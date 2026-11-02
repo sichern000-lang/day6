@@ -28,7 +28,7 @@ export default function MountainWash({ className = '' }) {
         <path d="M500 340 C570 276 650 232 720 204 C760 188 790 174 800 164 V420 H500Z" fill={`url(#${id}-g)`} />
         <path d="M500 340 C570 276 650 232 720 204 C760 188 790 174 800 164 V420 H500Z" fill={`url(#${id}-h)`} opacity=".7" />
       </g>
-      <g fill="#faf8ec" opacity=".85" filter={`url(#${id}-mist)`}>
+      <g fill="#f6f9f5" opacity=".85" filter={`url(#${id}-mist)`}>
         <ellipse cx="520" cy="190" rx="130" ry="20" />
         <ellipse cx="690" cy="150" rx="110" ry="16" />
         <ellipse cx="600" cy="285" rx="150" ry="22" />

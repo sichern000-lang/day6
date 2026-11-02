@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ping } from '../api/client'
 import { isSupabaseReady, supabase } from '../lib/supabase'
@@ -8,6 +8,7 @@ import WeatherChip from '../components/WeatherChip'
 import FeatureCarousel from '../components/FeatureCarousel'
 import IntroNotes from '../components/IntroNotes'
 import AskShowcase from '../components/AskShowcase'
+import TypedTitle from '../components/TypedTitle'
 import heroImg from '../assets/hero.jpg'
 
 export default function Home() {
@@ -19,11 +20,29 @@ export default function Home() {
   const [db, setDb] = useState(isSupabaseReady ? { state: 'wait' } : { state: 'fail', key: 'check.sbfail' })
   const [api, setApi] = useState({ state: 'wait' })
   const introDone = useAppStore((s) => s.introDone)
+  const [typed, setTyped] = useState(false)
+  const onTyped = useCallback(() => setTyped(true), [])
 
   // 랜딩에서만 섹션 단위 스크롤 스냅 (다른 페이지로 가면 해제)
   useEffect(() => {
     document.documentElement.classList.add('snap')
     return () => document.documentElement.classList.remove('snap')
+  }, [])
+
+  // 스크롤해서 보이는 만큼 내용이 차례로 나타남
+  useEffect(() => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    const els = [...document.querySelectorAll('.snap-sec .wrap > :not(.split):not(.grid), .split-text, .split-art, .snap-sec .grid > *')]
+    els.forEach((el) => el.classList.add('reveal'))
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (!e.isIntersecting) return
+      const sib = [...e.target.parentElement.children].indexOf(e.target)
+      e.target.style.transitionDelay = `${Math.min(sib, 4) * 0.12}s`
+      e.target.classList.add('in')
+      io.unobserve(e.target)
+    }), { threshold: 0.18 })
+    els.forEach((el) => io.observe(el))
+    return () => { io.disconnect(); els.forEach((el) => el.classList.remove('reveal', 'in')) }
   }, [])
 
   useEffect(() => {
@@ -43,9 +62,10 @@ export default function Home() {
       <section className="hero">
         <img className="hero-img" src={heroImg} alt="" />
         <div className="hero-copy">
-          <WeatherChip place="제주시" />
-          <h1>{t('home.h1a')}<br />{t('home.h1pre')}<em>{t('home.h1em')}</em>{t('home.h1post')}</h1>
-          <Link className="btn" to="/map">{t('home.cta')}</Link>
+          <div className={`hero-after ${typed ? 'in' : ''}`}><WeatherChip place="제주시" /></div>
+          <TypedTitle start={introDone} onDone={onTyped}
+            parts={[{ text: t('home.h1a') }, { br: true }, { text: t('home.h1pre') }, { text: t('home.h1em'), em: true }, { text: t('home.h1post') }]} />
+          <Link className={`btn hero-after ${typed ? 'in' : ''}`} to="/map">{t('home.cta')}</Link>
         </div>
       </section>
 

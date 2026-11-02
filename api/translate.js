@@ -1,7 +1,4 @@
-import Anthropic from '@anthropic-ai/sdk'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-const MODEL = 'claude-haiku-5-5'
+import { FAST_MODEL, generate, textOf } from '../server/gemini.js'
 
 // 국가유산 이름처럼 한국어로만 오는 짧은 낱말들을 영어로 옮긴다 (고유명사는 로마자 + 뜻)
 export default async function handler(req, res) {
@@ -16,15 +13,15 @@ export default async function handler(req, res) {
 - Never invent facts. Output only a JSON array of strings, same length and order as the input.`
 
   try {
-    const r = await client.messages.create({
-      model: MODEL, max_tokens: 1024, system,
-      messages: [{ role: 'user', content: JSON.stringify(texts) }],
+    const reply = await generate({
+      system, json: true, maxTokens: 2048, model: FAST_MODEL,
+      contents: [{ role: 'user', parts: [{ text: JSON.stringify(texts) }] }],
     })
-    const raw = r.content.filter((b) => b.type === 'text').map((b) => b.text).join('')
+    const raw = textOf(reply)
     const out = JSON.parse(raw.slice(raw.indexOf('['), raw.lastIndexOf(']') + 1))
     if (!Array.isArray(out) || out.length !== texts.length) throw new Error('번역 결과 개수가 맞지 않아요')
-    res.status(200).json({ texts: out })
+    res.status(200).json({ texts: out.map(String) })
   } catch (e) {
-    res.status(e.status ?? 500).json({ error: e.status === 429 ? '사용량이 많아요. 잠시 뒤 다시 시도하세요.' : e.message })
+    res.status(e.status ?? 500).json({ error: e.message })
   }
 }

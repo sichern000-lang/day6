@@ -1,0 +1,14 @@
+[
+  { "id": "s1", "nickname": "지은", "place_title": "삼성혈", "place_addr": "제주특별자치도 제주시 이도동", "story_id": "samseonghyeol", "rating": 5, "recommend": true,
+    "comment": "세 개의 구멍을 직접 보니 신화가 훨씬 가깝게 느껴졌어요. 한적한 오전에 가길 추천해요.", "image_url": null, "created_at": "2026-10-30T09:20:00+09:00" },
+  { "id": "s2", "nickname": "Emma (UK)", "place_title": "Sanbangsan", "place_addr": "Andeok-myeon, Seogwipo-si, Jeju-do", "story_id": "sanbangsan", "rating": 5, "recommend": true,
+    "comment": "Loved hearing the legend of the peak that flew here from Hallasan. Go on a clear day for the views.", "image_url": null, "created_at": "2026-10-27T14:05:00+09:00" },
+  { "id": "s3", "nickname": "민호", "place_title": "용두암", "place_addr": "제주특별자치도 제주시 용담동", "story_id": "yongduam", "rating": 3, "recommend": false,
+    "comment": "공항에서 가까워서 들르기 좋지만 낮에는 사람이 많아요. 일출이나 이른 아침이 나을 것 같아요.", "image_url": null, "created_at": "2026-10-24T11:40:00+09:00" },
+  { "id": "s4", "nickname": "하린", "place_title": "한라산 영실", "place_addr": "제주특별자치도 서귀포시", "story_id": "seolmundae", "rating": 5, "recommend": true,
+    "comment": "오백장군 이야기를 알고 걸으니 바위 하나하나가 달리 보였어요. 날씨 확인하고 가세요!", "image_url": "/samples/hero.jpg", "created_at": "2026-10-21T08:10:00+09:00" },
+  { "id": "s5", "nickname": "수빈", "place_title": "송당리 본향당", "place_addr": "제주특별자치도 제주시 구좌읍 송당리", "story_id": "songdang", "rating": 4, "recommend": true,
+    "comment": "마을 신 이야기를 읽고 가니 조용한 숲길이 다르게 느껴졌어요. 표지판이 조금 더 있으면 좋겠어요.", "image_url": null, "created_at": "2026-10-18T16:30:00+09:00" },
+  { "id": "s6", "nickname": "Tom (US)", "place_title": "Manjanggul Cave", "place_addr": "Gujwa-eup, Jeju-si, Jeju-do", "story_id": "gimnyeonggul", "rating": 4, "recommend": true,
+    "comment": "Spooky in a good way after reading the serpent tale of Gimnyeong. Bring a jacket, it is cold inside.", "image_url": null, "created_at": "2026-10-15T13:15:00+09:00" }
+]

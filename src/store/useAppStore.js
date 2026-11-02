@@ -66,14 +66,19 @@ export const useAppStore = create(
       // ④ 이야기 안내자(에이전트) 대화 — 페이지를 옮겨도 대화가 남도록 store 에 둠
       messages: [],
       chatLoading: false,
+      chatOpen: false,            // Ask 모달이 열려 있는지
+      openChat: () => set({ chatOpen: true }),
+      closeChat: () => set({ chatOpen: false }),
       sendMessage: async (text) => {
-        const history = get().messages.map((m) => ({ role: m.role, content: m.text }))
+        // 오류 메시지는 대화 기록(history)에서 빼고 서버로 보냄
+        const history = get().messages.filter((m) => !m.error).map((m) => ({ role: m.role, content: m.text }))
         set({ messages: [...get().messages, { role: 'user', text }], chatLoading: true })
         try {
           const { answer, steps } = await askAgent(text, history, get().lang)
           set({ messages: [...get().messages, { role: 'assistant', text: answer, steps }] })
         } catch (e) {
-          get().toast(e.message, 'error')
+          // 모달 안에서 바로 보이도록 대화에도 오류를 남김
+          set({ messages: [...get().messages, { role: 'assistant', text: e.message, error: true }] })
         } finally {
           set({ chatLoading: false })
         }

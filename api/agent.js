@@ -1,38 +1,35 @@
-import Anthropic from '@anthropic-ai/sdk'
 import { getStory } from '../server/stories.js'
 import { searchTour } from '../server/tour.js'
 import { searchTourEng } from '../server/tourEng.js'
 import { getWeather } from '../server/weather.js'
 import { searchHeritage } from '../server/heritage.js'
+import { generate, callsOf, textOf } from '../server/gemini.js'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-const MODEL = 'claude-sonnet-5-5'
-
-// ① 도구 설명서 — Claude 는 이 설명만 보고 어떤 도구를 쓸지 정한다
+// ① 도구 설명서 — Gemini 는 이 설명만 보고 어떤 도구를 쓸지 정한다 (functionDeclarations)
 const tools = [
   {
     name: 'get_story',
     description: '신화지도 데이터에서 제주 신화·전설을 찾는다. 인물·장소·종류(창조신화, 건국신화, 지형전설, 마을전설, 당신화)로 검색',
-    input_schema: { type: 'object', properties: { keyword: { type: 'string', description: '예: 설문대할망, 산방산, 지형전설' } } },
+    parameters: { type: 'OBJECT', properties: { keyword: { type: 'STRING', description: '예: 설문대할망, 산방산, 지형전설' } } },
   },
   {
     name: 'search_tour_places',
     description: '한국관광공사 TourAPI 로 제주의 장소를 검색한다 (이야기의 무대 찾기)',
-    input_schema: { type: 'object', properties: { keyword: { type: 'string', description: '예: 한라산, 삼성혈' } } },
+    parameters: { type: 'OBJECT', properties: { keyword: { type: 'STRING', description: '예: 한라산, 삼성혈' } } },
   },
   {
     name: 'get_weather',
     description: '기상청 단기예보로 제주시/서귀포시의 앞으로 몇 시간 날씨를 조회한다',
-    input_schema: {
-      type: 'object',
-      properties: { place: { type: 'string', enum: ['제주시', '서귀포시'] } },
+    parameters: {
+      type: 'OBJECT',
+      properties: { place: { type: 'STRING', enum: ['제주시', '서귀포시'] } },
       required: ['place'],
     },
   },
   {
     name: 'search_heritage',
     description: '국가유산청 API 로 제주의 국가유산을 이름으로 검색한다',
-    input_schema: { type: 'object', properties: { keyword: { type: 'string' } } },
+    parameters: { type: 'OBJECT', properties: { keyword: { type: 'STRING' } } },
   },
 ]
 
@@ -63,35 +60,40 @@ export default async function handler(req, res) {
   const { message, history = [], lang = 'ko' } = req.body ?? {}
   const en = lang === 'en'
   // 영어 모드: 영문 관광정보 API 와 영어 답변
-  const tools_run = en ? { ...runTool, search_tour_places: searchTourEng } : runTool
+  const run = en ? { ...runTool, search_tour_places: searchTourEng } : runTool
   const system = en ? SYSTEM + EN_RULE : SYSTEM
-  const messages = [...history.slice(-10), { role: 'user', content: message }]
+
+  // 화면에서 온 대화({role:'user'|'assistant', content}) → Gemini 형식({role:'user'|'model', parts})
+  const contents = [
+    ...history.slice(-10).map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: String(m.content ?? '') }] })),
+    { role: 'user', parts: [{ text: String(message ?? '') }] },
+  ]
   const steps = [] // 화면에 "에이전트가 무엇을 했는지" 보여주기용 호출 내역
 
   try {
     // ③ 에이전트 루프: 생각 → 도구 호출 → 결과 확인 → (반복) → 최종 답
     for (let turn = 0; turn < 6; turn++) {
-      const r = await client.messages.create({ model: MODEL, max_tokens: 1024, system, tools, messages })
+      const reply = await generate({ system, contents, tools })
+      const calls = callsOf(reply)
+      if (calls.length === 0) return res.status(200).json({ answer: textOf(reply), steps })
 
-      if (r.stop_reason !== 'tool_use') {
-        const answer = r.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n')
-        return res.status(200).json({ answer, steps })
-      }
-
-      messages.push({ role: 'assistant', content: r.content })
-      const results = []
-      for (const block of r.content) {
-        if (block.type !== 'tool_use') continue
+      contents.push(reply) // 도구 호출 요청을 대화에 그대로 기록 (Gemini 가 요구하는 부가 정보도 함께 보존)
+      const responses = []
+      for (const call of calls) {
         let result
-        try { result = await tools_run[block.name](block.input ?? {}) }
+        try {
+          if (!run[call.name]) throw new Error(`알 수 없는 도구: ${call.name}`)
+          result = await run[call.name](call.args ?? {})
+        }
         catch (e) { result = { error: e.message } }
-        steps.push({ tool: block.name, args: block.input, count: Array.isArray(result) ? result.length : 0, error: result?.error })
-        results.push({ type: 'tool_result', tool_use_id: block.id, content: JSON.stringify(result) })
+        steps.push({ tool: call.name, args: call.args, count: Array.isArray(result) ? result.length : 0, error: result?.error })
+        // functionResponse.response 는 객체여야 해서 배열은 { items } 로 감쌈
+        responses.push({ functionResponse: { name: call.name, response: Array.isArray(result) ? { items: result } : result } })
       }
-      messages.push({ role: 'user', content: results })
+      contents.push({ role: 'user', parts: responses })
     }
     res.status(200).json({ answer: '도구를 너무 많이 써서 멈췄어요. 질문을 좁혀 주세요.', steps })
   } catch (e) {
-    res.status(e.status ?? 500).json({ error: e.status === 429 ? '사용량이 많아요. 1분 뒤 다시 시도하세요.' : e.message })
+    res.status(e.status ?? 500).json({ error: e.message })
   }
 }

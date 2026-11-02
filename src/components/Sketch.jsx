@@ -47,12 +47,18 @@ const MAKE = {
     }
     return out
   },
-  // 휘감아 오르는 결 — 나란한 곡선 다발
+  // 휘감아 오르는 결 — 나란한 곡선 다발 (이야기마다 휘어지는 방향·높이가 달라짐)
   flow(r) {
     const out = []
-    for (let i = 0; i < 15; i++) {
-      const o = i * 9 + r() * 4
-      out.push(`M${f(20 + o * 0.4)} ${f(172 - r() * 6)} C${f(34 + o)} ${f(130 - o * 0.2)} ${f(90 + o * 0.5)} ${f(100 - o * 0.5)} ${f(150 + o * 0.3)} ${f(34 + o * 0.6 + r() * 8)}`)
+    const flip = r() < 0.5 ? -1 : 1            // 좌우 반전
+    const lift = 70 + r() * 70                 // 올라가는 높이
+    const sway = 20 + r() * 60                 // 휘어지는 정도
+    const n = 11 + Math.floor(r() * 7)
+    const X = (x) => (flip > 0 ? x : 200 - x)
+    for (let i = 0; i < n; i++) {
+      const o = i * (8 + r() * 3) + r() * 4
+      const y0 = 176 - r() * 8
+      out.push(`M${f(X(18 + o * 0.45))} ${f(y0)} C${f(X(30 + o + sway * 0.3))} ${f(y0 - lift * 0.45)} ${f(X(80 + o * 0.5 + sway))} ${f(y0 - lift * 0.8 + o * 0.2)} ${f(X(130 + o * 0.35 + sway * 0.4))} ${f(y0 - lift - 20 + o * 0.5 + r() * 8)}`)
     }
     return out
   },

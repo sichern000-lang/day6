@@ -14,6 +14,7 @@ export default function Home() {
   const nickname = useAppStore((s) => s.nickname)
   const setNickname = useAppStore((s) => s.setNickname)
   const loadSaved = useAppStore((s) => s.loadSaved)
+  const openChat = useAppStore((s) => s.openChat)
   const [db, setDb] = useState(isSupabaseReady ? { state: 'wait' } : { state: 'fail', key: 'check.sbfail' })
   const [api, setApi] = useState({ state: 'wait' })
 
@@ -29,7 +30,7 @@ export default function Home() {
         setDb(error ? { state: 'fail', msg: error.message } : { state: 'ok', key: 'check.ok' }))
     }
     ping()
-      .then((d) => setApi({ state: 'ok', msg: `data.go.kr ${d.hasDataKey ? '✓' : '✗'} · EN tour ${d.hasEngKey ? '✓' : '✗'} · Claude ${d.hasClaudeKey ? '✓' : '✗'}` }))
+      .then((d) => setApi({ state: 'ok', msg: `data.go.kr ${d.hasDataKey ? '✓' : '✗'} · EN tour ${d.hasEngKey ? '✓' : '✗'} · Gemini ${d.hasAiKey ? '✓' : '✗'}` }))
       .catch(() => setApi({ state: 'fail', key: 'check.apifail' }))
   }, [])
 
@@ -67,7 +68,7 @@ export default function Home() {
             <div className="split-text">
               <span className="eyebrow">OUR TELLING</span>
               <p>{t('home.telling')}</p>
-              <Link className="btn ghost" to="/guide">{t('home.ask')}</Link>
+              <button className="btn ghost" onClick={openChat}>{t('home.ask')}</button>
             </div>
             <div className="split-art">
               <img src={heroImg} alt="" loading="lazy" />

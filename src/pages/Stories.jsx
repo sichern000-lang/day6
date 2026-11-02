@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
-import FeaturedGrid from '../components/FeaturedGrid'
+import StoryCard from '../components/StoryCard'
+import LoreModal from '../components/LoreModal'
 import { Empty, ErrorBox, Loading } from '../components/Status'
 import { fetchCatalog } from '../api/client'
 import folk from '../data/folk-groups.json'
 import { STORIES, localize } from '../lib/stories'
+import { staticEnTitle } from '../lib/folkTitle'
 import { useTranslated } from '../lib/useTranslated'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
@@ -18,7 +21,9 @@ export default function Stories() {
   const lang = useAppStore((s) => s.lang)
   // 이 페이지 안에서만 쓰는 값은 지역 상태
   const [catalog, setCatalog] = useState({ data: [], loading: true, error: '' })
-  const [q, setQ] = useState('')
+  const [params] = useSearchParams()
+  const [q, setQ] = useState(params.get('q') ?? '')
+  const [open, setOpen] = useState(null)   // 모달로 열어 둔 신화·민담
   const [kind, setKind] = useState('all')   // all | featured | myth | folktale
   const [group, setGroup] = useState('')    // '' = 해당 종류 전체
   const [shown, setShown] = useState(PAGE)
@@ -45,7 +50,9 @@ export default function Stories() {
     (!query || (i.title + i.tags.join(' ')).toLowerCase().includes(query)))
   const visible = rows.slice(0, shown)
 
-  const tr = useTranslated(visible.map((i) => i.title), lang === 'en')
+  // 영어 제목: 미리 넣어 둔 번역이 먼저, 없는 제목만 실시간 번역
+  const tr0 = useTranslated(visible.filter((i) => !staticEnTitle(i.title)).map((i) => i.title), lang === 'en')
+  const enTitle = (title) => (lang === 'en' ? staticEnTitle(title) ?? tr0(title) : undefined)
   const groups = folk.groups.filter((g) => g.kind === kind)
   const activeGroup = group ? GROUP[group] : null
   const showFeatured = kind === 'all' || kind === 'featured'
@@ -89,7 +96,7 @@ export default function Stories() {
       )}
 
       {showFeatured && featured.length > 0 && (
-        <FeaturedGrid stories={featured} />
+        <div className="grid three feature-grid">{featured.map((s) => <StoryCard key={s.id} story={s} />)}</div>
       )}
 
       {showRows && (
@@ -100,18 +107,18 @@ export default function Stories() {
           <ul className="rows lore">
             {visible.map((i) => (
               <li key={`${i.kind}-${i.id}`}>
-                <div className="lore-item">
+                <div className="lore-item" role="button" tabIndex={0}
+                  onClick={() => setOpen(i)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setOpen(i))}>
                   <span className="h-text">
-                    <strong>{tr(i.title) ?? i.title}{tr(i.title) && <small> {i.title}</small>}</strong>
+                    <strong>{enTitle(i.title) ?? i.title}{enTitle(i.title) && <small> {i.title}</small>}</strong>
                     <span className="lore-meta">
                       <em>{label(GROUP[i.group], lang)}</em>
                       {i.tags.slice(0, 6).map((tag) => (
-                        <button key={tag} className="tag" onClick={() => search(tag)}>{tag}</button>
+                        <button key={tag} className="tag" onClick={(e) => { e.stopPropagation(); search(tag) }}>{tag}</button>
                       ))}
                     </span>
                   </span>
-                  <a className="copy-btn" href={`https://www.google.com/search?q=${encodeURIComponent(`제주 ${i.title}`)}`}
-                    target="_blank" rel="noopener noreferrer" aria-label={t('stories.web')} title={t('stories.web')}>↗</a>
+                  <span className="h-arrow" aria-hidden="true">→</span>
                 </div>
               </li>
             ))}
@@ -122,6 +129,7 @@ export default function Stories() {
           {!catalog.loading && !catalog.error && <p className="hint">{t('stories.note')}</p>}
         </>
       )}
+      {open && <LoreModal item={open} titleEn={enTitle(open.title)} onClose={() => setOpen(null)} onSearch={search} />}
     </>
   )
 }

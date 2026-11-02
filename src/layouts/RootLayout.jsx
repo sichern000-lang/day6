@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { NAV_ITEMS } from '../router'
 import Toasts from '../components/Toasts'
+import ChatModal from '../components/ChatModal'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
@@ -10,6 +11,8 @@ export default function RootLayout() {
   const nickname = useAppStore((s) => s.nickname)
   const lang = useAppStore((s) => s.lang)
   const setLang = useAppStore((s) => s.setLang)
+  const chatOpen = useAppStore((s) => s.chatOpen)
+  const openChat = useAppStore((s) => s.openChat)
   const isHome = useLocation().pathname === '/'
 
   useEffect(() => { document.documentElement.lang = lang }, [lang])
@@ -28,7 +31,9 @@ export default function RootLayout() {
       <div className="announce">{t('announce')}</div>
       <nav className={`topbar ${isHome ? 'over' : ''} ${isHome && scrolled ? 'solid' : ''}`}>
         <div className="links">
-          {NAV_ITEMS.map((n) => (
+          {NAV_ITEMS.map((n) => n.action ? (
+            <button key={n.action} className="navbtn" onClick={openChat}>{t(n.key)}</button>
+          ) : (
             <NavLink key={n.to} to={n.to} end={n.to === '/'}>{t(n.key)}</NavLink>
           ))}
         </div>
@@ -44,6 +49,7 @@ export default function RootLayout() {
       <main className={isHome ? '' : 'container'}><Outlet /></main>
       <footer className="footer">{t('footer')}</footer>
       <Toasts />
+      {chatOpen && <ChatModal />}
     </>
   )
 }

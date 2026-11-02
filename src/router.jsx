@@ -4,7 +4,7 @@ import Home from './pages/Home'
 import MapPage from './pages/MapPage'
 import Stories from './pages/Stories'
 import StoryDetail from './pages/StoryDetail'
-import Guide from './pages/Guide'
+import Reviews from './pages/Reviews'
 import Notebook from './pages/Notebook'
 import NotFound from './pages/NotFound'
 
@@ -13,8 +13,9 @@ export const NAV_ITEMS = [
   { to: '/', key: 'nav.home' },
   { to: '/map', key: 'nav.map' },
   { to: '/stories', key: 'nav.stories' },
-  { to: '/guide', key: 'nav.guide' },
+  { to: '/review', key: 'nav.review' },
   { to: '/notebook', key: 'nav.notebook' },
+  { action: 'ask', key: 'nav.ask' }, // 페이지가 아니라 Ask 모달을 엽니다
 ]
 
 export const router = createBrowserRouter([
@@ -27,7 +28,7 @@ export const router = createBrowserRouter([
       { path: 'map', element: <MapPage /> },
       { path: 'stories', element: <Stories /> },
       { path: 'stories/:id', element: <StoryDetail /> },
-      { path: 'guide', element: <Guide /> },
+      { path: 'review', element: <Reviews /> },
       { path: 'notebook', element: <Notebook /> },
     ],
   },

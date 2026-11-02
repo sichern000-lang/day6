@@ -4,6 +4,7 @@ import MountainWash from '../components/MountainWash'
 import { Empty, ErrorBox, Loading } from '../components/Status'
 import { fetchHeritage, fetchPlaces, fetchPlacesEn } from '../api/client'
 import { getStoryById, kindLabel, localize } from '../lib/stories'
+import { copyText } from '../lib/copy'
 import { useTranslated } from '../lib/useTranslated'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
@@ -56,21 +57,8 @@ export default function StoryDetail() {
   const isSaved = saved.some((s) => s.story_id === base.id)
   const meta = `${kindLabel(base.kind, lang)} · ${story.place}`.split(' · ')
 
-  // 클립보드 API 가 막힌 환경(권한·http)에서는 임시 입력창으로 복사를 다시 시도
   async function copyAddress(id, addr) {
-    try {
-      await navigator.clipboard.writeText(addr)
-    } catch {
-      const ta = document.createElement('textarea')
-      ta.value = addr
-      ta.style.position = 'fixed'
-      ta.style.opacity = '0'
-      document.body.appendChild(ta)
-      ta.select()
-      const ok = document.execCommand('copy')
-      ta.remove()
-      if (!ok) return toast(t('toast.copyfail'), 'error')
-    }
+    if (!(await copyText(addr))) return toast(t('toast.copyfail'), 'error')
     toast(t('toast.copied'))
     setCopiedId(id)
     setTimeout(() => setCopiedId((cur) => (cur === id ? null : cur)), 1500)

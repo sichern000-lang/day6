@@ -1,0 +1,8 @@
+node_modules
+dist
+*.local
+.env
+.vercel
+.DS_Store
+# 참고용 샘플 (제출물 아님)
+jeju-ip-sample-solution/

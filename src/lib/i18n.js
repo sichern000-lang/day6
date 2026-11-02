@@ -13,7 +13,7 @@ const STR = {
     anon: '익명',
     footer: '데이터: 기상청 · 한국관광공사 · 국가유산청(공공데이터포털) · 신화는 전승에 따라 다르며 요약은 학습용입니다',
 
-    'home.h1a': '제주의 이야기를', 'home.h1pre': '읽고 ', 'home.h1em': '담다', 'home.h1post': '',
+    'home.h1a': '제주의 이야기를 따라,', 'home.h1pre': '나의 제주를 ', 'home.h1em': '기록하다', 'home.h1post': '',
     'home.cta': '아카이브 열람하기',
     'home.display': '이야기를 천천히,\n장소와 함께.', 'home.lede': '오늘의 이야기부터 골라 보세요.',
     'auth.guest': 'Guest로 계속하기', 'auth.login': '로그인', 'auth.signup': '회원가입', 'auth.tLogin': '다시 오셨네요', 'auth.tSignup': '함께 걸어요', 'auth.sLogin': '로그인하면 내 수첩이 어디서든 이어져요.', 'auth.sSignup': '계정을 만들면 담은 이야기와 메모를 저장할 수 있어요.', 'auth.google': 'Google로 계속하기', 'auth.or': '또는', 'auth.email': '이메일', 'auth.password': '비밀번호', 'auth.nick': '닉네임', 'auth.nickph': '수첩에 쓸 이름', 'auth.goLogin': '로그인', 'auth.goSignup': '회원가입', 'auth.toSignup': '아직 계정이 없나요?', 'auth.toLogin': '이미 계정이 있나요?', 'auth.checkmail': '확인 메일을 보냈어요. 메일의 링크를 누르면 가입이 끝나요.', 'auth.nosb': 'Supabase 설정이 필요해요 (.env.local)', 'auth.logout': '로그아웃', 'auth.account': '내 계정', 'auth.admin': '관리자', 'auth.pw': '비밀번호는 6자 이상이어야 해요', 'auth.welcome': '{name} 님, 환영해요', 'auth.bye': '로그아웃했어요', 'auth.busy': '잠시만요…',
@@ -78,7 +78,7 @@ const STR = {
     anon: 'Guest',
     footer: 'Data: Korea Meteorological Administration · Korea Tourism Organization · Korea Heritage Service (data.go.kr) · Myths vary by telling; summaries are for learning.',
 
-    'home.h1a': 'Jeju’s stories,', 'home.h1pre': 'to read and ', 'home.h1em': 'keep', 'home.h1post': '',
+    'home.h1a': 'Follow Jeju’s stories,', 'home.h1pre': 'record ', 'home.h1em': 'your Jeju', 'home.h1post': '',
     'home.cta': 'BROWSE THE ARCHIVE',
     'home.display': 'Stories, told slowly,\nwith their places.', 'home.lede': 'Start with today’s story.',
     'auth.guest': 'Continue as Guest', 'auth.login': 'Log in', 'auth.signup': 'Sign up', 'auth.tLogin': 'Welcome back', 'auth.tSignup': 'Walk with us', 'auth.sLogin': 'Log in and your notebook follows you anywhere.', 'auth.sSignup': 'Create an account to keep your saved stories and notes.', 'auth.google': 'Continue with Google', 'auth.or': 'or', 'auth.email': 'Email', 'auth.password': 'Password', 'auth.nick': 'Nickname', 'auth.nickph': 'Name for your notebook', 'auth.goLogin': 'Log in', 'auth.goSignup': 'Sign up', 'auth.toSignup': 'No account yet?', 'auth.toLogin': 'Already have an account?', 'auth.checkmail': 'We sent a confirmation email. Open the link in it to finish signing up.', 'auth.nosb': 'Supabase setup is required (.env.local)', 'auth.logout': 'Log out', 'auth.account': 'My account', 'auth.admin': 'Admin', 'auth.pw': 'Password must be at least 6 characters', 'auth.welcome': 'Welcome, {name}', 'auth.bye': 'Logged out', 'auth.busy': 'One moment…',

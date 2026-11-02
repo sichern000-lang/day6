@@ -10,7 +10,7 @@ export default {
   'chat.refresh': 'Nueva conversación', 'chat.close': 'Cerrar', 'chat.error': 'No se pudo obtener una respuesta',
 
 
-  'home.h1a': 'Historias de Jeju,', 'home.h1pre': 'para leer y ', 'home.h1em': 'guardar', 'home.h1post': '',
+  'home.h1a': 'Sigue las historias de Jeju,', 'home.h1pre': 'registra ', 'home.h1em': 'tu Jeju', 'home.h1post': '',
   'home.cta': 'EXPLORAR EL ARCHIVO',
   'home.display': 'Historias contadas despacio,\ncon sus lugares.', 'home.lede': 'Empieza por la historia de hoy.',
   'home.nbDone': 'Guardado en tu cuaderno :)', 'home.nbTitle': 'Toca el corazón de\nlas historias que te gusten', 'home.nbOpen': 'Abrir mi cuaderno', 'home.shuffle': 'Ver otras',

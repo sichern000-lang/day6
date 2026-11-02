@@ -6,8 +6,8 @@ import { fetchRandomDrawings } from '../lib/places'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
-// 랜딩 위에 종이 메모지가 겹겹이 덮여 있다가, 스크롤(휠·스와이프·키·클릭) 3번에 한 겹씩 날아가며 진짜 랜딩이 드러남
-const PEELS = 3          // 위 메모 → 가운데 메모 → 바닥 종이
+// 랜딩 위에 종이 메모지가 겹겹이 덮여 있다가, 스크롤(휠·스와이프·키·클릭) 2번에 한 겹씩 날아가며 진짜 랜딩이 드러남
+const PEELS = 2          // 위 메모 → 아래 메모 (두 번 넘기면 랜딩이 드러남)
 const PAPER = ['#f1f5f1', '#e6edf2', '#e8efe6'] // 조각마다 살짝 다른 종이색
 const LOCK_MS = 950      // 한 번 넘기고 나면 잠깐 잠금 (관성 휠이 한꺼번에 넘기지 않게)
 
@@ -17,8 +17,8 @@ function layout(vw, vh) {
   const per = Math.max(6, Math.min(13, Math.round((vw * vh) / (size * size * 1.7))))
   const r = rng('intro-layout')
   const pick = (() => { const bag = [...DOODLES].sort(() => r() - 0.5); let i = 0; return () => bag[i++ % bag.length] })()
-  const layers = [0, 1, 2].map((layer) => {
-    const count = layer === 2 ? Math.max(4, Math.round(per * 0.45)) : per
+  const layers = [0, 1].map((layer) => {
+    const count = layer === 1 ? Math.max(5, Math.round(per * 0.7)) : per
     return Array.from({ length: count }, (_, i) => {
       const x = 4 + r() * 88, y = 4 + r() * 84
       return {
@@ -94,7 +94,7 @@ export default function IntroNotes() {
 
   return createPortal(
     <div className={`intro ${done ? 'out' : ''} ${step >= PEELS - 1 ? 'bare' : ''}`} onClick={click} role="region" aria-label={t('intro.label')}>
-      {[2, 1, 0].map((li) => (
+      {[1, 0].map((li) => (
         <div key={li} className={`intro-layer ${step > li ? 'gone' : ''}`} style={{ zIndex: 10 - li }}>
           {layers[li].map((n) => (
             <figure key={n.id} className="note"

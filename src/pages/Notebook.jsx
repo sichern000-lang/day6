@@ -9,7 +9,6 @@ import { getStoryById, localize } from '../lib/stories'
 import { folkTitle } from '../lib/folkTitle'
 import { rng } from '../lib/rng'
 import { shareText } from '../lib/askShare'
-import { fetchRandomDrawings } from '../lib/places'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
@@ -90,10 +89,8 @@ function Slider({ count, hint, decor, children }) {
   )
 }
 
-// 메모지 사이에 섞이는 두들 종이 조각들 (랜딩 인트로의 그림과 다른 사람들이 그린 그림) — 리스트 보기에서는 나오지 않음
+// 메모지 사이에 섞이는 두들 종이 조각들 (랜딩 인트로에 나오는 그림 그대로) — 리스트 보기에서는 나오지 않음
 function Scraps({ count }) {
-  const [mine, setMine] = useState([])
-  useEffect(() => { let on = true; fetchRandomDrawings(5).then((d) => on && setMine(d)); return () => { on = false } }, [])
   const width = count * STEP + 340
   const scraps = useMemo(() => {
     const r = rng(`scraps-${count}`)
@@ -105,10 +102,10 @@ function Scraps({ count }) {
       rot: ((r() - 0.5) * 50).toFixed(1), z: r() < 0.5 ? 0 : 3, tone: Math.floor(r() * 3),
     }))
   }, [count, width])
-  return scraps.map((s, k) => (
+  return scraps.map((s) => (
     <figure key={s.id} className="scrap" aria-hidden="true"
       style={{ left: s.x, top: s.y, width: s.size, '--rot': `${s.rot}deg`, zIndex: s.z }}>
-      <Doodle variant={mine[k] ? 'mine' : s.doodle} d={mine[k]?.drawing} seed={`nb-${s.id}`} cut paper={PAPER[s.tone]} />
+      <Doodle variant={s.doodle} seed={`nb-${s.id}`} cut paper={PAPER[s.tone]} />
     </figure>
   ))
 }

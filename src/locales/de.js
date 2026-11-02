@@ -10,7 +10,7 @@ export default {
   'chat.refresh': 'Neues Gespräch', 'chat.close': 'Schließen', 'chat.error': 'Es konnte keine Antwort geholt werden',
 
 
-  'home.h1a': 'Jejus Geschichten,', 'home.h1pre': 'zum Lesen und ', 'home.h1em': 'Bewahren', 'home.h1post': '',
+  'home.h1a': 'Folge Jejus Geschichten,', 'home.h1pre': 'halte ', 'home.h1em': 'dein Jeju', 'home.h1post': ' fest',
   'home.cta': 'ARCHIV DURCHSTÖBERN',
   'home.display': 'Geschichten, langsam erzählt,\nmit ihren Orten.', 'home.lede': 'Beginne mit der Geschichte des Tages.',
   'home.nbDone': 'In deinem Notizbuch gespeichert :)', 'home.nbTitle': 'Tippe auf das Herz bei\nden Geschichten, die dir gefallen', 'home.nbOpen': 'Mein Notizbuch öffnen', 'home.shuffle': 'Andere zeigen',

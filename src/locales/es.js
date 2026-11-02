@@ -7,8 +7,7 @@ export default {
   anon: 'Invitado',
   footer: 'Datos: Servicio Meteorológico de Corea · Organización de Turismo de Corea · Servicio del Patrimonio de Corea (data.go.kr) · Los mitos varían según quién los cuenta; los resúmenes son solo orientativos.',
   'intro.skip': 'Saltar', 'intro.hint': 'Desplaza o toca para ir quitando las notas', 'intro.label': 'Notas de las historias de Jeju',
-  'doodle.oreum': 'Oreum', 'doodle.giant': 'Seolmundae', 'doodle.holes': 'Samseonghyeol', 'doodle.peak': 'Sanbangsan', 'doodle.dragon': 'Yongduam', 'doodle.serpent': 'Cueva de Gimnyeong', 'doodle.tree': 'Árbol del santuario', 'doodle.hareubang': 'Dol hareubang', 'doodle.haenyeo': 'Haenyeo', 'doodle.horse': 'Poni de Jeju', 'doodle.tangerine': 'Mandarina', 'doodle.camellia': 'Camelia', 'doodle.fire': 'Fuego de dokkaebi',
-  'chat.close': 'Cerrar', 'chat.error': 'No se pudo obtener una respuesta',
+  'chat.refresh': 'Nueva conversación', 'chat.close': 'Cerrar', 'chat.error': 'No se pudo obtener una respuesta',
 
   'review.title': 'Reseñas de viaje', 'review.sub': 'Valora los lugares que visitaste y recomiéndalos',
   'review.write': 'ESCRIBIR RESEÑA', 'review.avg': 'Promedio {avg} · {n} reseñas',
@@ -59,6 +58,9 @@ export default {
   'guide.example': 'p. ej. «Cuéntame la leyenda de Sanbangsan y dime si hoy hace buen tiempo en Seogwipo para ir»',
   'guide.loading': 'La guía está usando sus herramientas…', 'modal.source': 'Buscar el relato en línea', 'modal.sourceHint': 'Los enlaces oficiales al texto completo ya no se abren; esto busca en la web',
   'guide.try': 'Prueba a preguntar', 'guide.s1': 'Cuéntame la leyenda de Sanbangsan', 'guide.s2': '¿Quién es la abuela Seolmundae?', 'guide.s3': '¿Qué lugares de las historias van bien con el tiempo de hoy en Seogwipo?', 'guide.s4': '¿Qué se puede ver cerca de Yongduam?',
+  'ask.title': 'Pregunta lo que\nquieras', 'ask.lede': 'Ask es una guía de IA que elige sus propias herramientas: historias, lugares, tiempo y patrimonio. Encuentra el mito, consulta el tiempo de hoy y sugiere adónde ir, todo en una respuesta.', 'ask.cta': 'ABRIR ASK',
+  'ask.demoQ': 'Cuéntame la leyenda de Sanbangsan y dime si hoy es buen día para ir', 'ask.step1': 'Buscando la historia · Sanbangsan', 'ask.step2': 'Consultando el tiempo · Seogwipo', 'ask.step3': 'Buscando lugares · Sanbangsan',
+  'ask.demoA': 'La flecha de un cazador enfureció al Emperador de Jade, que arrancó la cima del Hallasan y la arrojó: así nació el Sanbangsan. Hoy no hay lluvia prevista en Seogwipo, así que es buen día para ir. También puedes pasar por el paseo en barco de Sanbangsan.', 'ask.note': 'Esto es un ejemplo. Abre Ask para una respuesta real.',
   'guide.ph': 'Pregunta lo que quieras', 'guide.send': 'ENVIAR',
   'tool.get_story': 'Historia', 'tool.search_tour_places': 'Lugares', 'tool.get_weather': 'Tiempo', 'tool.search_heritage': 'Patrimonio',
 

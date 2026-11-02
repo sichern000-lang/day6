@@ -243,13 +243,32 @@ export const ART = {
   },
 }
 
+// 종이 조각의 윤곽 — 그림마다 "그림이 차지하는 덩어리"를 단순한 모양으로 정의해 두고,
+// 그 모양을 부풀려서(dilate) 오린 종이로 씀. 그림 안쪽의 빈 곳도 종이로 채워져 스티커처럼 오려 낸 모양이 됨.
+const BODY = {
+  oreum: <><path d="M8 118 C44 74 104 66 138 80 C162 90 180 100 194 106 V188 H10Z" /><path d="M140 48 H186 V92 H140Z" /></>,
+  giant: <><circle cx="112" cy="80" r="34" /><path d="M8 178 C28 140 62 140 84 168 L100 192 H8Z M56 180 C84 142 128 140 150 172 V192 H56Z M118 182 C144 150 176 150 196 176 V192 H118Z" /><path d="M138 88 H196 V106 H138Z" /></>,
+  holes: <><path d="M8 144 C60 138 140 150 194 142 V190 H8Z" /><path d="M24 88 H176 V150 H24Z" /><path d="M24 56 H176 V74 H24Z" /></>,
+  peak: <><path d="M70 138 C80 90 100 54 118 40 C136 54 158 92 166 138Z" /><path d="M8 96 H56 V132 H8Z" /><path d="M8 148 C60 146 100 190 194 170 V192 H8Z" /></>,
+  dragon: <><path d="M42 162 C40 110 58 76 90 68 C120 62 150 74 164 98 L192 82 V128 L160 116 L100 162Z" /><path d="M0 164 H200 V190 H0Z" /><circle cx="166" cy="42" r="17" /></>,
+  serpent: <path d="M20 184 C16 108 56 58 100 58 C144 58 184 106 180 184Z" />,
+  tree: <><path d="M40 100 C30 74 52 56 72 62 C76 40 106 34 120 48 C136 32 172 46 168 74 C192 76 194 108 170 112 C172 132 140 134 130 124 C120 136 82 134 78 118 C58 126 32 118 40 100Z" /><path d="M82 118 H140 V182 H82Z" /><path d="M140 150 H174 V192 H140Z" /><path d="M20 160 H72 V190 H20Z" /></>,
+  hareubang: <path d="M54 62 C54 30 146 30 146 62 C160 66 164 80 150 84 L132 118 L138 192 H62 L68 118 L50 84 C36 80 40 66 54 62Z" />,
+  haenyeo: <><circle cx="132" cy="92" r="30" /><circle cx="66" cy="96" r="22" /><path d="M82 90 H112 V108 H82Z" /><path d="M0 124 H200 V190 H0Z" /></>,
+  horse: <path d="M34 62 L70 28 L104 74 H150 C166 84 174 106 171 134 L164 150 H76 V100 L40 84Z" />,
+  tangerine: <><path d="M100 62 C150 56 170 100 150 138 C134 168 66 168 50 138 C32 100 54 56 100 62Z" /><path d="M96 24 H152 V68 H96Z" /></>,
+  camellia: <><circle cx="100" cy="84" r="56" /><path d="M90 118 H110 V182 H90Z" /><path d="M46 138 H154 V172 H46Z" /></>,
+  fire: <><ellipse cx="62" cy="92" rx="18" ry="32" /><ellipse cx="112" cy="62" rx="22" ry="42" /><ellipse cx="152" cy="104" rx="15" ry="26" /><path d="M8 148 C60 142 140 160 194 150 V190 H8Z" /><circle cx="36" cy="58" r="12" /></>,
+}
+
 // variant: DOODLES 중 하나. 같은 variant 는 항상 같은 그림 (seed 로 빗금 위치만 달라짐)
-export default function Doodle({ variant, seed = variant, className = '' }) {
+// cut: true 면 그림 윤곽을 따라 오린 종이 조각(그림자 포함) 위에 그림이 올라감. paper: 종이 색
+export default function Doodle({ variant, seed = variant, className = '', cut = false, paper = '#f6f1df' }) {
   const id = useId().replace(/:/g, '')
   const r = useMemo(() => rng(`${variant}-${seed}`), [variant, seed])
   const art = useMemo(() => (ART[variant] ?? ART.oreum)(r), [variant, r])
   return (
-    <svg className={`doodle ${className}`} viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <svg className={`doodle ${cut ? 'cutout' : ''} ${className}`} viewBox={cut ? '-18 -18 236 236' : '0 0 200 200'} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <defs>
         {/* 선이 살짝 일렁이고, 종이 결 때문에 군데군데 끊기는 연필·색연필 질감 */}
         <filter id={`${id}-p`} x="-8%" y="-8%" width="116%" height="116%">
@@ -259,7 +278,25 @@ export default function Doodle({ variant, seed = variant, className = '' }) {
           <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  3.4 0 0 0 -0.55" result="mask" />
           <feComposite in="rough" in2="mask" operator="in" />
         </filter>
+        {/* 오린 종이: 몸통 모양을 부풀리고 → 가장자리를 손으로 자른 듯 일렁이게 → 종이색·종이결·그림자 */}
+        {cut && (
+          <filter id={`${id}-cut`} filterUnits="userSpaceOnUse" x="-18" y="-18" width="236" height="236" colorInterpolationFilters="sRGB">
+            <feMorphology in="SourceAlpha" operator="dilate" radius="9" result="grow" />
+            <feGaussianBlur in="grow" stdDeviation="4" result="soft" />
+            <feComponentTransfer in="soft" result="edge"><feFuncA type="linear" slope="14" intercept="-6" /></feComponentTransfer>
+            <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="3" result="wob" />
+            <feDisplacementMap in="edge" in2="wob" scale="6" result="shape" />
+            <feFlood floodColor={paper} result="color" />
+            <feComposite in="color" in2="shape" operator="in" result="sheet" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="6" result="fiber" />
+            <feColorMatrix in="fiber" type="matrix" values="0 0 0 0 .42  0 0 0 0 .34  0 0 0 0 .2  0 0 0 .24 0" result="grain" />
+            <feComposite in="grain" in2="shape" operator="in" result="grainIn" />
+            <feMerge result="paperTex"><feMergeNode in="sheet" /><feMergeNode in="grainIn" /></feMerge>
+            <feDropShadow in="paperTex" dx="0" dy="3.5" stdDeviation="3.2" floodColor="#3c2d0f" floodOpacity="0.34" />
+          </filter>
+        )}
       </defs>
+      {cut && <g filter={`url(#${id}-cut)`} fill="#000" stroke="none">{BODY[variant] ?? BODY.oreum}</g>}
       <g filter={`url(#${id}-p)`} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">{art}</g>
     </svg>
   )

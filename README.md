@@ -23,16 +23,16 @@ src/
   data/stories.json       신화·전설 6편 (학습용 요약 — 출처로 검증 후 확장)
 ```
 
-## 랜딩 연출 (종이 메모 → 스케치 → 사진)
-1. **인트로**: 랜딩을 종이 메모지가 3겹으로 덮고 있고, 스크롤·스와이프·방향키·클릭 **3번**에 한 겹씩 날아가며 랜딩이 드러납니다. (`건너뛰기` 버튼, Esc 로 바로 건너뜀)
-2. **히어로**: 들판·한라산·말이 연필로 그려지다가(약 5초) 종이가 걷히며 지금의 사진으로 바뀝니다.
-3. 한 탭(세션)에서 **한 번만** 보여 줍니다. 다시 보려면 주소 끝에 `?intro=1`. 모션 줄이기 설정(`prefers-reduced-motion`)이면 건너뜁니다.
+## 랜딩 연출 (종이 조각 덮개)
+1. 랜딩 사진 위를 **그림 윤곽대로 오린 종이 조각**이 3겹으로 덮고 있고, 스크롤·스와이프·방향키·클릭 **3번**에 한 겹씩 날아가며 랜딩이 드러납니다. (`건너뛰기` 버튼, Esc 로 바로 건너뜀)
+2. 한 탭(세션)에서 **한 번만** 보여 줍니다. 다시 보려면 주소 끝에 `?intro=1`. 모션 줄이기 설정(`prefers-reduced-motion`)이면 건너뜁니다.
+3. 랜딩 섹션 순서: 히어로 → 대표 이야기 → **Ask 소개(예시 대화가 저절로 재생)** → OUR TELLING → 준비 상태
 
 | 무엇 | 어디 |
 |---|---|
-| 낙서 일러스트 13종 (코드로 그린 SVG) | `src/components/Doodle.jsx` — `ART` 에 그림 추가, `DOODLES` 에 이름 추가 |
-| 메모 덮개 | `src/components/IntroNotes.jsx` (`PEELS`=넘기는 횟수) |
-| 히어로 스케치 | `src/components/HeroSketch.jsx` (장면 순서 = 그려지는 순서) |
+| 낙서 일러스트 13종 (코드로 그린 SVG) | `src/components/Doodle.jsx` — `ART` 에 그림, `BODY` 에 종이 윤곽, `DOODLES` 에 이름 |
+| 종이 조각 덮개 | `src/components/IntroNotes.jsx` (`PEELS`=넘기는 횟수, `PAPER`=종이색) |
+| Ask 소개 섹션 | `src/components/AskShowcase.jsx` (예시 문구는 `ask.*` 문구) |
 | 종이 질감·연필 색 | `src/styles/theme.css` 의 `.paper`, `.doodle .c-*` |
 
 ## 언어 (한국어 · English · Español · Deutsch)

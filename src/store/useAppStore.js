@@ -7,13 +7,14 @@ import { LANGS } from '../lib/langs'
 
 // ── 여러 페이지가 함께 쓰는 "전역 상태" ─────────────────
 // 한 페이지에서만 쓰는 값(입력창, 선택한 탭 등)은 그 페이지의 useState 로 둡니다.
-// 인트로(종이 메모 덮개)와 히어로 스케치는 한 탭에서 한 번만 보여 줌 (?intro=1 로 다시 보기)
+// 인트로(종이 조각 덮개)는 한 탭에서 한 번만 보여 줌 (?intro=1 로 다시 보기)
 const seen = (k) => { try { return sessionStorage.getItem(k) === '1' } catch { return false } }
 const mark = (k) => { try { sessionStorage.setItem(k, '1') } catch { /* 저장 못 해도 동작에는 지장 없음 */ } }
 const reduced = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 const forced = () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('intro') === '1'
 const skipIntro = !forced() && (seen('sinhwa-intro') || reduced())
-const skipHero = !forced() && (seen('sinhwa-hero') || reduced())
+
+let chatRun = 0 // 대화를 새로 시작할 때마다 올라감 — 이전 대화의 늦은 답이 새 대화에 끼어들지 않게 구분
 
 export const useAppStore = create(
   persist(
@@ -29,8 +30,6 @@ export const useAppStore = create(
       // ① -3 인트로·히어로 연출 (저장하지 않는 값)
       introDone: skipIntro,
       finishIntro: () => { mark('sinhwa-intro'); set({ introDone: true }) },
-      heroSeen: skipHero,
-      markHeroSeen: () => { mark('sinhwa-hero'); set({ heroSeen: true }) },
 
       // ② 알림
       toasts: [],
@@ -84,18 +83,22 @@ export const useAppStore = create(
       chatOpen: false,            // Ask 모달이 열려 있는지
       openChat: () => set({ chatOpen: true }),
       closeChat: () => set({ chatOpen: false }),
+      clearChat: () => { chatRun++; set({ messages: [], chatLoading: false }) },
       sendMessage: async (text) => {
         // 오류 메시지는 대화 기록(history)에서 빼고 서버로 보냄
+        const run = chatRun
         const history = get().messages.filter((m) => !m.error).map((m) => ({ role: m.role, content: m.text }))
         set({ messages: [...get().messages, { role: 'user', text }], chatLoading: true })
         try {
           const { answer, steps } = await askAgent(text, history, get().lang)
+          if (run !== chatRun) return // 그 사이 대화를 새로 시작했으면 이 답은 버림
           set({ messages: [...get().messages, { role: 'assistant', text: answer, steps }] })
         } catch (e) {
+          if (run !== chatRun) return
           // 모달 안에서 바로 보이도록 대화에도 오류를 남김
           set({ messages: [...get().messages, { role: 'assistant', text: e.message, error: true }] })
         } finally {
-          set({ chatLoading: false })
+          if (run === chatRun) set({ chatLoading: false })
         }
       },
     }),

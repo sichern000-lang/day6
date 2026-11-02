@@ -7,7 +7,7 @@ import { useT } from '../lib/useT'
 import WeatherChip from '../components/WeatherChip'
 import FeatureCarousel from '../components/FeatureCarousel'
 import IntroNotes from '../components/IntroNotes'
-import HeroSketch from '../components/HeroSketch'
+import AskShowcase from '../components/AskShowcase'
 import heroImg from '../assets/hero.jpg'
 
 export default function Home() {
@@ -19,18 +19,6 @@ export default function Home() {
   const [db, setDb] = useState(isSupabaseReady ? { state: 'wait' } : { state: 'fail', key: 'check.sbfail' })
   const [api, setApi] = useState({ state: 'wait' })
   const introDone = useAppStore((s) => s.introDone)
-  const heroSeen = useAppStore((s) => s.heroSeen)
-  const markHeroSeen = useAppStore((s) => s.markHeroSeen)
-  // 히어로 연출: idle(종이만) → draw(연필로 그림) → reveal(사진으로 바뀜) → done. 인트로가 끝나면 시작
-  const [phase, setPhase] = useState(heroSeen ? 'done' : 'idle')
-  useEffect(() => {
-    if (!introDone || phase !== 'idle') return
-    markHeroSeen()
-    setPhase('draw')
-    const a = setTimeout(() => setPhase('reveal'), 5200)
-    const b = setTimeout(() => setPhase('done'), 8200)
-    return () => { clearTimeout(a); clearTimeout(b) }
-  }, [introDone]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // 랜딩에서만 섹션 단위 스크롤 스냅 (다른 페이지로 가면 해제)
   useEffect(() => {
@@ -52,9 +40,8 @@ export default function Home() {
     <>
       {/* TODO: 기획 의도에 맞게 문구를 다듬으세요 (src/lib/i18n.js) */}
       {!introDone && <IntroNotes />}
-      <section className={`hero phase-${phase}`}>
+      <section className="hero">
         <img className="hero-img" src={heroImg} alt="" />
-        {phase !== 'done' && <HeroSketch phase={phase} />}
         <div className="hero-copy">
           <WeatherChip place="제주시" />
           <h1>{t('home.h1a')}<br />{t('home.h1pre')}<em>{t('home.h1em')}</em>{t('home.h1post')}</h1>
@@ -72,6 +59,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <AskShowcase />
 
       <section className="snap-sec">
         <div className="wrap">

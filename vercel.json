@@ -10,13 +10,16 @@
   ],
   "functions": {
     "api/agent.js": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "src/{data,lib}/**"
     },
     "api/translate.js": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "src/lib/**"
     },
     "api/catalog.js": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "src/data/**"
     }
   }
 }

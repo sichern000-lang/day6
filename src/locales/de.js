@@ -7,8 +7,7 @@ export default {
   anon: 'Gast',
   footer: 'Daten: Koreanischer Wetterdienst · Koreanische Tourismusorganisation · Koreanischer Denkmaldienst (data.go.kr) · Mythen unterscheiden sich je nach Überlieferung; die Zusammenfassungen dienen nur der Orientierung.',
   'intro.skip': 'Überspringen', 'intro.hint': 'Scrollen oder tippen, um die Zettel abzuziehen', 'intro.label': 'Notizen aus Jejus Geschichten',
-  'doodle.oreum': 'Oreum', 'doodle.giant': 'Seolmundae', 'doodle.holes': 'Samseonghyeol', 'doodle.peak': 'Sanbangsan', 'doodle.dragon': 'Yongduam', 'doodle.serpent': 'Gimnyeong-Höhle', 'doodle.tree': 'Schreinbaum', 'doodle.hareubang': 'Dol Hareubang', 'doodle.haenyeo': 'Haenyeo', 'doodle.horse': 'Jeju-Pony', 'doodle.tangerine': 'Mandarine', 'doodle.camellia': 'Kamelie', 'doodle.fire': 'Dokkaebi-Feuer',
-  'chat.close': 'Schließen', 'chat.error': 'Es konnte keine Antwort geholt werden',
+  'chat.refresh': 'Neues Gespräch', 'chat.close': 'Schließen', 'chat.error': 'Es konnte keine Antwort geholt werden',
 
   'review.title': 'Reiseberichte', 'review.sub': 'Bewerte die Orte, die du besucht hast, und sprich Empfehlungen aus',
   'review.write': 'BEWERTUNG SCHREIBEN', 'review.avg': 'Durchschnitt {avg} · {n} Bewertungen',
@@ -59,6 +58,9 @@ export default {
   'guide.example': 'z. B. „Erzähl mir die Legende vom Sanbangsan und sag mir, ob das Wetter in Seogwipo heute zum Besuch passt“',
   'guide.loading': 'Die Guide nutzt ihre Werkzeuge…', 'modal.source': 'Erzählung online suchen', 'modal.sourceHint': 'Die offiziellen Volltext-Links öffnen sich nicht mehr; hier wird im Web gesucht',
   'guide.try': 'Frag zum Beispiel', 'guide.s1': 'Erzähl mir die Legende vom Sanbangsan', 'guide.s2': 'Wer ist Großmutter Seolmundae?', 'guide.s3': 'Welche Orte der Geschichten passen zum heutigen Wetter in Seogwipo?', 'guide.s4': 'Was gibt es in der Nähe von Yongduam zu sehen?',
+  'ask.title': 'Frag einfach\ndrauflos', 'ask.lede': 'Ask ist eine KI-Guide, die selbst Werkzeuge wählt: Geschichten, Orte, Wetter und Kulturerbe. Sie findet den Mythos, prüft das Wetter von heute und schlägt vor, wohin es gehen kann – alles in einer Antwort.', 'ask.cta': 'ASK ÖFFNEN',
+  'ask.demoQ': 'Erzähl mir die Legende vom Sanbangsan und sag mir, ob heute ein guter Tag für einen Besuch ist', 'ask.step1': 'Geschichte suchen · Sanbangsan', 'ask.step2': 'Wetter prüfen · Seogwipo', 'ask.step3': 'Orte nachschlagen · Sanbangsan',
+  'ask.demoA': 'Der Pfeil eines Jägers erzürnte den Jadekaiser, der den Gipfel des Hallasan ausriss und fortschleuderte; daraus wurde der Sanbangsan. In Seogwipo ist heute kein Regen angesagt, ein guter Tag für einen Besuch. Auch die Bootsfahrt am Sanbangsan lohnt sich.', 'ask.note': 'Das ist ein Beispiel. Öffne Ask für eine echte Antwort.',
   'guide.ph': 'Frag, was du willst', 'guide.send': 'SENDEN',
   'tool.get_story': 'Geschichte', 'tool.search_tour_places': 'Orte', 'tool.get_weather': 'Wetter', 'tool.search_heritage': 'Erbe',
 

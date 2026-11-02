@@ -7,6 +7,7 @@ import { useT } from '../lib/useT'
 
 // 랜딩 위에 종이 메모지가 겹겹이 덮여 있다가, 스크롤(휠·스와이프·키·클릭) 3번에 한 겹씩 날아가며 진짜 랜딩이 드러남
 const PEELS = 3          // 위 메모 → 가운데 메모 → 바닥 종이
+const PAPER = ['#f6f1df', '#f1e8cc', '#ecefdf'] // 조각마다 살짝 다른 종이색
 const LOCK_MS = 950      // 한 번 넘기고 나면 잠깐 잠금 (관성 휠이 한꺼번에 넘기지 않게)
 
 // 화면 크기에 맞춰 메모를 흩뿌림 (같은 시드라 새로고침해도 같은 배치)
@@ -89,13 +90,12 @@ export default function IntroNotes() {
         <div key={li} className={`intro-layer ${step > li ? 'gone' : ''}`} style={{ zIndex: 10 - li }}>
           {li === 2 && <div className="intro-sheet paper" />}
           {layers[li].map((n) => (
-            <figure key={n.id} className={`note paper tone-${n.tone}`}
+            <figure key={n.id} className="note"
               style={{
                 left: `${n.x}%`, top: `${n.y}%`, width: size * n.scale,
                 '--rot': `${n.rot}deg`, '--dx': `${n.dx}vw`, '--dy': `${n.dy}vh`, '--spin': `${n.spin}deg`, '--delay': `${n.delay}s`,
               }}>
-              <Doodle variant={n.doodle} seed={n.id} />
-              <figcaption>{t(`doodle.${n.doodle}`)}</figcaption>
+              <Doodle variant={n.doodle} seed={n.id} cut paper={PAPER[n.tone]} />
             </figure>
           ))}
         </div>

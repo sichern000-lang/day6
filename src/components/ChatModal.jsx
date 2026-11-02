@@ -11,8 +11,10 @@ export default function ChatModal() {
   const loading = useAppStore((s) => s.chatLoading)
   const sendMessage = useAppStore((s) => s.sendMessage)
   const closeChat = useAppStore((s) => s.closeChat)
+  const clearChat = useAppStore((s) => s.clearChat)
   const [input, setInput] = useState('')
   const end = useRef(null)
+  const inputRef = useRef(null)
 
   // 새 메시지가 오면 맨 아래로
   useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [messages, loading])
@@ -27,6 +29,12 @@ export default function ChatModal() {
   return (
     <Modal onClose={closeChat} label="Ask">
       <div className="chat-modal">
+        <button className="chat-refresh" onClick={() => { clearChat(); setInput(''); inputRef.current?.focus() }}
+          disabled={messages.length === 0 && !loading} aria-label={t('chat.refresh')} title={t('chat.refresh')}>
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+            <path d="M16.2 9.6A6.4 6.4 0 1 0 14.4 14.3 M16.4 4.2v5.2h-5.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
         <h2 className="modal-title">{t('guide.title')}</h2>
         <p className="modal-sub">{t('guide.sub')}</p>
 
@@ -59,7 +67,7 @@ export default function ChatModal() {
 
         <form onSubmit={onSubmit} className="chat-form">
           <div className="chat-input">
-            <input className="input" autoFocus value={input} onChange={(e) => setInput(e.target.value)} placeholder={t('guide.ph')} />
+            <input className="input" ref={inputRef} autoFocus value={input} onChange={(e) => setInput(e.target.value)} placeholder={t('guide.ph')} />
             <button className="send" disabled={loading || !input.trim()} aria-label={t('guide.send')} title={t('guide.send')}>
               <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
                 <path d="M17 3 3 9.2l5.6 2.2L10.8 17Z M8.6 11.4 17 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />

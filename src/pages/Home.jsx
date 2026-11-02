@@ -67,7 +67,7 @@ export default function Home() {
           <div className={`hero-after ${typed ? 'in' : ''}`}><WeatherChip place="제주시" /></div>
           <TypedTitle start={introDone} onDone={onTyped}
             parts={[{ text: t('home.h1a') }, { br: true }, { text: t('home.h1pre') }, { text: t('home.h1em'), em: true }, { text: t('home.h1post') }]} />
-          <Link className={`btn hero-after ${typed ? 'in' : ''}`} to="/map">{t('home.cta')}</Link>
+          <Link className={`btn hero-after ${typed ? 'in' : ''}`} to="/stories">{t('home.cta')}</Link>
         </div>
       </section>
 

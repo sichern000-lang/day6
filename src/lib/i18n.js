@@ -4,8 +4,8 @@ import de from '../locales/de.js'
 
 const STR = {
   ko: {
-    announce: '제주 신화·전설을 지도 위에서 만나 보세요',
-    brand: '신화지도',
+    announce: '제주의 신화·전설·민담을 열람하고 내 수첩에 저장하세요',
+    brand: '제주 아카이브',
     'nav.home': '홈', 'nav.map': '신화 지도', 'nav.stories': '이야기', 'nav.notebook': '내 수첩',
     'nav.review': '리뷰', 'nav.ask': 'Ask',
     'intro.skip': '건너뛰기', 'intro.hint': '스크롤하거나 눌러서 한 장씩 넘겨 보세요', 'intro.label': '제주 이야기 메모',
@@ -29,9 +29,10 @@ const STR = {
     anon: '익명',
     footer: '데이터: 기상청 · 한국관광공사 · 국가유산청(공공데이터포털) · 신화는 전승에 따라 다르며 요약은 학습용입니다',
 
-    'home.h1a': '신들의 섬,', 'home.h1pre': '', 'home.h1em': '이야기', 'home.h1post': '를 따라 걷다',
-    'home.cta': '지도 펼치기',
+    'home.h1a': '제주의 이야기를 열람하고,', 'home.h1pre': '마음에 든 ', 'home.h1em': '설화', 'home.h1post': '를 담아 두세요',
+    'home.cta': '아카이브 열람하기',
     'home.display': '이야기를 천천히,\n장소와 함께.', 'home.lede': '오늘의 이야기부터 골라 보세요.',
+    'auth.guest': 'Guest로 계속하기', 'auth.login': '로그인', 'auth.signup': '회원가입', 'auth.tLogin': '다시 오셨네요', 'auth.tSignup': '함께 걸어요', 'auth.sLogin': '로그인하면 내 수첩이 어디서든 이어져요.', 'auth.sSignup': '계정을 만들면 담은 이야기와 메모를 저장할 수 있어요.', 'auth.google': 'Google로 계속하기', 'auth.or': '또는', 'auth.email': '이메일', 'auth.password': '비밀번호', 'auth.nick': '닉네임', 'auth.nickph': '수첩에 쓸 이름', 'auth.goLogin': '로그인', 'auth.goSignup': '회원가입', 'auth.toSignup': '아직 계정이 없나요?', 'auth.toLogin': '이미 계정이 있나요?', 'auth.checkmail': '확인 메일을 보냈어요. 메일의 링크를 누르면 가입이 끝나요.', 'auth.nosb': 'Supabase 설정이 필요해요 (.env.local)', 'auth.logout': '로그아웃', 'auth.account': '내 계정', 'auth.admin': '관리자', 'auth.pw': '비밀번호는 6자 이상이어야 해요', 'auth.welcome': '{name} 님, 환영해요', 'auth.bye': '로그아웃했어요', 'auth.busy': '잠시만요…',
     'home.today': 'TODAY', 'home.read': '읽어 보기', 'home.more': '더 읽기',
     'home.statement': '설화와 그 이야기가 태어난 땅을 다시 잇습니다.\n\n한라산과 바위, 동굴과 마을의 당을 따라 걸으며\n이야기가 시작된 자리와 그 시간을 만납니다.\n\n읽는 것을 넘어, 땅에 뿌리내린 이야기를 경험합니다.',
     'home.storiesTitle': '섬에서 전해진 이야기', 'home.storiesSub': '키워드로 미리보는\n제주 설화',
@@ -79,8 +80,8 @@ const STR = {
     'toast.nosb': 'Supabase 설정이 필요해요 — 로컬은 .env.local(저장 후 서버 재시작), 배포는 Vercel 환경변수(저장 후 재배포)', 'toast.dup': '이미 수첩에 있어요', 'toast.saved': "'{title}' 수첩에 담았어요",
   },
   en: {
-    announce: 'Meet the myths and legends of Jeju on a map',
-    brand: 'Myth Map',
+    announce: 'Browse Jeju’s myths, legends and folktales, and save them to your notebook',
+    brand: 'Jeju Archive',
     'nav.home': 'Home', 'nav.map': 'Myth Map', 'nav.stories': 'Stories', 'nav.notebook': 'Notebook',
     'nav.review': 'Reviews', 'nav.ask': 'Ask',
     'intro.skip': 'Skip', 'intro.hint': 'Scroll or tap to peel the notes away', 'intro.label': 'Notes from Jeju’s stories',
@@ -104,9 +105,10 @@ const STR = {
     anon: 'Guest',
     footer: 'Data: Korea Meteorological Administration · Korea Tourism Organization · Korea Heritage Service (data.go.kr) · Myths vary by telling; summaries are for learning.',
 
-    'home.h1a': 'Island of the Gods,', 'home.h1pre': 'Walk the ', 'home.h1em': 'stories', 'home.h1post': '',
-    'home.cta': 'OPEN THE MAP',
+    'home.h1a': 'Browse Jeju’s lore,', 'home.h1pre': 'save the ', 'home.h1em': 'stories', 'home.h1post': ' you love',
+    'home.cta': 'BROWSE THE ARCHIVE',
     'home.display': 'Stories, told slowly,\nwith their places.', 'home.lede': 'Start with today’s story.',
+    'auth.guest': 'Continue as Guest', 'auth.login': 'Log in', 'auth.signup': 'Sign up', 'auth.tLogin': 'Welcome back', 'auth.tSignup': 'Walk with us', 'auth.sLogin': 'Log in and your notebook follows you anywhere.', 'auth.sSignup': 'Create an account to keep your saved stories and notes.', 'auth.google': 'Continue with Google', 'auth.or': 'or', 'auth.email': 'Email', 'auth.password': 'Password', 'auth.nick': 'Nickname', 'auth.nickph': 'Name for your notebook', 'auth.goLogin': 'Log in', 'auth.goSignup': 'Sign up', 'auth.toSignup': 'No account yet?', 'auth.toLogin': 'Already have an account?', 'auth.checkmail': 'We sent a confirmation email. Open the link in it to finish signing up.', 'auth.nosb': 'Supabase setup is required (.env.local)', 'auth.logout': 'Log out', 'auth.account': 'My account', 'auth.admin': 'Admin', 'auth.pw': 'Password must be at least 6 characters', 'auth.welcome': 'Welcome, {name}', 'auth.bye': 'Logged out', 'auth.busy': 'One moment…',
     'home.today': 'TODAY', 'home.read': 'READ', 'home.more': 'READ MORE',
     'home.statement': 'We reconnect the tales with the land that gave them birth.\n\nWalking past Hallasan, rocks, caves and village shrines,\nwe meet the places where the stories began, and the time they carry.\n\nBeyond reading, we experience stories rooted in the ground.',
     'home.storiesTitle': 'Tales carried across the island', 'home.storiesSub': 'Jeju tales, previewed\nby keyword',

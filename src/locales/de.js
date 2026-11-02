@@ -1,6 +1,6 @@
 // 독일어 화면 문구 — 키는 en/ko 와 같아야 함 (빠진 키는 영어로 대신 나옴)
 export default {
-  announce: 'Entdecke die Mythen und Legenden Jejus auf einer Karte',
+  announce: 'Entdecke Jejus Mythen, Legenden und Märchen und speichere sie in deinem Notizbuch',
   brand: 'Mythenkarte',
   'nav.home': 'Start', 'nav.map': 'Karte', 'nav.stories': 'Geschichten', 'nav.notebook': 'Notizbuch',
   'nav.review': 'Bewertungen', 'nav.ask': 'Ask',
@@ -26,11 +26,12 @@ export default {
   'review.uploadFail': 'Das Foto konnte nicht hochgeladen werden',
   'review.stars': '{n} Sterne',
 
-  'home.h1a': 'Insel der Götter,', 'home.h1pre': 'folge den ', 'home.h1em': 'Geschichten', 'home.h1post': '',
-  'home.cta': 'KARTE ÖFFNEN',
+  'home.h1a': 'Entdecke Jejus Überlieferung,', 'home.h1pre': 'speichere die ', 'home.h1em': 'Geschichten', 'home.h1post': ', die du liebst',
+  'home.cta': 'ARCHIV DURCHSTÖBERN',
   'home.display': 'Geschichten, langsam erzählt,\nmit ihren Orten.', 'home.lede': 'Beginne mit der Geschichte des Tages.',
   'home.nbTitle': 'Tippe auf das Herz bei\nden Geschichten, die dir gefallen', 'home.nbSub': 'Geschichten mit Herz landen in deinem Notizbuch. Hake besuchte Orte ab und schreib eine Notiz.', 'home.nbOpen': 'Mein Notizbuch öffnen', 'home.shuffle': 'Andere zeigen',
   'nb.progress': '{done} / {total} besucht', 'nb.memoph': 'Notiz hinzufügen…', 'nb.heart': 'Zum Notizbuch hinzufügen',
+  'auth.guest': 'Als Gast fortfahren', 'auth.login': 'Anmelden', 'auth.signup': 'Registrieren', 'auth.tLogin': 'Schön, dich zu sehen', 'auth.tSignup': 'Geh mit uns', 'auth.sLogin': 'Melde dich an, und dein Notizbuch begleitet dich überallhin.', 'auth.sSignup': 'Erstelle ein Konto, um Geschichten und Notizen zu behalten.', 'auth.google': 'Weiter mit Google', 'auth.or': 'oder', 'auth.email': 'E-Mail', 'auth.password': 'Passwort', 'auth.nick': 'Spitzname', 'auth.nickph': 'Name für dein Notizbuch', 'auth.goLogin': 'Anmelden', 'auth.goSignup': 'Registrieren', 'auth.toSignup': 'Noch kein Konto?', 'auth.toLogin': 'Schon ein Konto?', 'auth.checkmail': 'Wir haben dir eine Bestätigungs-Mail geschickt. Öffne den Link, um die Anmeldung abzuschließen.', 'auth.nosb': 'Supabase muss eingerichtet werden (.env.local)', 'auth.logout': 'Abmelden', 'auth.account': 'Mein Konto', 'auth.admin': 'Admin', 'auth.pw': 'Das Passwort braucht mindestens 6 Zeichen', 'auth.welcome': 'Willkommen, {name}', 'auth.bye': 'Abgemeldet', 'auth.busy': 'Einen Moment…',
   'home.today': 'HEUTE', 'home.read': 'LESEN', 'home.more': 'MEHR LESEN',
   'home.statement': 'Wir verbinden die Erzählungen wieder mit dem Land, das sie geboren hat.\n\nAuf dem Weg vorbei am Hallasan, an Felsen, Höhlen und Dorfschreinen\nbegegnen wir den Orten, an denen die Geschichten begannen, und ihrer Zeit.\n\nWir lesen nicht nur, wir erleben Geschichten, die in der Erde wurzeln.',
   'home.storiesTitle': 'Geschichten von der Insel', 'home.storiesSub': 'Jeju-Sagen,\nnach Stichwort',

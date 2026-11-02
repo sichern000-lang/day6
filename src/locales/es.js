@@ -1,6 +1,6 @@
 // 스페인어 화면 문구 — 키는 en/ko 와 같아야 함 (빠진 키는 영어로 대신 나옴)
 export default {
-  announce: 'Descubre los mitos y leyendas de Jeju en un mapa',
+  announce: 'Explora los mitos, leyendas y cuentos de Jeju y guárdalos en tu cuaderno',
   brand: 'Mapa de Mitos',
   'nav.home': 'Inicio', 'nav.map': 'Mapa', 'nav.stories': 'Historias', 'nav.notebook': 'Cuaderno',
   'nav.review': 'Reseñas', 'nav.ask': 'Ask',
@@ -26,11 +26,12 @@ export default {
   'review.uploadFail': 'No se pudo subir la foto',
   'review.stars': '{n} estrellas',
 
-  'home.h1a': 'Isla de los dioses,', 'home.h1pre': 'recorre las ', 'home.h1em': 'historias', 'home.h1post': '',
-  'home.cta': 'ABRIR EL MAPA',
+  'home.h1a': 'Explora el saber de Jeju,', 'home.h1pre': 'guarda las ', 'home.h1em': 'historias', 'home.h1post': ' que amas',
+  'home.cta': 'EXPLORAR EL ARCHIVO',
   'home.display': 'Historias contadas despacio,\ncon sus lugares.', 'home.lede': 'Empieza por la historia de hoy.',
   'home.nbTitle': 'Toca el corazón de\nlas historias que te gusten', 'home.nbSub': 'Las historias con corazón van a tu cuaderno. Marca los lugares visitados y deja una nota.', 'home.nbOpen': 'Abrir mi cuaderno', 'home.shuffle': 'Ver otras',
   'nb.progress': '{done} / {total} visitados', 'nb.memoph': 'Añadir una nota…', 'nb.heart': 'Añadir al cuaderno',
+  'auth.guest': 'Continuar como invitado', 'auth.login': 'Entrar', 'auth.signup': 'Registrarse', 'auth.tLogin': 'Qué bueno verte', 'auth.tSignup': 'Camina con nosotros', 'auth.sLogin': 'Entra y tu cuaderno te sigue a todas partes.', 'auth.sSignup': 'Crea una cuenta para guardar tus historias y notas.', 'auth.google': 'Continuar con Google', 'auth.or': 'o', 'auth.email': 'Correo', 'auth.password': 'Contraseña', 'auth.nick': 'Apodo', 'auth.nickph': 'Nombre para tu cuaderno', 'auth.goLogin': 'Entrar', 'auth.goSignup': 'Registrarse', 'auth.toSignup': '¿Aún no tienes cuenta?', 'auth.toLogin': '¿Ya tienes cuenta?', 'auth.checkmail': 'Te enviamos un correo de confirmación. Abre el enlace para terminar el registro.', 'auth.nosb': 'Falta configurar Supabase (.env.local)', 'auth.logout': 'Salir', 'auth.account': 'Mi cuenta', 'auth.admin': 'Admin', 'auth.pw': 'La contraseña debe tener al menos 6 caracteres', 'auth.welcome': 'Bienvenido/a, {name}', 'auth.bye': 'Sesión cerrada', 'auth.busy': 'Un momento…',
   'home.today': 'HOY', 'home.read': 'LEER', 'home.more': 'VER MÁS',
   'home.statement': 'Volvemos a unir las leyendas con la tierra que las vio nacer.\n\nCaminando junto al Hallasan, las rocas, las cuevas y los santuarios de aldea,\nnos encontramos con los lugares donde empezaron las historias y con su tiempo.\n\nMás allá de leer, vivimos historias con raíces en la tierra.',
   'home.storiesTitle': 'Historias que viajan por la isla', 'home.storiesSub': 'Leyendas de Jeju,\npor palabras clave',

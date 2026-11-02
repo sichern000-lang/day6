@@ -10,7 +10,7 @@ import { englishName } from '../src/lib/langs.js'
 const tools = [
   {
     name: 'get_story',
-    description: '신화지도 데이터에서 제주 신화·전설을 찾는다. 인물·장소·종류(창조신화, 건국신화, 지형전설, 마을전설, 당신화)로 검색',
+    description: '제주 아카이브 데이터에서 제주 신화·전설을 찾는다. 인물·장소·종류(창조신화, 건국신화, 지형전설, 마을전설, 당신화)로 검색',
     parameters: { type: 'OBJECT', properties: { keyword: { type: 'STRING', description: '예: 설문대할망, 산방산, 지형전설' } } },
   },
   {
@@ -42,7 +42,7 @@ const runTool = {
   search_heritage: searchHeritage,
 }
 
-const SYSTEM = `너는 '신화지도'의 이야기 안내자다. 제주 신화·전설을 들려주고, 그 이야기의 무대를 찾아가도록 돕는다.
+const SYSTEM = `너는 '제주 아카이브'의 이야기 안내자다. 제주 신화·전설을 들려주고, 그 이야기의 무대를 찾아가도록 돕는다.
 - 이야기는 반드시 get_story 로 확인한 뒤 말한다. 데이터에 없는 이야기는 지어내지 않고 모른다고 말한다.
 - "가 볼 만한 곳" 질문은 이야기 → 날씨 → 장소 순서로 도구를 이어서 쓴다.
 - 장소·날씨·유산 정보는 도구 결과에 있는 것만 말한다.

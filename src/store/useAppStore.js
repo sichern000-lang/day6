@@ -31,6 +31,39 @@ export const useAppStore = create(
       introDone: skipIntro,
       finishIntro: () => { mark('sinhwa-intro'); set({ introDone: true }) },
 
+      // ①-4 로그인 (Supabase Auth) — 세션은 supabase-js 가 localStorage 에 보관하므로 여기엔 저장하지 않음
+      user: null,
+      authOpen: false,
+      openAuth: () => set({ authOpen: true }),
+      closeAuth: () => set({ authOpen: false }),
+      initAuth: () => {
+        if (!supabase) return () => {}
+        const apply = (session) => {
+          const user = session?.user ?? null
+          set({ user })
+          if (user) {
+            const m = user.user_metadata ?? {}
+            set({ nickname: m.nickname || m.full_name || m.name || user.email?.split('@')[0] || '' })
+            get().loadSaved()
+          }
+        }
+        supabase.auth.getSession().then(({ data }) => apply(data.session))
+        const { data } = supabase.auth.onAuthStateChange((event, session) => {
+          apply(session)
+          if (event === 'SIGNED_IN') set({ authOpen: false })
+        })
+        return () => data.subscription.unsubscribe()
+      },
+      signIn: ({ email, password }) => supabase.auth.signInWithPassword({ email, password }),
+      signUp: ({ email, password, nickname }) =>
+        supabase.auth.signUp({ email, password, options: { data: { nickname }, emailRedirectTo: window.location.origin } }),
+      signInGoogle: () => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } }),
+      signOut: async () => {
+        await supabase?.auth.signOut()
+        set({ user: null, nickname: '', saved: [], authOpen: false })
+        get().toast(translate(get().lang, 'auth.bye'))
+      },
+
       // ② 알림
       toasts: [],
       toast: (message, variant = 'ok') => {

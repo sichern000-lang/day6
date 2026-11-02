@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { NAV_ITEMS } from '../router'
 import Toasts from '../components/Toasts'
 import ChatModal from '../components/ChatModal'
+import AuthModal from '../components/AuthModal'
 import { useAppStore } from '../store/useAppStore'
 import { LANGS } from '../lib/langs'
 import { useT } from '../lib/useT'
@@ -14,9 +15,14 @@ export default function RootLayout() {
   const setLang = useAppStore((s) => s.setLang)
   const chatOpen = useAppStore((s) => s.chatOpen)
   const openChat = useAppStore((s) => s.openChat)
+  const user = useAppStore((s) => s.user)
+  const authOpen = useAppStore((s) => s.authOpen)
+  const openAuth = useAppStore((s) => s.openAuth)
+  const initAuth = useAppStore((s) => s.initAuth)
   const isHome = useLocation().pathname === '/'
 
   useEffect(() => { document.documentElement.lang = lang }, [lang])
+  useEffect(() => initAuth(), [initAuth])
 
   // 랜딩: 맨 위에서는 투명, 스크롤하면 크림색 배경으로
   const [scrolled, setScrolled] = useState(false)
@@ -45,13 +51,14 @@ export default function RootLayout() {
               <button key={l.id} className={lang === l.id ? 'on' : ''} onClick={() => setLang(l.id)} title={l.name} aria-pressed={lang === l.id}>{l.label}</button>
             ))}
           </div>
-          <span className="who">{nickname || t('anon')}</span>
+          <button className={`who ${user ? 'in' : ''}`} onClick={openAuth}>{user ? (nickname || user.email) : t('auth.login')}</button>
         </div>
       </nav>
       <main className={isHome ? '' : 'container'}><Outlet /></main>
       <footer className="footer">{t('footer')}</footer>
       <Toasts />
       {chatOpen && <ChatModal />}
+      {authOpen && <AuthModal />}
     </>
   )
 }

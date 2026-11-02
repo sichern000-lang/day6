@@ -136,7 +136,7 @@ form.row .input { flex: 1; width: auto; margin: 0; }
 .story-text p { margin: 0 0 12px; font-size: 1.08rem; }
 .map-wrap { padding: 8px; background: var(--paper); }
 .island-map { width: 100%; height: auto; display: block; }
-.island-map .land { fill: var(--sage); stroke: var(--ink); stroke-width: 2; opacity: .85; }
+.island-map .land-img { opacity: .55; }
 .island-map .pin { cursor: pointer; }
 .island-map .pin circle { fill: var(--butter); stroke: var(--ink); stroke-width: 3; transition: r .15s; }
 .island-map .pin.on circle { fill: var(--ink); }
@@ -558,7 +558,7 @@ body.sage .tag:hover { background: var(--butter); }
 .ask-sec { background: #f7faf6; }
 .nb-sec { background: #e7ece4; }
 .statement > .wrap, .stories-sec > .wrap { position: relative; z-index: 1; }
-.land-map { position: absolute; right: -10%; bottom: -4%; width: min(112vw, 1320px); aspect-ratio: 1775 / 886; background: #b9c0b5; opacity: .75; pointer-events: none;
+.land-map { position: absolute; right: -14%; bottom: -12%; width: min(150vw, 1900px); aspect-ratio: 1775 / 886; background: #b9c0b5; opacity: .75; pointer-events: none;
   -webkit-mask: url('../assets/jeju-map.svg') center / contain no-repeat; mask: url('../assets/jeju-map.svg') center / contain no-repeat; }
 .statement-text { max-width: 760px; margin-left: clamp(0px, 5vw, 64px); display: grid; gap: 2.1em; }
 .statement-text p { margin: 0; font-family: 'Gowun Batang', 'Instrument Serif', serif; font-size: clamp(1.25rem, 2.2vw, 1.85rem); line-height: 1.75; word-break: keep-all; }
@@ -665,3 +665,51 @@ button.who:hover { background: rgba(207, 224, 236, .9); }
 button.who.in { background: rgba(179, 196, 170, .55); }
 .auth-guest { width: 100%; margin-top: 14px; padding: 10px 16px; border: 1px solid rgba(52, 66, 31, .4); border-radius: 999px; background: transparent; color: var(--ink); font: inherit; font-size: .92rem; cursor: pointer; transition: background .2s, border-color .2s; }
 .auth-guest:hover { background: rgba(207, 224, 236, .6); border-color: var(--ink); }
+
+/* 지도: 내 이야기 장소 */
+.statement-cta { margin: 36px 0 0 clamp(0px, 5vw, 64px); }
+.island-map .pin.mine circle { fill: #fbfdfb; stroke: var(--ink); stroke-width: 2.4; }
+.island-map .pin.mine.on circle { fill: #cfe0ec; stroke-width: 3.4; }
+.island-map .pin.mine .dot { fill: var(--ink); stroke: none; }
+.island-map .pin-art path { stroke: var(--ink); }
+.places-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 56px; }
+.places-head .section-title { margin: 0; }
+.places-tools { display: flex; align-items: center; gap: 12px; }
+.places-tools .group-select { margin-left: 0; }
+.places-tools .group-select select { padding: 6px 38px 6px 16px; font-size: .86rem; }
+.place-list { list-style: none; margin: 18px 0 56px; padding: 0; border-top: 1px solid var(--ink); }
+.place-row { display: flex; align-items: center; gap: 18px; padding: 16px 8px; border-bottom: 1px solid var(--ink); cursor: pointer; transition: background .2s; }
+.place-row:hover { background: rgba(255, 255, 255, .5); }
+.place-row.on { background: rgba(207, 224, 236, .55); }
+.place-art { flex: none; width: 76px; height: 76px; border-radius: 12px; background: #fbfdfb; border: 1px solid rgba(52, 66, 31, .25); display: grid; place-items: center; color: var(--ink); padding: 6px; font-family: var(--serif); font-size: 1.6rem; }
+.place-art .drawing { width: 100%; height: 100%; }
+.place-main { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.place-main strong { font-family: var(--serif); font-weight: 400; font-size: 1.45rem; line-height: 1.2; }
+.place-main p { margin: 0; font-size: .92rem; color: var(--ink); }
+.place-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .78rem; color: var(--muted); }
+.place-meta em { font-style: normal; }
+.chip-soft { background: rgba(207, 224, 236, .9); color: var(--ink); font-size: .74rem; padding: 1px 9px; border-radius: 5px; }
+.place-row .trash { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; transition: background .2s, color .2s; }
+.place-row .trash:hover { background: rgba(194, 80, 58, .12); color: #c2503a; }
+
+.modal:has(.place-form) { width: min(520px, 100%); }
+.place-form { display: grid; gap: 14px; }
+.place-form label, .place-form .lbl { display: grid; gap: 6px; font-size: .74rem; letter-spacing: .08em; font-weight: 600; text-transform: uppercase; }
+.place-form .lbl { display: block; margin-bottom: 6px; }
+.place-form .input { font-weight: 400; letter-spacing: 0; text-transform: none; font-size: .95rem; }
+.place-form textarea.input { resize: vertical; border-radius: 14px; }
+.addr-row { display: flex; gap: 8px; }
+.addr-row .input { flex: 1; }
+.addr-picked { margin: 8px 0 0; font-size: .86rem; display: flex; gap: 8px; align-items: baseline; }
+.addr-picked button { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 1.1rem; line-height: 1; }
+.addr-list { list-style: none; margin: 8px 0 0; padding: 0; border: 1px solid rgba(52, 66, 31, .25); border-radius: 12px; overflow: hidden; }
+.addr-list button { display: block; width: 100%; text-align: left; border: 0; background: transparent; padding: 9px 14px; font: inherit; font-size: .84rem; cursor: pointer; }
+.addr-list li + li button { border-top: 1px solid rgba(52, 66, 31, .12); }
+.addr-list button:hover { background: rgba(207, 224, 236, .6); }
+.drawpad-box { position: relative; width: min(260px, 100%); aspect-ratio: 1; border-radius: 14px; background: #fff; border: 1.5px dashed rgba(52, 66, 31, .45); overflow: hidden; }
+.drawpad-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+.drawpad-hint { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; color: var(--muted); font-size: .88rem; pointer-events: none; }
+.drawpad-bar { display: flex; gap: 8px; margin-top: 8px; }
+.drawpad-bar button { border: 1px solid rgba(52, 66, 31, .4); background: transparent; color: var(--ink); font: inherit; font-size: .8rem; padding: 3px 14px; border-radius: 999px; cursor: pointer; }
+.drawpad-bar button:disabled { opacity: .4; cursor: default; }
+.drawpad-bar button:not(:disabled):hover { background: rgba(207, 224, 236, .6); }

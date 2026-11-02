@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { askAgent } from '../api/client'
 import { translate } from '../lib/i18n'
 import { LANGS } from '../lib/langs'
+import { createPlace, deletePlace, loadHidden, loadMine, ownerOf, saveHidden } from '../lib/places'
 
 // ── 여러 페이지가 함께 쓰는 "전역 상태" ─────────────────
 // 한 페이지에서만 쓰는 값(입력창, 선택한 탭 등)은 그 페이지의 useState 로 둡니다.
@@ -121,6 +122,36 @@ export const useAppStore = create(
         const { error } = await supabase.from('saved_stories').delete().eq('id', id)
         if (error) return get().toast(error.message, 'error')
         set({ saved: get().saved.filter((s) => s.id !== id) })
+      },
+
+      // ③-2 내 이야기 장소 (지도에 더하는 장소) — Supabase my_places, 표가 없으면 이 기기에만 저장
+      places: [],
+      placesMode: 'db',
+      placesLoading: false,
+      hiddenSamples: loadHidden(),
+      loadPlaces: async () => {
+        set({ placesLoading: true })
+        const { rows, mode } = await loadMine(ownerOf(get().user))
+        set({ places: rows, placesMode: mode, placesLoading: false })
+      },
+      addPlace: async (p) => {
+        try {
+          const row = await createPlace(ownerOf(get().user), p, get().placesMode)
+          set({ places: [row, ...get().places] })
+          get().toast(translate(get().lang, 'map.saved'))
+          return true
+        } catch (e) { get().toast(e.message, 'error'); return false }
+      },
+      removePlace: async (place) => {
+        if (place.sample) {
+          const hiddenSamples = [...get().hiddenSamples, place.id]
+          saveHidden(hiddenSamples)
+          return set({ hiddenSamples })
+        }
+        try {
+          await deletePlace(place.id, get().placesMode)
+          set({ places: get().places.filter((x) => x.id !== place.id) })
+        } catch (e) { get().toast(e.message, 'error') }
       },
 
       // ④ 이야기 안내자(에이전트) 대화 — 페이지를 옮겨도 대화가 남도록 store 에 둠

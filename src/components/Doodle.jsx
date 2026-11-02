@@ -269,6 +269,7 @@ const BODY = {
   hareubang: <path d="M54 62 C54 30 146 30 146 62 C160 66 164 80 150 84 L132 118 L138 192 H62 L68 118 L50 84 C36 80 40 66 54 62Z" />,
   haenyeo: <><circle cx="132" cy="92" r="30" /><circle cx="66" cy="96" r="22" /><path d="M82 90 H112 V108 H82Z" /><path d="M0 124 H200 V190 H0Z" /></>,
   horse: <path d="M34 62 L70 28 L104 74 H150 C166 84 174 106 171 134 L164 150 H76 V100 L40 84Z" />,
+  mine: <path d="M26 34 H174 V170 H26Z" />,
   notebook: <><path d="M44 34 H150 V170 H44Z" /><path d="M148 92 L192 90 L200 106 L158 160Z" /></>,
   tangerine: <><path d="M100 62 C150 56 170 100 150 138 C134 168 66 168 50 138 C32 100 54 56 100 62Z" /><path d="M96 24 H152 V68 H96Z" /></>,
   camellia: <><circle cx="100" cy="84" r="56" /><path d="M90 118 H110 V182 H90Z" /><path d="M46 138 H154 V172 H46Z" /></>,
@@ -277,10 +278,10 @@ const BODY = {
 
 // variant: DOODLES 중 하나. 같은 variant 는 항상 같은 그림 (seed 로 빗금 위치만 달라짐)
 // cut: true 면 그림 윤곽을 따라 오린 종이 조각(그림자 포함) 위에 그림이 올라감. paper: 종이 색
-export default function Doodle({ variant, seed = variant, className = '', cut = false, paper = '#f1f5f1' }) {
+export default function Doodle({ variant, seed = variant, className = '', cut = false, paper = '#f1f5f1', d }) {
   const id = useId().replace(/:/g, '')
   const r = useMemo(() => rng(`${variant}-${seed}`), [variant, seed])
-  const art = useMemo(() => (ART[variant] ?? ART.oreum)(r), [variant, r])
+  const art = useMemo(() => (d ? <path d={d} /> : (ART[variant] ?? ART.oreum)(r)), [variant, r, d])
   return (
     <svg className={`doodle ${cut ? 'cutout' : ''} ${className}`} viewBox={cut ? '-18 -18 236 236' : '0 0 200 200'} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
       <defs>

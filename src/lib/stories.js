@@ -32,10 +32,11 @@ export function storyOfTheDay(date = new Date()) {
   return stories[Math.floor(date.getTime() / 86400000) % stories.length]
 }
 
-// 지도 투영: 제주도 대략 범위(위경도)를 SVG 좌표로
-const LNG = [126.12, 127.0], LAT = [33.1, 33.6]
-export const MAP_W = 800, MAP_H = 360
+// 지도 투영: 제주도 위경도를 지도 SVG(jeju-map.svg, 원본 1775×886) 좌표로 — 지도 속 섬 그림이 차지하는 범위(87~1658, 118~773)에 위경도 범위를 맞춤
+const LNG = [126.15, 126.97], LAT = [33.11, 33.56]
+const K = 800 / 1775
+export const MAP_W = 800, MAP_H = Math.round(886 * K)
 export const project = (lat, lng) => ({
-  x: ((lng - LNG[0]) / (LNG[1] - LNG[0])) * MAP_W,
-  y: (1 - (lat - LAT[0]) / (LAT[1] - LAT[0])) * MAP_H,
+  x: (87 + ((lng - LNG[0]) / (LNG[1] - LNG[0])) * 1571) * K,
+  y: (118 + ((LAT[1] - lat) / (LAT[1] - LAT[0])) * 655) * K,
 })

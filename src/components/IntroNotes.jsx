@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Doodle, { DOODLES } from './Doodle'
 import { rng } from '../lib/rng'
+import { fetchRandomDrawings } from '../lib/places'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
@@ -37,6 +38,13 @@ export default function IntroNotes() {
   const [step, setStep] = useState(0)
   const { size, layers } = useMemo(() => layout(window.innerWidth, window.innerHeight), [])
   const done = step >= PEELS
+  // 다른 사용자들이 그린 그림이 있으면 몇 장을 메모 사이에 섞음 (도착하는 대로 일부 메모가 바뀜)
+  const [mine, setMine] = useState([])
+  useEffect(() => { let on = true; fetchRandomDrawings(7).then((d) => on && setMine(d)); return () => { on = false } }, [])
+  const swap = useMemo(() => {
+    const ids = layers.flat().filter((_, i) => i % 3 === 1).map((n) => n.id)
+    return Object.fromEntries(mine.slice(0, ids.length).map((m, i) => [ids[i], m.drawing]))
+  }, [mine, layers])
 
   // 인트로 동안 뒤 화면은 스크롤·포커스 잠금
   useEffect(() => {
@@ -94,7 +102,7 @@ export default function IntroNotes() {
                 left: `${n.x}%`, top: `${n.y}%`, width: size * n.scale,
                 '--rot': `${n.rot}deg`, '--dx': `${n.dx}vw`, '--dy': `${n.dy}vh`, '--spin': `${n.spin}deg`, '--delay': `${n.delay}s`,
               }}>
-              <Doodle variant={n.doodle} seed={n.id} cut paper={PAPER[n.tone]} />
+              <Doodle variant={swap[n.id] ? 'mine' : n.doodle} d={swap[n.id]} seed={n.id} cut paper={PAPER[n.tone]} />
             </figure>
           ))}
         </div>

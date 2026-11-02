@@ -79,6 +79,7 @@ export default function Home() {
               <p key={i}>{para.split('\n').map((line, j) => <span key={j}>{j > 0 && <br />}{line}</span>)}</p>
             ))}
           </div>
+          <Link className="btn ghost statement-cta" to="/map">{t('home.addStory')}</Link>
         </div>
       </section>
 

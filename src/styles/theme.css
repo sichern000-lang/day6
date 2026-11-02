@@ -475,15 +475,56 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 .chat-refresh:hover:not(:disabled) { background: var(--butter); transform: rotate(-180deg); }
 .chat-refresh:disabled { opacity: .3; cursor: default; }
 
-/* 신화·민담 접고 펼치기 */
-.fold { border-top: 1.5px solid var(--ink); margin-top: 8px; }
-.fold:last-of-type { border-bottom: 1.5px solid var(--ink); }
-.fold-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 16px 6px; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background .2s; }
-.fold-head:hover, .fold-head:focus-visible { background: rgba(243, 227, 160, .5); outline: none; }
-.fold-title { font-family: var(--serif); font-size: 1.9rem; line-height: 1.1; display: flex; align-items: baseline; gap: 12px; }
-.fold-title small { font-family: 'Pretendard', sans-serif; font-size: .9rem; color: var(--muted); }
+
+/* ───── 이야기 목록 레이아웃: 연한 회녹색 배경, 가운데 정렬, 선이 있는 카드·목록 ───── */
+body.sage { background: #eaeee6; }
+body.sage .topbar:not(.over) { background: #eaeee6; }
+.page-header.center { text-align: center; margin-bottom: 18px; }
+.page-header.center h1 { font-size: clamp(2.8rem, 6vw, 3.8rem); letter-spacing: -.01em; }
+.search-slim { display: block; max-width: 460px; margin: 0 auto 18px; text-align: center; }
+.tabs.center { justify-content: center; margin: 4px 0 44px; }
+.tabs.pills button { font-size: .98rem; padding: 6px 18px; }
+
+/* 대표 이야기: 위아래 가는 선 사이에 스케치, 아래에 ● 제목과 어두운 키워드 알약 */
+.feature-ruled { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 60px 48px; margin: 0 0 76px; }
+.story-card.ruled { gap: 0; border-top: 1px solid var(--ink); }
+.story-card.ruled .art { aspect-ratio: 1 / .94; background: transparent; border-radius: 0; border-bottom: 1px solid var(--ink); margin: 0 0 16px; padding: 14px 0; transition: none; }
+.story-card.ruled:hover .art { transform: none; }
+.story-card.ruled .art .sketch { padding: 0; }
+.story-card.ruled h3 { font-family: 'Pretendard', sans-serif; font-size: 1.12rem; font-weight: 400; line-height: 1.35; display: flex; align-items: baseline; gap: 9px; }
+.story-card.ruled:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
+.story-card.ruled .bullet { flex: none; width: 11px; height: 11px; border-radius: 50%; background: var(--ink); transform: translateY(1px); }
+.story-card.ruled .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 11px 0 0; }
+.chip-dark { background: var(--ink); color: #fff; font-size: .8rem; line-height: 1.5; padding: 1px 9px; border-radius: 5px; }
+
+/* 민담·신화 섹션: 큰 제목 옆에 분류 알약, 아래에 선으로 나뉜 목록 */
+.fold { margin-top: 56px; }
+.fold + .fold { margin-top: 44px; }
+.fold-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 26px; padding-bottom: 20px; }
+.fold-head { display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.fold-title { font-family: var(--serif); font-size: clamp(2.4rem, 5vw, 3.4rem); line-height: 1; display: flex; align-items: baseline; gap: 14px; }
+.fold-title small { font-family: 'Pretendard', sans-serif; font-size: .95rem; color: var(--muted); }
 .fold-head .chev { flex: none; transition: transform .25s; }
 .fold.open .fold-head .chev { transform: rotate(180deg); }
-.fold-body { padding: 4px 0 22px; animation: foldIn .25s ease; }
-.fold-body .tabs.sub { margin-top: 6px; }
+.fold-head:hover .fold-title, .fold-head:focus-visible .fold-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 8px; }
+.fold-head:focus-visible { outline: 2px solid var(--ink); outline-offset: 6px; border-radius: 4px; }
+.fold-bar .tabs.sub { margin: 0; flex: 1 1 380px; width: auto; min-width: 0; }
+.fold-head { flex: none; }
+.fold-bar .tabs.sub button { font-size: .95rem; padding: 5px 16px; border-width: 1px; }
+.fold-bar .tabs.sub button.on { background: #76886a; border-color: #76886a; color: #fff; }
+.fold-body { border-top: 1px solid var(--ink); animation: foldIn .25s ease; }
 @keyframes foldIn { from { opacity: 0; transform: translateY(-6px); } }
+.fold-body > .kw { margin: 14px 0 4px; }
+.fold-body .rows li:first-child .lore-item { border-top: 0; }
+.fold-body .rows li:last-child .lore-item { border-bottom: 1px solid var(--ink); }
+.lore .lore-item { border-top-width: 1px; padding: 18px 14px; }
+.lore .h-arrow { display: none; }
+.lore .h-text strong { font-size: 1.28rem; font-weight: 400; }
+.lore .h-text strong small { font-size: .85rem; }
+.lore-meta { margin-top: 10px; gap: 6px; }
+.lore-meta em { font-size: .84rem; letter-spacing: 0; padding: 2px 10px; border-radius: 6px; }
+body.sage .rows .lore-item:hover { background: #dde3d3; }
+body.sage .tag { background: #c9d8b8; border-radius: 6px; padding: 2px 10px; font-size: .84rem; }
+body.sage .tag:hover { background: var(--butter); }
+@media (max-width: 900px) { .feature-ruled { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 44px 28px; } }
+@media (max-width: 560px) { .feature-ruled { grid-template-columns: 1fr; } .fold-bar { gap: 12px; } }

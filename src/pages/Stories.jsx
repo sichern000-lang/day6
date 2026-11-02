@@ -31,6 +31,12 @@ export default function Stories() {
   const [shown, setShown] = useState(fresh(PAGE))                // 종류별로 지금 보여 주는 개수
   const [group, setGroup] = useState(fresh(''))                  // 종류별로 고른 분류
 
+  // 이 페이지는 연한 회녹색 배경
+  useEffect(() => {
+    document.body.classList.add('sage')
+    return () => document.body.classList.remove('sage')
+  }, [])
+
   useEffect(() => {
     fetchCatalog()
       .then((data) => setCatalog({ data, loading: false, error: '' }))
@@ -71,10 +77,10 @@ export default function Stories() {
 
   return (
     <>
-      <PageHeader title={t('stories.title')} subtitle={t('stories.sub2', { n: catalog.data.length || '…', f: STORIES.length })} />
-      <input className="input" placeholder={t('stories.search2')} value={q} onChange={(e) => search(e.target.value)} />
+      <PageHeader center title={t('stories.title')} subtitle={t('stories.sub2', { n: catalog.data.length || '…', f: STORIES.length })} />
+      <input className="input search-slim" placeholder={t('stories.search2')} value={q} onChange={(e) => search(e.target.value)} />
 
-      <div className="tabs">
+      <div className="tabs center pills">
         {[['all', t('stories.all'), catalog.data.length + STORIES.length], ['featured', t('stories.featured'), STORIES.length],
           ...KINDS.map((k) => [k.id, label(k, lang), counts[k.id]])].map(([id, name, n]) => (
           <button key={id} className={kind === id ? 'on' : ''} onClick={() => pick(id)}>
@@ -84,7 +90,7 @@ export default function Stories() {
       </div>
 
       {showFeatured && featured.length > 0 && (
-        <div className="grid three feature-grid">{featured.map((s) => <StoryCard key={s.id} story={s} />)}</div>
+        <div className="feature-ruled">{featured.map((s) => <StoryCard key={s.id} story={s} ruled />)}</div>
       )}
 
       {sections.length > 0 && (
@@ -103,27 +109,30 @@ export default function Stories() {
         const filtered = Boolean(query || group[id])
         return (
           <section key={id} className={`fold ${isOpen ? 'open' : ''}`}>
-            <button className="fold-head" aria-expanded={isOpen} aria-controls={`fold-${id}`} onClick={() => setFor(setOpened, id, !isOpen)}>
-              <span className="fold-title">
-                {label(k, lang)}
-                <small>{catalog.loading ? '…' : filtered ? `${list.length} / ${counts[id] ?? 0}` : (counts[id] ?? 0)}</small>
-              </span>
-              <svg className="chev" viewBox="0 0 20 20" width="22" height="22" aria-hidden="true">
-                <path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-
-            {isOpen && (
-              <div className="fold-body" id={`fold-${id}`} role="region" aria-label={label(k, lang)}>
-                <div className="tabs sub">
-                  <button className={group[id] === '' ? 'on' : ''} onClick={() => { setFor(setGroup, id, ''); setFor(setShown, id, PAGE) }}>{t('stories.groupAll')}</button>
+            <div className="fold-bar">
+              <button className="fold-head" aria-expanded={isOpen} aria-controls={`fold-${id}`} onClick={() => setFor(setOpened, id, !isOpen)}>
+                <span className="fold-title">
+                  {label(k, lang)}
+                  <small>{catalog.loading ? '…' : filtered ? `${list.length} / ${counts[id] ?? 0}` : (counts[id] ?? 0)}</small>
+                </span>
+                <svg className="chev" viewBox="0 0 20 20" width="22" height="22" aria-hidden="true">
+                  <path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {isOpen && (
+                <div className="tabs sub" role="group" aria-label={label(k, lang)}>
+                  <button className={group[id] === '' ? 'on' : ''} onClick={() => { setFor(setGroup, id, ''); setFor(setShown, id, PAGE) }}>{t('stories.groupAll')}<span className="count"> {counts[id] ?? 0}</span></button>
                   {groups.map((g) => (
                     <button key={g.id} className={group[id] === g.id ? 'on' : ''} onClick={() => { setFor(setGroup, id, g.id); setFor(setShown, id, PAGE) }}>
                       {label(g, lang)}<span className="count"> {counts[g.id] ?? 0}</span>
                     </button>
                   ))}
                 </div>
+              )}
+            </div>
 
+            {isOpen && (
+              <div className="fold-body" id={`fold-${id}`} role="region" aria-label={label(k, lang)}>
                 {active && (
                   <p className="kw">
                     <b>{t('stories.kw')}</b>

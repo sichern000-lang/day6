@@ -754,7 +754,7 @@ button.who { white-space: nowrap; }
 .nb-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .nb-toggle { flex: none; margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ink); background: transparent; color: var(--ink); font: inherit; font-size: .82rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; transition: background .2s; }
 .nb-toggle:hover { background: rgba(207, 224, 236, .7); }
-.nb-slide { overflow-x: auto; margin: 0 -20px; padding: 0 20px; cursor: grab; scrollbar-width: thin; scrollbar-color: rgba(52, 66, 31, .3) transparent; }
+.nb-slide { overflow-x: auto; overflow-y: hidden; width: 100vw; max-width: 100vw; margin: 0 0 0 calc(50% - 50vw); padding: 24px clamp(24px, 4vw, 64px) 0; cursor: grab; scrollbar-width: thin; scrollbar-color: rgba(52, 66, 31, .3) transparent; }
 .nb-slide.grabbing { cursor: grabbing; user-select: none; }
 .nb-track { position: relative; height: 600px; min-width: 100%; }
 .nb-hint { text-align: center; color: var(--muted); font-size: .82rem; margin: 6px 0 40px; }
@@ -800,3 +800,5 @@ button.who { white-space: nowrap; }
 /* 메모지 사이에 널브러진 두들 조각 */
 .scrap { position: absolute; margin: 0; aspect-ratio: 1; color: #1d2616; transform: rotate(var(--rot)); pointer-events: none; }
 .scrap svg.doodle { overflow: visible; }
+
+body { overflow-x: clip; }

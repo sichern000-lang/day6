@@ -33,13 +33,18 @@ export default function MapPage() {
     () => [...places, ...SAMPLES.filter((s) => !hidden.includes(s.id)).map((s) => sampleView(s, lang))],
     [places, hidden, lang],
   )
+  // 지도에서 신화 핀을 누르면 아래 목록의 그 카드로 이동
+  const pickStory = (s) => {
+    setSelected(s)
+    document.getElementById(`lore-${s.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
   const shown = all.filter((p) => !cat || p.category === cat)
 
   return (
     <>
       <PageHeader title="Story Map" subtitle={t('map.sub')} />
       <div className="panel map-wrap">
-        <IslandMap selectedId={selected.id} onSelect={setSelected} places={shown} selectedPlaceId={selectedPlace?.id} onSelectPlace={setSelectedPlace} />
+        <IslandMap selectedId={selected.id} onSelect={pickStory} places={shown} selectedPlaceId={selectedPlace?.id} onSelectPlace={setSelectedPlace} />
       </div>
 
       <div className="places-head">
@@ -79,8 +84,14 @@ export default function MapPage() {
         ))}
       </ul>
 
-      <h2 className="section-title">{t('map.selected')}</h2>
-      <div className="one"><StoryCard story={selected} showSummary /></div>
+      <h2 className="section-title">{t('map.lore')} <small>{STORIES.length}</small></h2>
+      <div className="lore-places">
+        {STORIES.map((s) => (
+          <div key={s.id} id={`lore-${s.id}`} className={`lore-place ${selected.id === s.id ? 'on' : ''}`} onClick={() => setSelected(s)}>
+            <StoryCard story={s} showSummary />
+          </div>
+        ))}
+      </div>
       {adding && <PlaceModal onClose={() => setAdding(false)} />}
     </>
   )

@@ -713,3 +713,11 @@ button.who.in { background: rgba(179, 196, 170, .55); }
 .drawpad-bar button { border: 1px solid rgba(52, 66, 31, .4); background: transparent; color: var(--ink); font: inherit; font-size: .8rem; padding: 3px 14px; border-radius: 999px; cursor: pointer; }
 .drawpad-bar button:disabled { opacity: .4; cursor: default; }
 .drawpad-bar button:not(:disabled):hover { background: rgba(207, 224, 236, .6); }
+
+/* 지도 아래: 제주의 이야기가 담긴 장소(신화 핀) 전부 */
+.lore-places { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 44px 32px; margin: 22px 0 64px; }
+.lore-place { border-radius: 16px; padding: 10px; margin: -10px; transition: background .25s, box-shadow .25s; cursor: pointer; }
+.lore-place:hover { background: rgba(255, 255, 255, .5); }
+.lore-place.on { background: rgba(207, 224, 236, .55); box-shadow: 0 0 0 1.5px var(--ink); }
+@media (max-width: 900px) { .lore-places { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .lore-places { grid-template-columns: 1fr; } }

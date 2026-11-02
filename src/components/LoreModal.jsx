@@ -2,27 +2,26 @@ import { useEffect, useState } from 'react'
 import Modal from './Modal'
 import { Empty, ErrorBox, Loading } from './Status'
 import { fetchPlaces } from '../api/client'
-import folk from '../data/folk-groups.json'
+import { GROUP, label } from '../lib/folk'
 import { copyText } from '../lib/copy'
-import { staticEnTitle } from '../lib/folkTitle'
+import { isKo } from '../lib/langs'
 import { useTranslated } from '../lib/useTranslated'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
-const GROUP = Object.fromEntries(folk.groups.map((g) => [g.id, g]))
 const plain = (s) => s.replace(/\(.*?\)/g, '').trim() // "도체비(도깨비)" → "도체비"
 // 자동 검색에서는 뜻이 너무 흔한 핵심어를 뺌 (직접 눌러서 검색하는 건 가능)
 const GENERIC = new Set(['본풀이', '본', '사람', '사름', '하르방', '할망', '할아버지', '할머니', '아기', '각시'])
 
 // 신화·민담 한 편을 모달로 — 이야기 저장, 핵심어로 관련 장소 찾기 (외부 사이트로 나가지 않음)
-export default function LoreModal({ item, titleEn, onClose, onSearch }) {
+export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
   const t = useT()
   const lang = useAppStore((s) => s.lang)
   const saved = useAppStore((s) => s.saved)
   const saveStory = useAppStore((s) => s.saveStory)
   const toast = useAppStore((s) => s.toast)
   const isSaved = saved.some((s) => s.story_id === item.id)
-  const en = lang === 'en'
+  const translated = !isKo(lang)
 
   // 제목 → 핵심어 순서로 장소가 나올 때까지 찾아봄. 핵심어를 누르면 그 낱말로 다시 검색
   const candidates = [...new Set([plain(item.title), ...item.tags.map(plain)])]
@@ -50,7 +49,7 @@ export default function LoreModal({ item, titleEn, onClose, onSearch }) {
   }, [item.id, picked])
 
   const shown = state.list.slice(0, 6)
-  const tr = useTranslated(shown.map((p) => p.title), en)
+  const tr = useTranslated(shown.map((p) => p.title), translated)
 
   async function copy(addr) {
     const ok = await copyText(addr)
@@ -59,9 +58,9 @@ export default function LoreModal({ item, titleEn, onClose, onSearch }) {
 
   return (
     <Modal onClose={onClose} label={item.title}>
-      <span className="lore-kind">{en ? GROUP[item.group].en : GROUP[item.group].ko}</span>
-      <h2 className="modal-title">{titleEn ?? item.title}</h2>
-      {titleEn && <p className="modal-sub">{item.title}</p>}
+      <span className="lore-kind">{label(GROUP[item.group], lang)}</span>
+      <h2 className="modal-title">{titleLocal ?? item.title}</h2>
+      {titleLocal && <p className="modal-sub">{item.title}</p>}
 
       {item.tags.length > 0 && (
         <div className="modal-block">

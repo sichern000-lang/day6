@@ -23,6 +23,33 @@ src/
   data/stories.json       신화·전설 6편 (학습용 요약 — 출처로 검증 후 확장)
 ```
 
+## 랜딩 연출 (종이 메모 → 스케치 → 사진)
+1. **인트로**: 랜딩을 종이 메모지가 3겹으로 덮고 있고, 스크롤·스와이프·방향키·클릭 **3번**에 한 겹씩 날아가며 랜딩이 드러납니다. (`건너뛰기` 버튼, Esc 로 바로 건너뜀)
+2. **히어로**: 들판·한라산·말이 연필로 그려지다가(약 5초) 종이가 걷히며 지금의 사진으로 바뀝니다.
+3. 한 탭(세션)에서 **한 번만** 보여 줍니다. 다시 보려면 주소 끝에 `?intro=1`. 모션 줄이기 설정(`prefers-reduced-motion`)이면 건너뜁니다.
+
+| 무엇 | 어디 |
+|---|---|
+| 낙서 일러스트 13종 (코드로 그린 SVG) | `src/components/Doodle.jsx` — `ART` 에 그림 추가, `DOODLES` 에 이름 추가 |
+| 메모 덮개 | `src/components/IntroNotes.jsx` (`PEELS`=넘기는 횟수) |
+| 히어로 스케치 | `src/components/HeroSketch.jsx` (장면 순서 = 그려지는 순서) |
+| 종이 질감·연필 색 | `src/styles/theme.css` 의 `.paper`, `.doodle .c-*` |
+
+## 언어 (한국어 · English · Español · Deutsch)
+화면 오른쪽 위 KO / EN / ES / DE 버튼으로 바뀌고, 선택은 저장됩니다. 번역은 모두 미리 넣어 둔 파일이라 API 키 없이도 나옵니다.
+
+| 무엇 | 어디 |
+|---|---|
+| 언어 목록 | `src/lib/langs.js` |
+| 화면 문구 (키 135개) | `src/lib/i18n.js` (ko·en), `src/locales/es.js`, `src/locales/de.js` — 빠진 키는 영어로 대신 나옴 |
+| 대표 이야기 6편 | `src/data/stories.json`(한국어 원문) + `src/data/stories-i18n.json`(en·es·de) |
+| 분류·키워드 | `src/data/folk-groups.json` (키워드는 `[한국어, 영어, 스페인어, 독일어]`) |
+| 신화·민담 제목 408건 | `src/data/folk-titles.json` (`{ 한국어제목: { en, es, de } }`) |
+| 장소·국가유산 이름 | 실시간 번역 `/api/translate` (Gemini) — 실패하면 원문 |
+
+새 언어 추가: ① `langs.js` 에 한 줄 ② `src/locales/` 에 문구 파일 ③ `i18n.js` 의 `STR` 에 등록 ④ 위 데이터 파일마다 번역 추가.
+번역은 초안이라 제주 고유명사(본풀이·지명)는 원어민 검수가 필요합니다. 스페인어·독일어의 관광정보는 영문 서비스를 대신 씁니다.
+
 ## 평가 기준 체크리스트 (100점 + 가산점)
 | 항목 | 배점 | 이 프로젝트에서 | 상태 |
 |---|---|---|---|

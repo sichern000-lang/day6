@@ -3,9 +3,18 @@ import { persist } from 'zustand/middleware'
 import { supabase } from '../lib/supabase'
 import { askAgent } from '../api/client'
 import { translate } from '../lib/i18n'
+import { LANGS } from '../lib/langs'
 
 // ── 여러 페이지가 함께 쓰는 "전역 상태" ─────────────────
 // 한 페이지에서만 쓰는 값(입력창, 선택한 탭 등)은 그 페이지의 useState 로 둡니다.
+// 인트로(종이 메모 덮개)와 히어로 스케치는 한 탭에서 한 번만 보여 줌 (?intro=1 로 다시 보기)
+const seen = (k) => { try { return sessionStorage.getItem(k) === '1' } catch { return false } }
+const mark = (k) => { try { sessionStorage.setItem(k, '1') } catch { /* 저장 못 해도 동작에는 지장 없음 */ } }
+const reduced = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+const forced = () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('intro') === '1'
+const skipIntro = !forced() && (seen('sinhwa-intro') || reduced())
+const skipHero = !forced() && (seen('sinhwa-hero') || reduced())
+
 export const useAppStore = create(
   persist(
     (set, get) => ({
@@ -15,7 +24,13 @@ export const useAppStore = create(
 
       // ① -2 표시 언어 — 'ko' | 'en', localStorage 에 저장
       lang: 'ko',
-      setLang: (lang) => set({ lang }),
+      setLang: (lang) => set({ lang: LANGS.some((l) => l.id === lang) ? lang : 'ko' }),
+
+      // ① -3 인트로·히어로 연출 (저장하지 않는 값)
+      introDone: skipIntro,
+      finishIntro: () => { mark('sinhwa-intro'); set({ introDone: true }) },
+      heroSeen: skipHero,
+      markHeroSeen: () => { mark('sinhwa-hero'); set({ heroSeen: true }) },
 
       // ② 알림
       toasts: [],

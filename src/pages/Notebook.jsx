@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader'
 import { Empty, Loading } from '../components/Status'
 import { isSupabaseReady } from '../lib/supabase'
 import { getStoryById, localize } from '../lib/stories'
-import { staticEnTitle } from '../lib/folkTitle'
+import { folkTitle } from '../lib/folkTitle'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
@@ -31,7 +31,7 @@ export default function Notebook() {
           <li key={s.id}>
             <div>
               <Link to={getStoryById(s.story_id) ? `/stories/${s.story_id}` : `/stories?q=${encodeURIComponent(s.title)}`}>
-                <strong>{localize(getStoryById(s.story_id), lang)?.title ?? (lang === 'en' ? staticEnTitle(s.title) : undefined) ?? s.title}</strong>
+                <strong>{localize(getStoryById(s.story_id), lang)?.title ?? folkTitle(s.title, lang) ?? s.title}</strong>
               </Link>
               <span>{s.visited ? t('nb.visited') : t('nb.notyet')}</span>
             </div>

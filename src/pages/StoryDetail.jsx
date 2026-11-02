@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import MountainWash from '../components/MountainWash'
 import { Empty, ErrorBox, Loading } from '../components/Status'
 import { fetchHeritage, fetchPlaces, fetchPlacesEn } from '../api/client'
-import { getStoryById, kindLabel, localize } from '../lib/stories'
+import { getStoryById, kindLabel, localize, tourKeywordEn } from '../lib/stories'
+import { isKo } from '../lib/langs'
 import { copyText } from '../lib/copy'
 import { useTranslated } from '../lib/useTranslated'
 import { useAppStore } from '../store/useAppStore'
@@ -44,13 +45,13 @@ export default function StoryDetail() {
         .catch((e) => !cancelled && set({ data: [], loading: false, error: e.message }))
     }
     // 언어에 따라 국문/영문 관광정보 API 를 골라 호출 (유산은 국문만 제공 → 영어 모드에서는 번역해서 보여줌)
-    if (lang === 'en') run(fetchPlacesEn, base.tourKeywordEn, setPlaces)
+    if (!isKo(lang)) run(fetchPlacesEn, tourKeywordEn(base), setPlaces)
     else run(fetchPlaces, base.tourKeyword, setPlaces)
     run(fetchHeritage, base.heritageKeyword, setHeritage)
     return () => { cancelled = true }
   }, [base, lang])
 
-  const tr = useTranslated(heritage.data.flatMap((h) => [h.name, h.kind, h.city]), lang === 'en')
+  const tr = useTranslated(heritage.data.flatMap((h) => [h.name, h.kind, h.city]), !isKo(lang))
 
   if (!base) return <NotFound />
 

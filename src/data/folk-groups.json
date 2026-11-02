@@ -1,26 +1,480 @@
 {
   "kinds": [
-    { "id": "myth", "ko": "신화", "en": "Myths" },
-    { "id": "folktale", "ko": "민담", "en": "Folktales" }
+    {
+      "id": "myth",
+      "ko": "신화",
+      "en": "Myths",
+      "es": "Mitos",
+      "de": "Mythen"
+    },
+    {
+      "id": "folktale",
+      "ko": "민담",
+      "en": "Folktales",
+      "es": "Cuentos populares",
+      "de": "Volksmärchen"
+    }
   ],
   "groups": [
-    { "id": "myth-general", "kind": "myth", "codes": ["MYTH2.001"], "ko": "일반신 본풀이", "en": "General-deity myths",
-      "keywords": [["서천꽃밭", "Western Flower Garden"], ["하늘옥황", "Heavenly Emperor"], ["할망", "Grandmother goddess"], ["천상베필", "Heavenly match"], ["해산", "Childbirth"], ["불공", "Buddhist offering"]] },
-    { "id": "myth-shrine", "kind": "myth", "codes": ["MYTH2.002"], "ko": "당신 본풀이", "en": "Village-shrine myths",
-      "keywords": [["본향당", "Village shrine"], ["소천국", "Socheon-guk"], ["백주또", "Baekjuddo"], ["돼지고기", "Pork"], ["용왕국", "Dragon-king realm"], ["귀양", "Exile"], ["산신백관", "Mountain spirits"], ["무쇠상자", "Iron box"]] },
-    { "id": "myth-ancestor", "kind": "myth", "codes": ["MYTH2.003"], "ko": "조상·가문 본풀이", "en": "Ancestor & clan myths",
-      "keywords": [["큰굿", "Great ritual"], ["삼형제", "Three brothers"], ["조상신", "Ancestor spirit"], ["기우제", "Rain rite"], ["용소", "Dragon pool"], ["양씨아미", "Yangssi Ami"]] },
-    { "id": "myth-epic", "kind": "myth", "codes": ["MYTH2.019"], "ko": "서사무가·기타", "en": "Ritual epics & others",
-      "keywords": [["원천강", "Wonchongang"], ["세민황제", "Emperor Semin"], ["저승·이승", "Afterlife & this world"], ["적선", "Good deeds"], ["버드나무", "Willow tree"]] },
-    { "id": "tale-dokkaebi", "kind": "folktale", "codes": ["MYTH2.016"], "ko": "도깨비 이야기", "en": "Dokkaebi tales",
-      "keywords": [["도체비(도깨비)", "Dokkaebi"], ["도체빗불", "Dokkaebi fire"], ["귀신", "Ghost"], ["굿", "Shaman ritual"], ["심방", "Shaman"], ["제사", "Ancestral rite"], ["밤", "Night"]] },
-    { "id": "tale-people", "kind": "folktale", "codes": ["MYTH2.015"], "ko": "사람살이 이야기", "en": "Tales of everyday people",
-      "keywords": [["할망", "Grandmother"], ["하르방", "Grandfather"], ["지붕", "Roof"], ["호박", "Pumpkin"], ["콩데기", "Kongdegi"], ["다슴애기", "Stepdaughter"], ["각시", "Bride"]] },
-    { "id": "tale-humor", "kind": "folktale", "codes": ["MYTH2.017"], "ko": "웃음·해학", "en": "Humor & jokes",
-      "keywords": [["하르방", "Grandfather"], ["거짓말", "Lies"], ["우스갯소리", "Jokes"], ["똥", "Dung"], ["며느리", "Daughter-in-law"], ["시아버지", "Father-in-law"], ["장독", "Jar"]] },
-    { "id": "tale-animal", "kind": "folktale", "codes": ["MYTH2.014"], "ko": "동물·교훈", "en": "Animals & lessons",
-      "keywords": [["말(馬)", "Horse"], ["여우", "Fox"], ["환생", "Reincarnation"], ["호랑이", "Tiger"], ["복", "Fortune"], ["개와 닭", "Dog & chicken"]] },
-    { "id": "tale-spirit", "kind": "folktale", "codes": ["MYTH2.013", "MYTH2.018"], "ko": "귀신·영혼", "en": "Ghosts & spirits",
-      "keywords": [["바당(바다)", "Sea"], ["헛게", "Phantom"], ["처녀", "Maiden"], ["영혼", "Soul"], ["도깨비", "Dokkaebi"]] }
+    {
+      "id": "myth-general",
+      "kind": "myth",
+      "codes": [
+        "MYTH2.001"
+      ],
+      "ko": "일반신 본풀이",
+      "en": "General-deity myths",
+      "keywords": [
+        [
+          "서천꽃밭",
+          "Western Flower Garden",
+          "Jardín Floral del Oeste",
+          "Westlicher Blumengarten"
+        ],
+        [
+          "하늘옥황",
+          "Heavenly Emperor",
+          "Emperador Celestial",
+          "Himmelskaiser"
+        ],
+        [
+          "할망",
+          "Grandmother goddess",
+          "Diosa abuela",
+          "Großmutter-Göttin"
+        ],
+        [
+          "천상베필",
+          "Heavenly match",
+          "Pareja celestial",
+          "Himmlische Fügung"
+        ],
+        [
+          "해산",
+          "Childbirth",
+          "Parto",
+          "Geburt"
+        ],
+        [
+          "불공",
+          "Buddhist offering",
+          "Ofrenda budista",
+          "Buddhistisches Opfer"
+        ]
+      ],
+      "es": "Mitos de deidades generales",
+      "de": "Mythen allgemeiner Gottheiten"
+    },
+    {
+      "id": "myth-shrine",
+      "kind": "myth",
+      "codes": [
+        "MYTH2.002"
+      ],
+      "ko": "당신 본풀이",
+      "en": "Village-shrine myths",
+      "keywords": [
+        [
+          "본향당",
+          "Village shrine",
+          "Santuario de aldea",
+          "Dorfschrein"
+        ],
+        [
+          "소천국",
+          "Socheon-guk",
+          "Socheon-guk",
+          "Socheon-guk"
+        ],
+        [
+          "백주또",
+          "Baekjuddo",
+          "Baekjuddo",
+          "Baekjuddo"
+        ],
+        [
+          "돼지고기",
+          "Pork",
+          "Carne de cerdo",
+          "Schweinefleisch"
+        ],
+        [
+          "용왕국",
+          "Dragon-king realm",
+          "Reino del Rey Dragón",
+          "Reich des Drachenkönigs"
+        ],
+        [
+          "귀양",
+          "Exile",
+          "Destierro",
+          "Verbannung"
+        ],
+        [
+          "산신백관",
+          "Mountain spirits",
+          "Espíritus de la montaña",
+          "Berggeister"
+        ],
+        [
+          "무쇠상자",
+          "Iron box",
+          "Caja de hierro",
+          "Eisenkasten"
+        ]
+      ],
+      "es": "Mitos de santuarios de aldea",
+      "de": "Dorfschrein-Mythen"
+    },
+    {
+      "id": "myth-ancestor",
+      "kind": "myth",
+      "codes": [
+        "MYTH2.003"
+      ],
+      "ko": "조상·가문 본풀이",
+      "en": "Ancestor & clan myths",
+      "keywords": [
+        [
+          "큰굿",
+          "Great ritual",
+          "Gran ritual",
+          "Großes Ritual"
+        ],
+        [
+          "삼형제",
+          "Three brothers",
+          "Tres hermanos",
+          "Drei Brüder"
+        ],
+        [
+          "조상신",
+          "Ancestor spirit",
+          "Espíritu ancestral",
+          "Ahnengeist"
+        ],
+        [
+          "기우제",
+          "Rain rite",
+          "Rito de lluvia",
+          "Regenritual"
+        ],
+        [
+          "용소",
+          "Dragon pool",
+          "Pozo del dragón",
+          "Drachenteich"
+        ],
+        [
+          "양씨아미",
+          "Yangssi Ami",
+          "Yangssi Ami",
+          "Yangssi Ami"
+        ]
+      ],
+      "es": "Mitos de ancestros y clanes",
+      "de": "Ahnen- und Clanmythen"
+    },
+    {
+      "id": "myth-epic",
+      "kind": "myth",
+      "codes": [
+        "MYTH2.019"
+      ],
+      "ko": "서사무가·기타",
+      "en": "Ritual epics & others",
+      "keywords": [
+        [
+          "원천강",
+          "Wonchongang",
+          "Wonchongang",
+          "Wonchongang"
+        ],
+        [
+          "세민황제",
+          "Emperor Semin",
+          "Emperador Semin",
+          "Kaiser Semin"
+        ],
+        [
+          "저승·이승",
+          "Afterlife & this world",
+          "Más allá y este mundo",
+          "Jenseits und Diesseits"
+        ],
+        [
+          "적선",
+          "Good deeds",
+          "Buenas obras",
+          "Gute Taten"
+        ],
+        [
+          "버드나무",
+          "Willow tree",
+          "Sauce",
+          "Weide"
+        ]
+      ],
+      "es": "Epopeyas rituales y otros",
+      "de": "Ritualepen und Sonstiges"
+    },
+    {
+      "id": "tale-dokkaebi",
+      "kind": "folktale",
+      "codes": [
+        "MYTH2.016"
+      ],
+      "ko": "도깨비 이야기",
+      "en": "Dokkaebi tales",
+      "keywords": [
+        [
+          "도체비(도깨비)",
+          "Dokkaebi",
+          "Dokkaebi",
+          "Dokkaebi"
+        ],
+        [
+          "도체빗불",
+          "Dokkaebi fire",
+          "Fuego de dokkaebi",
+          "Dokkaebi-Feuer"
+        ],
+        [
+          "귀신",
+          "Ghost",
+          "Fantasma",
+          "Geist"
+        ],
+        [
+          "굿",
+          "Shaman ritual",
+          "Ritual chamánico",
+          "Schamanenritual"
+        ],
+        [
+          "심방",
+          "Shaman",
+          "Chamán",
+          "Schamane"
+        ],
+        [
+          "제사",
+          "Ancestral rite",
+          "Rito ancestral",
+          "Ahnenritus"
+        ],
+        [
+          "밤",
+          "Night",
+          "Noche",
+          "Nacht"
+        ]
+      ],
+      "es": "Cuentos de dokkaebi",
+      "de": "Dokkaebi-Märchen"
+    },
+    {
+      "id": "tale-people",
+      "kind": "folktale",
+      "codes": [
+        "MYTH2.015"
+      ],
+      "ko": "사람살이 이야기",
+      "en": "Tales of everyday people",
+      "keywords": [
+        [
+          "할망",
+          "Grandmother",
+          "Abuela",
+          "Großmutter"
+        ],
+        [
+          "하르방",
+          "Grandfather",
+          "Abuelo",
+          "Großvater"
+        ],
+        [
+          "지붕",
+          "Roof",
+          "Tejado",
+          "Dach"
+        ],
+        [
+          "호박",
+          "Pumpkin",
+          "Calabaza",
+          "Kürbis"
+        ],
+        [
+          "콩데기",
+          "Kongdegi",
+          "Kongdegi",
+          "Kongdegi"
+        ],
+        [
+          "다슴애기",
+          "Stepdaughter",
+          "Hijastra",
+          "Stieftochter"
+        ],
+        [
+          "각시",
+          "Bride",
+          "Novia",
+          "Braut"
+        ]
+      ],
+      "es": "Cuentos de la gente corriente",
+      "de": "Geschichten vom Alltag der Menschen"
+    },
+    {
+      "id": "tale-humor",
+      "kind": "folktale",
+      "codes": [
+        "MYTH2.017"
+      ],
+      "ko": "웃음·해학",
+      "en": "Humor & jokes",
+      "keywords": [
+        [
+          "하르방",
+          "Grandfather",
+          "Abuelo",
+          "Großvater"
+        ],
+        [
+          "거짓말",
+          "Lies",
+          "Mentiras",
+          "Lügen"
+        ],
+        [
+          "우스갯소리",
+          "Jokes",
+          "Chistes",
+          "Witze"
+        ],
+        [
+          "똥",
+          "Dung",
+          "Estiércol",
+          "Mist"
+        ],
+        [
+          "며느리",
+          "Daughter-in-law",
+          "Nuera",
+          "Schwiegertochter"
+        ],
+        [
+          "시아버지",
+          "Father-in-law",
+          "Suegro",
+          "Schwiegervater"
+        ],
+        [
+          "장독",
+          "Jar",
+          "Tinaja",
+          "Tonkrug"
+        ]
+      ],
+      "es": "Humor y chistes",
+      "de": "Humor und Witze"
+    },
+    {
+      "id": "tale-animal",
+      "kind": "folktale",
+      "codes": [
+        "MYTH2.014"
+      ],
+      "ko": "동물·교훈",
+      "en": "Animals & lessons",
+      "keywords": [
+        [
+          "말(馬)",
+          "Horse",
+          "Caballo",
+          "Pferd"
+        ],
+        [
+          "여우",
+          "Fox",
+          "Zorro",
+          "Fuchs"
+        ],
+        [
+          "환생",
+          "Reincarnation",
+          "Reencarnación",
+          "Wiedergeburt"
+        ],
+        [
+          "호랑이",
+          "Tiger",
+          "Tigre",
+          "Tiger"
+        ],
+        [
+          "복",
+          "Fortune",
+          "Fortuna",
+          "Glück"
+        ],
+        [
+          "개와 닭",
+          "Dog & chicken",
+          "Perro y gallina",
+          "Hund und Huhn"
+        ]
+      ],
+      "es": "Animales y lecciones",
+      "de": "Tiere und Lehren"
+    },
+    {
+      "id": "tale-spirit",
+      "kind": "folktale",
+      "codes": [
+        "MYTH2.013",
+        "MYTH2.018"
+      ],
+      "ko": "귀신·영혼",
+      "en": "Ghosts & spirits",
+      "keywords": [
+        [
+          "바당(바다)",
+          "Sea",
+          "Mar",
+          "Meer"
+        ],
+        [
+          "헛게",
+          "Phantom",
+          "Fantasma",
+          "Phantom"
+        ],
+        [
+          "처녀",
+          "Maiden",
+          "Doncella",
+          "Jungfrau"
+        ],
+        [
+          "영혼",
+          "Soul",
+          "Alma",
+          "Seele"
+        ],
+        [
+          "도깨비",
+          "Dokkaebi",
+          "Dokkaebi",
+          "Dokkaebi"
+        ]
+      ],
+      "es": "Fantasmas y espíritus",
+      "de": "Geister und Seelen"
+    }
   ]
 }

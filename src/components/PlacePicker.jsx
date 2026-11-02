@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Empty, ErrorBox, Loading } from './Status'
 import { fetchPlaces, fetchPlacesEn } from '../api/client'
-import { STORIES } from '../lib/stories'
+import { STORIES, tourKeywordEn } from '../lib/stories'
+import { isKo } from '../lib/langs'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
@@ -9,7 +10,7 @@ import { useT } from '../lib/useT'
 export default function PlacePicker({ value, onPick }) {
   const t = useT()
   const lang = useAppStore((s) => s.lang)
-  const en = lang === 'en'
+  const en = !isKo(lang) // 한국어 외에는 영문 관광정보(영어 검색어)를 씀
   const [q, setQ] = useState('')
   const [keyword, setKeyword] = useState('')           // 실제로 검색 중인 낱말 (입력이 멈추면 반영)
   const [state, setState] = useState({ list: [], loading: false, error: '' })
@@ -48,7 +49,7 @@ export default function PlacePicker({ value, onPick }) {
       <p className="modal-label quick-label">{t('review.quick')}</p>
       <div className="modal-tags">
         {STORIES.map((s) => {
-          const kw = en ? s.tourKeywordEn : s.tourKeyword
+          const kw = en ? tourKeywordEn(s) : s.tourKeyword
           return <button key={s.id} type="button" className={`tag ${keyword === kw ? 'on' : ''}`} onClick={() => { setQ(kw); setKeyword(kw) }}>{kw}</button>
         })}
       </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Modal from './Modal'
 import PlacePicker from './PlacePicker'
 import Stars from './Stars'
-import { STORIES } from '../lib/stories'
+import { STORIES, tourKeywordEn } from '../lib/stories'
 import { createReview, uploadPhoto } from '../lib/reviews'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
@@ -40,7 +40,7 @@ export default function ReviewModal({ onClose, onCreated }) {
         catch (err) { toast(`${t('review.uploadFail')}: ${err.message}`, 'error'); setBusy(false); return }
       }
       // 장소 이름에 이야기 속 낱말이 들어 있으면 그 이야기와 연결
-      const story = STORIES.find((s) => [s.tourKeyword, s.tourKeywordEn].some((k) => place.title.includes(k)))
+      const story = STORIES.find((s) => [s.tourKeyword, tourKeywordEn(s)].some((k) => place.title.includes(k)))
       const row = await createReview({
         nickname: nickname || '익명', place_id: place.id, place_title: place.title, place_addr: place.addr ?? null,
         story_id: story?.id ?? null, rating, recommend, comment: comment.trim() || null, image_url,

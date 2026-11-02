@@ -5,16 +5,15 @@ import StoryCard from '../components/StoryCard'
 import LoreModal from '../components/LoreModal'
 import { Empty, ErrorBox, Loading } from '../components/Status'
 import { fetchCatalog } from '../api/client'
-import folk from '../data/folk-groups.json'
+import { FOLK as folk, GROUP, keywordLabel, label } from '../lib/folk'
 import { STORIES, localize } from '../lib/stories'
-import { staticEnTitle } from '../lib/folkTitle'
+import { folkTitle } from '../lib/folkTitle'
+import { isKo } from '../lib/langs'
 import { useTranslated } from '../lib/useTranslated'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
 const PAGE = 30
-const GROUP = Object.fromEntries(folk.groups.map((g) => [g.id, g]))
-const label = (o, lang) => (lang === 'en' ? o.en : o.ko)
 
 export default function Stories() {
   const t = useT()
@@ -50,9 +49,9 @@ export default function Stories() {
     (!query || (i.title + i.tags.join(' ')).toLowerCase().includes(query)))
   const visible = rows.slice(0, shown)
 
-  // 영어 제목: 미리 넣어 둔 번역이 먼저, 없는 제목만 실시간 번역
-  const tr0 = useTranslated(visible.filter((i) => !staticEnTitle(i.title)).map((i) => i.title), lang === 'en')
-  const enTitle = (title) => (lang === 'en' ? staticEnTitle(title) ?? tr0(title) : undefined)
+  // 번역된 제목: 미리 넣어 둔 번역이 먼저, 없는 제목만 실시간 번역
+  const tr0 = useTranslated(visible.filter((i) => !folkTitle(i.title, lang)).map((i) => i.title), !isKo(lang))
+  const localTitle = (title) => (isKo(lang) ? undefined : folkTitle(title, lang) ?? tr0(title))
   const groups = folk.groups.filter((g) => g.kind === kind)
   const activeGroup = group ? GROUP[group] : null
   const showFeatured = kind === 'all' || kind === 'featured'
@@ -89,8 +88,8 @@ export default function Stories() {
       {activeGroup && (
         <p className="kw">
           <b>{t('stories.kw')}</b>
-          {activeGroup.keywords.map(([ko, en]) => (
-            <button key={ko} className="tag" onClick={() => search(ko.replace(/\(.*\)/, ''))}>{lang === 'en' ? en : ko}</button>
+          {activeGroup.keywords.map((kw) => (
+            <button key={kw[0]} className="tag" onClick={() => search(kw[0].replace(/\(.*\)/, ''))}>{keywordLabel(kw, lang)}</button>
           ))}
         </p>
       )}
@@ -110,7 +109,7 @@ export default function Stories() {
                 <div className="lore-item" role="button" tabIndex={0}
                   onClick={() => setOpen(i)} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), setOpen(i))}>
                   <span className="h-text">
-                    <strong>{enTitle(i.title) ?? i.title}{enTitle(i.title) && <small> {i.title}</small>}</strong>
+                    <strong>{localTitle(i.title) ?? i.title}{localTitle(i.title) && <small> {i.title}</small>}</strong>
                     <span className="lore-meta">
                       <em>{label(GROUP[i.group], lang)}</em>
                       {i.tags.slice(0, 6).map((tag) => (
@@ -129,7 +128,7 @@ export default function Stories() {
           {!catalog.loading && !catalog.error && <p className="hint">{t('stories.note')}</p>}
         </>
       )}
-      {open && <LoreModal item={open} titleEn={enTitle(open.title)} onClose={() => setOpen(null)} onSearch={search} />}
+      {open && <LoreModal item={open} titleLocal={localTitle(open.title)} onClose={() => setOpen(null)} onSearch={search} />}
     </>
   )
 }

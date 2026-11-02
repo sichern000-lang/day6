@@ -4,6 +4,7 @@ import { NAV_ITEMS } from '../router'
 import Toasts from '../components/Toasts'
 import ChatModal from '../components/ChatModal'
 import { useAppStore } from '../store/useAppStore'
+import { LANGS } from '../lib/langs'
 import { useT } from '../lib/useT'
 
 export default function RootLayout() {
@@ -40,8 +41,9 @@ export default function RootLayout() {
         <NavLink to="/" className="brand">{t('brand')}</NavLink>
         <div className="right">
           <div className="lang" role="group" aria-label="Language">
-            <button className={lang === 'ko' ? 'on' : ''} onClick={() => setLang('ko')}>KO</button>
-            <button className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
+            {LANGS.map((l) => (
+              <button key={l.id} className={lang === l.id ? 'on' : ''} onClick={() => setLang(l.id)} title={l.name} aria-pressed={lang === l.id}>{l.label}</button>
+            ))}
           </div>
           <span className="who">{nickname || t('anon')}</span>
         </div>

@@ -4,6 +4,7 @@ import { searchTourEng } from '../server/tourEng.js'
 import { getWeather } from '../server/weather.js'
 import { searchHeritage } from '../server/heritage.js'
 import { generate, callsOf, textOf } from '../server/gemini.js'
+import { englishName } from '../src/lib/langs.js'
 
 // ① 도구 설명서 — Gemini 는 이 설명만 보고 어떤 도구를 쓸지 정한다 (functionDeclarations)
 const tools = [
@@ -49,19 +50,19 @@ const SYSTEM = `너는 '신화지도'의 이야기 안내자다. 제주 신화·
 - 신화는 전승에 따라 다르다는 점을 필요하면 짧게 덧붙인다.
 - 한국어로 5문장 이내, 이야기꾼처럼 다정하게.`
 
-const EN_RULE = `
-- The user is a foreign visitor. Answer in English, in at most 5 sentences.
+const langRule = (language) => `
+- The user is a foreign visitor. Answer in ${language}, in at most 5 sentences.
 - Story data is in Korean: translate it faithfully when you answer, and never add details that are not in the data.
 - For search_tour_places use English keywords (e.g. Hallasan); the results are English tourism data.
-- Heritage names come from a Korean-only source: give a short English gloss when you mention them.`
+- Heritage names come from a Korean-only source: give a short ${language} gloss when you mention them.`
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' })
   const { message, history = [], lang = 'ko' } = req.body ?? {}
-  const en = lang === 'en'
+  const foreign = lang !== 'ko' // 한국어 외에는 영문 관광정보 + 해당 언어로 답변
   // 영어 모드: 영문 관광정보 API 와 영어 답변
-  const run = en ? { ...runTool, search_tour_places: searchTourEng } : runTool
-  const system = en ? SYSTEM + EN_RULE : SYSTEM
+  const run = foreign ? { ...runTool, search_tour_places: searchTourEng } : runTool
+  const system = foreign ? SYSTEM + langRule(englishName(lang)) : SYSTEM
 
   // 화면에서 온 대화({role:'user'|'assistant', content}) → Gemini 형식({role:'user'|'model', parts})
   const contents = [

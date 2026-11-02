@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchPlaces, fetchPlacesEn } from '../api/client'
+import { tourKeywordEn } from './stories'
+import { isKo } from './langs'
 
 // 이야기의 무대(관광공사 API)에서 첫 번째 사진 한 장 — 호버했을 때 처음 한 번만 불러오고 기억해 둠
 const cache = new Map() // `${lang}:${keyword}` → url | null
@@ -9,9 +11,9 @@ const pending = new Map()
 const secure = (u) => u.replace(/^http:\/\/(tong\.visitkorea\.or\.kr)/, 'https://$1')
 
 function load(story, lang) {
-  const en = lang === 'en'
-  const keyword = en ? story.tourKeywordEn : story.tourKeyword
-  const key = `${lang}:${keyword}`
+  const en = !isKo(lang) // 한국어 외에는 영문 관광정보
+  const keyword = en ? tourKeywordEn(story) : story.tourKeyword
+  const key = `${en ? 'en' : 'ko'}:${keyword}`
   if (cache.has(key)) return Promise.resolve(cache.get(key))
   if (!pending.has(key)) {
     pending.set(key, (en ? fetchPlacesEn : fetchPlaces)(keyword)

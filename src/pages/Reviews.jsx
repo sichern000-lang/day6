@@ -8,6 +8,7 @@ import { SAMPLES, deleteReview, isMissingTable, listReviews } from '../lib/revie
 import { getStoryById } from '../lib/stories'
 import { isSupabaseReady } from '../lib/supabase'
 import { useAppStore } from '../store/useAppStore'
+import { localeOf } from '../lib/langs'
 import { useT } from '../lib/useT'
 
 export default function Reviews() {
@@ -84,7 +85,7 @@ export default function Reviews() {
                 <Stars value={r.rating} />
                 {r.comment && <p className="review-comment">{r.comment}</p>}
                 <p className="review-foot">
-                  <span>{r.nickname}{(r.is_sample || r.id?.toString().startsWith('s')) && <em> · {t('review.sample')}</em>} · {new Date(r.created_at).toLocaleDateString(lang === 'en' ? 'en-US' : 'ko-KR')}</span>
+                  <span>{r.nickname}{(r.is_sample || r.id?.toString().startsWith('s')) && <em> · {t('review.sample')}</em>} · {new Date(r.created_at).toLocaleDateString(localeOf(lang))}</span>
                   {!state.demo && !r.is_sample && r.nickname === me && (
                     <button className="tag" onClick={() => remove(r)}>{t('review.del')}</button>
                   )}

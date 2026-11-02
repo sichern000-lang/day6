@@ -1,10 +1,15 @@
 // 화면 문구 — 새 문구는 ko/en 양쪽에 같은 키로 추가하세요
+import es from '../locales/es.js'
+import de from '../locales/de.js'
+
 const STR = {
   ko: {
     announce: '제주 신화·전설을 지도 위에서 만나 보세요',
     brand: '신화지도',
     'nav.home': '홈', 'nav.map': '신화 지도', 'nav.stories': '이야기', 'nav.notebook': '내 수첩',
     'nav.review': '리뷰', 'nav.ask': 'Ask',
+    'intro.skip': '건너뛰기', 'intro.hint': '스크롤하거나 눌러서 한 장씩 넘겨 보세요', 'intro.label': '제주 이야기 메모',
+    'doodle.oreum': '오름', 'doodle.giant': '설문대할망', 'doodle.holes': '삼성혈', 'doodle.peak': '산방산', 'doodle.dragon': '용두암', 'doodle.serpent': '김녕굴', 'doodle.tree': '송당 당나무', 'doodle.hareubang': '돌하르방', 'doodle.haenyeo': '해녀', 'doodle.horse': '제주 말', 'doodle.tangerine': '귤', 'doodle.camellia': '동백꽃', 'doodle.fire': '도체빗불',
     'chat.close': '닫기', 'chat.error': '답을 가져오지 못했어요',
     'review.title': '여행 후기', 'review.sub': '다녀온 장소에 별점을 남기고 추천해 주세요',
     'review.write': '후기 쓰기', 'review.avg': '평균 {avg} · 후기 {n}개',
@@ -70,6 +75,8 @@ const STR = {
     brand: 'Myth Map',
     'nav.home': 'Home', 'nav.map': 'Myth Map', 'nav.stories': 'Stories', 'nav.notebook': 'Notebook',
     'nav.review': 'Reviews', 'nav.ask': 'Ask',
+    'intro.skip': 'Skip', 'intro.hint': 'Scroll or tap to peel the notes away', 'intro.label': 'Notes from Jeju’s stories',
+    'doodle.oreum': 'Oreum', 'doodle.giant': 'Seolmundae', 'doodle.holes': 'Samseonghyeol', 'doodle.peak': 'Sanbangsan', 'doodle.dragon': 'Yongduam', 'doodle.serpent': 'Gimnyeong Cave', 'doodle.tree': 'Shrine tree', 'doodle.hareubang': 'Dol hareubang', 'doodle.haenyeo': 'Haenyeo', 'doodle.horse': 'Jeju pony', 'doodle.tangerine': 'Tangerine', 'doodle.camellia': 'Camellia', 'doodle.fire': 'Dokkaebi fire',
     'chat.close': 'Close', 'chat.error': 'Could not get an answer',
     'review.title': 'Trip reviews', 'review.sub': 'Rate the places you visited and recommend them',
     'review.write': 'WRITE A REVIEW', 'review.avg': 'Average {avg} · {n} reviews',
@@ -130,10 +137,14 @@ const STR = {
     loading: 'Loading…', empty: 'No results',
     'toast.nosb': 'Supabase setup (.env.local) is required', 'toast.dup': 'Already in your notebook', 'toast.saved': "Saved '{title}' to your notebook",
   },
+  es,
+  de,
 }
 
 export function translate(lang, key, vars) {
-  let s = STR[lang]?.[key] ?? STR.ko[key] ?? key
+  let s = STR[lang]?.[key] ?? STR.en[key] ?? STR.ko[key] ?? key
   if (vars) for (const [k, v] of Object.entries(vars)) s = s.replaceAll(`{${k}}`, v)
   return s
 }
+
+export { STR }

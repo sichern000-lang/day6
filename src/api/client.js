@@ -25,5 +25,5 @@ export const fetchCatalog = () => get('/api/catalog')
 export const fetchHeritage = (keyword = '') => get(`/api/heritage?keyword=${encodeURIComponent(keyword)}`)
 
 // AI
-export const translateTexts = (texts) => post('/api/translate', { texts })
+export const translateTexts = (texts, lang = 'en') => post('/api/translate', { texts, lang })
 export const askAgent = (message, history, lang) => post('/api/agent', { message, history, lang })

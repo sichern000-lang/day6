@@ -9,6 +9,7 @@ import FeatureCarousel from '../components/FeatureCarousel'
 import IntroNotes from '../components/IntroNotes'
 import AskShowcase from '../components/AskShowcase'
 import TypedTitle from '../components/TypedTitle'
+import { Scribble } from '../components/LandingArt'
 import heroImg from '../assets/hero.jpg'
 
 export default function Home() {
@@ -69,36 +70,37 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="snap-sec">
+      <section className="snap-sec statement">
+        <div className="land-map" aria-hidden="true" />
         <div className="wrap">
-          <h2 className="display">{t('home.display').split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</h2>
-          <p className="lede">{t('home.lede')}</p>
-          <FeatureCarousel />
-          <div className="more">
-            <Link className="btn ghost small" to="/stories">{t('home.more')}</Link>
+          <div className="statement-text">
+            {t('home.statement').split('\n\n').map((para, i) => (
+              <p key={i}>{para.split('\n').map((line, j) => <span key={j}>{j > 0 && <br />}{line}</span>)}</p>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="snap-sec stories-sec">
+        <Scribble kind="burst" className="sc-burst" />
+        <Scribble kind="grass" className="sc-grass" />
+        <Scribble kind="hatch" className="sc-hatch" />
+        <div className="wrap">
+          <div className="stories-grid">
+            <div className="stories-intro">
+              <span className="eyebrow">STORIES</span>
+              <h2 className="display">{t('home.storiesTitle')}</h2>
+              <p className="lede">{t('home.storiesSub').split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</p>
+              <Link className="textlink" to="/stories">{t('home.more')} <span aria-hidden="true">↗</span></Link>
+            </div>
+            <FeatureCarousel />
           </div>
         </div>
       </section>
 
       <AskShowcase />
 
-      <section className="snap-sec">
-        <div className="wrap">
-          <div className="split">
-            <div className="split-text">
-              <span className="eyebrow">OUR TELLING</span>
-              <p>{t('home.telling')}</p>
-              <button className="btn ghost" onClick={openChat}>{t('home.ask')}</button>
-            </div>
-            <div className="split-art">
-              <img src={heroImg} alt="" loading="lazy" />
-              <span className="tape" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="snap-sec">
+      <section className="snap-sec status-sec">
         <div className="wrap">
           <h2 className="display small">{t('home.status')}</h2>
           <div className="grid three">

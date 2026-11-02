@@ -30,6 +30,8 @@ export default {
   'home.cta': 'ABRIR EL MAPA',
   'home.display': 'Historias contadas despacio,\ncon sus lugares.', 'home.lede': 'Empieza por la historia de hoy.',
   'home.today': 'HOY', 'home.read': 'LEER', 'home.more': 'VER MÁS',
+  'home.statement': 'Volvemos a unir las leyendas con la tierra que las vio nacer.\n\nCaminando junto al Hallasan, las rocas, las cuevas y los santuarios de aldea,\nnos encontramos con los lugares donde empezaron las historias y con su tiempo.\n\nMás allá de leer, vivimos historias con raíces en la tierra.',
+  'home.storiesTitle': 'Historias que viajan por la isla', 'home.storiesSub': 'Leyendas de Jeju,\npor palabras clave',
   'home.telling': 'Nuestra forma de contar consiste en restablecer el vínculo entre una historia y la tierra de la que nació. Es recordar que el Hallasan, una roca, una cueva o un santuario de aldea nunca fueron solo paisaje: ahí empezó el relato. Es ver el tiempo de hoy, los lugares que aún llevan su nombre y el patrimonio que lo mantuvo vivo, y luego ir a caminarlos. Es cultivar el cariño por las historias arraigadas en un lugar y saber de dónde viene de verdad un relato.',
   'home.ask': 'PREGUNTAR A LA GUÍA', 'home.status': 'Estado de la configuración',
   'home.nick': 'Apodo', 'home.nickph': 'Escribe un apodo', 'home.nickhint': 'Tu cuaderno se guarda con este apodo.',

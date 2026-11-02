@@ -47,7 +47,7 @@ export default function AskShowcase() {
   const ask = (text) => { openChat(); sendMessage(text) }
 
   return (
-    <section className="snap-sec">
+    <section className="snap-sec ask-sec">
       <div className="wrap ask-grid">
         <div className="ask-copy">
           <span className="eyebrow">ASK</span>

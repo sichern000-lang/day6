@@ -30,6 +30,8 @@ export default {
   'home.cta': 'KARTE ÖFFNEN',
   'home.display': 'Geschichten, langsam erzählt,\nmit ihren Orten.', 'home.lede': 'Beginne mit der Geschichte des Tages.',
   'home.today': 'HEUTE', 'home.read': 'LESEN', 'home.more': 'MEHR LESEN',
+  'home.statement': 'Wir verbinden die Erzählungen wieder mit dem Land, das sie geboren hat.\n\nAuf dem Weg vorbei am Hallasan, an Felsen, Höhlen und Dorfschreinen\nbegegnen wir den Orten, an denen die Geschichten begannen, und ihrer Zeit.\n\nWir lesen nicht nur, wir erleben Geschichten, die in der Erde wurzeln.',
+  'home.storiesTitle': 'Geschichten von der Insel', 'home.storiesSub': 'Jeju-Sagen,\nnach Stichwort',
   'home.telling': 'Unsere Art zu erzählen knüpft die Verbindung zwischen einer Geschichte und dem Boden, aus dem sie stammt, neu. Sie erinnert daran, dass der Hallasan, ein Stein, eine Höhle oder ein Dorfschrein nie bloße Kulisse waren – dort begann die Erzählung. Sie zeigt das heutige Wetter, die Orte, die ihren Namen noch tragen, und das Erbe, das sie am Leben hielt, und lädt dazu ein, dorthin zu wandern. Sie weckt die Liebe zu Geschichten, die im Ort verwurzelt sind, und das Wissen, woher eine Erzählung wirklich kommt.',
   'home.ask': 'DIE GUIDE FRAGEN', 'home.status': 'Einrichtungsstatus',
   'home.nick': 'Spitzname', 'home.nickph': 'Spitznamen eingeben', 'home.nickhint': 'Dein Notizbuch wird unter diesem Spitznamen gespeichert.',

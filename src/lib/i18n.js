@@ -5,7 +5,7 @@ import de from '../locales/de.js'
 const STR = {
   ko: {
     announce: '제주의 신화·전설·민담을 열람하고 내 수첩에 저장하세요',
-    brand: '제주 아카이브',
+    brand: '제주 이야기 아카이브',
     'nav.home': '홈', 'nav.map': '신화 지도', 'nav.stories': '이야기', 'nav.notebook': '내 수첩',
     'nav.review': '리뷰', 'nav.ask': 'Ask',
     'intro.skip': '건너뛰기', 'intro.hint': '스크롤하거나 눌러서 한 장씩 넘겨 보세요', 'intro.label': '제주 이야기 메모',
@@ -81,7 +81,7 @@ const STR = {
   },
   en: {
     announce: 'Browse Jeju’s myths, legends and folktales, and save them to your notebook',
-    brand: 'Jeju Archive',
+    brand: 'Jeju Story Archive',
     'nav.home': 'Home', 'nav.map': 'Myth Map', 'nav.stories': 'Stories', 'nav.notebook': 'Notebook',
     'nav.review': 'Reviews', 'nav.ask': 'Ask',
     'intro.skip': 'Skip', 'intro.hint': 'Scroll or tap to peel the notes away', 'intro.label': 'Notes from Jeju’s stories',

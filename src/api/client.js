@@ -24,4 +24,4 @@ export const fetchPlacesEn = (keyword = '') => get(`/api/tour-en?keyword=${encod
 export const fetchHeritage = (keyword = '') => get(`/api/heritage?keyword=${encodeURIComponent(keyword)}`)
 
 // AI
-export const askAgent = (message, history) => post('/api/agent', { message, history })
+export const askAgent = (message, history, lang) => post('/api/agent', { message, history, lang })

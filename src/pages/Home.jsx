@@ -2,41 +2,40 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ping } from '../api/client'
 import { isSupabaseReady, supabase } from '../lib/supabase'
-import { STORIES, storyOfTheDay } from '../lib/stories'
+import { STORIES } from '../lib/stories'
 import { useAppStore } from '../store/useAppStore'
+import { useT } from '../lib/useT'
 import WeatherChip from '../components/WeatherChip'
-import StoryCard from '../components/StoryCard'
-import Landscape from '../components/Landscape'
+import FeatureCarousel from '../components/FeatureCarousel'
+import heroImg from '../assets/hero.jpg'
 
 export default function Home() {
+  const t = useT()
   const nickname = useAppStore((s) => s.nickname)
   const setNickname = useAppStore((s) => s.setNickname)
   const loadSaved = useAppStore((s) => s.loadSaved)
-  const [db, setDb] = useState(isSupabaseReady
-    ? { state: 'wait', msg: '확인 중…' }
-    : { state: 'fail', msg: '.env.local 에 Supabase 값을 넣으세요' })
-  const [api, setApi] = useState({ state: 'wait', msg: '확인 중…' })
+  const [db, setDb] = useState(isSupabaseReady ? { state: 'wait' } : { state: 'fail', key: 'check.sbfail' })
+  const [api, setApi] = useState({ state: 'wait' })
 
   useEffect(() => {
     if (isSupabaseReady) {
       supabase.from('saved_stories').select('id').limit(1).then(({ error }) =>
-        setDb(error ? { state: 'fail', msg: error.message } : { state: 'ok', msg: '연결 OK' }))
+        setDb(error ? { state: 'fail', msg: error.message } : { state: 'ok', key: 'check.ok' }))
     }
     ping()
-      .then((d) => setApi({ state: 'ok', msg: `공공데이터 키 ${d.hasDataKey ? '있음' : '없음'} · Claude 키 ${d.hasClaudeKey ? '있음' : '없음'}` }))
-      .catch(() => setApi({ state: 'fail', msg: 'npm run dev 가 아니라 vercel dev 로 실행하세요' }))
+      .then((d) => setApi({ state: 'ok', msg: `data.go.kr ${d.hasDataKey ? '✓' : '✗'} · EN tour ${d.hasEngKey ? '✓' : '✗'} · Claude ${d.hasClaudeKey ? '✓' : '✗'}` }))
+      .catch(() => setApi({ state: 'fail', key: 'check.apifail' }))
   }, [])
 
-  const today = storyOfTheDay()
   return (
     <>
-      {/* TODO: 기획 의도에 맞게 문구를 다듬으세요 */}
+      {/* TODO: 기획 의도에 맞게 문구를 다듬으세요 (src/lib/i18n.js) */}
       <section className="hero">
-        <Landscape />
+        <img className="hero-img" src={heroImg} alt="" />
         <div className="hero-copy">
           <WeatherChip place="제주시" />
-          <h1>신들의 섬,<br /><em>이야기</em>를 따라 걷다</h1>
-          <Link className="btn" to="/map">지도 펼치기</Link>
+          <h1>{t('home.h1a')}<br />{t('home.h1pre')}<em>{t('home.h1em')}</em>{t('home.h1post')}</h1>
+          <Link className="btn" to="/map">{t('home.cta')}</Link>
         </div>
         <div className="stickers" aria-hidden="true">
           <div className="sticker blue"><b>18,000</b><span>gods of jeju</span></div>
@@ -47,44 +46,34 @@ export default function Home() {
 
       <div className="sheet">
         <div className="wrap">
-          <h2 className="display">이야기를 천천히,<br />장소와 함께.</h2>
-          <p className="lede">오늘의 이야기부터 골라 보세요.</p>
-          <div className="rail">
-            <div className="rail-lead">
-              <span className="eyebrow">TODAY</span>
-              <h3>{today.title}</h3>
-              <p>{today.summary}</p>
-              <Link className="btn" to={`/stories/${today.id}`}>읽어 보기</Link>
-            </div>
-            {STORIES.map((s) => <StoryCard key={s.id} story={s} />)}
-          </div>
+          <h2 className="display">{t('home.display').split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</h2>
+          <p className="lede">{t('home.lede')}</p>
+
+          {/* 대표 이야기 캐러셀 — 키워드 사물 사진 */}
+          <FeatureCarousel />
 
           <section className="split">
             <div className="split-text">
               <span className="eyebrow">OUR TELLING</span>
-              <p>
-                제주에는 일만 팔천 신의 이야기가 전해집니다. 우리는 그 이야기를 지도 위에 올리고,
-                이야기가 시작된 장소의 날씨와 국가유산을 이어 붙였어요.
-                읽는 데서 끝나지 않고, 직접 걸어 볼 수 있도록.
-              </p>
-              <Link className="btn ghost" to="/guide">안내자에게 묻기</Link>
+              <p>{t('home.telling')}</p>
+              <Link className="btn ghost" to="/guide">{t('home.ask')}</Link>
             </div>
             <div className="split-art">
-              <Landscape variant="card" />
+              <img src={heroImg} alt="" loading="lazy" />
               <span className="tape" />
             </div>
           </section>
 
-          <h2 className="display small">준비 상태</h2>
+          <h2 className="display small">{t('home.status')}</h2>
           <div className="grid three">
             <div className="panel">
-              <strong>닉네임</strong>
-              <input className="input" placeholder="닉네임을 입력하세요" value={nickname}
+              <strong>{t('home.nick')}</strong>
+              <input className="input" placeholder={t('home.nickph')} value={nickname}
                 onChange={(e) => setNickname(e.target.value)} onBlur={loadSaved} />
-              <p className="hint">내 수첩이 이 닉네임으로 저장돼요.</p>
+              <p className="hint">{t('home.nickhint')}</p>
             </div>
-            <Check title="Supabase" {...db} />
-            <Check title="서버 함수 /api" {...api} />
+            <Check title="Supabase" state={db.state} msg={db.msg ?? (db.key ? t(db.key) : t('check.wait'))} />
+            <Check title="/api" state={api.state} msg={api.msg ?? (api.key ? t(api.key) : t('check.wait'))} />
           </div>
         </div>
       </div>

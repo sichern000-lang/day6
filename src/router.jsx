@@ -10,11 +10,11 @@ import NotFound from './pages/NotFound'
 
 // 페이지 추가: ① pages/ 에 파일 ② NAV_ITEMS 한 줄 ③ routes 한 줄
 export const NAV_ITEMS = [
-  { to: '/', label: '홈' },
-  { to: '/map', label: '신화 지도' },
-  { to: '/stories', label: '이야기' },
-  { to: '/guide', label: '안내자' },
-  { to: '/notebook', label: '내 수첩' },
+  { to: '/', key: 'nav.home' },
+  { to: '/map', key: 'nav.map' },
+  { to: '/stories', key: 'nav.stories' },
+  { to: '/guide', key: 'nav.guide' },
+  { to: '/notebook', key: 'nav.notebook' },
 ]
 
 export const router = createBrowserRouter([

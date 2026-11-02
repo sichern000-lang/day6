@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { getStory } from '../server/stories.js'
 import { searchTour } from '../server/tour.js'
+import { searchTourEng } from '../server/tourEng.js'
 import { getWeather } from '../server/weather.js'
 import { searchHeritage } from '../server/heritage.js'
 
@@ -51,16 +52,26 @@ const SYSTEM = `너는 '신화지도'의 이야기 안내자다. 제주 신화·
 - 신화는 전승에 따라 다르다는 점을 필요하면 짧게 덧붙인다.
 - 한국어로 5문장 이내, 이야기꾼처럼 다정하게.`
 
+const EN_RULE = `
+- The user is a foreign visitor. Answer in English, in at most 5 sentences.
+- Story data is in Korean: translate it faithfully when you answer, and never add details that are not in the data.
+- For search_tour_places use English keywords (e.g. Hallasan); the results are English tourism data.
+- Heritage names come from a Korean-only source: give a short English gloss when you mention them.`
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' })
-  const { message, history = [] } = req.body ?? {}
+  const { message, history = [], lang = 'ko' } = req.body ?? {}
+  const en = lang === 'en'
+  // 영어 모드: 영문 관광정보 API 와 영어 답변
+  const tools_run = en ? { ...runTool, search_tour_places: searchTourEng } : runTool
+  const system = en ? SYSTEM + EN_RULE : SYSTEM
   const messages = [...history.slice(-10), { role: 'user', content: message }]
   const steps = [] // 화면에 "에이전트가 무엇을 했는지" 보여주기용 호출 내역
 
   try {
     // ③ 에이전트 루프: 생각 → 도구 호출 → 결과 확인 → (반복) → 최종 답
     for (let turn = 0; turn < 6; turn++) {
-      const r = await client.messages.create({ model: MODEL, max_tokens: 1024, system: SYSTEM, tools, messages })
+      const r = await client.messages.create({ model: MODEL, max_tokens: 1024, system, tools, messages })
 
       if (r.stop_reason !== 'tool_use') {
         const answer = r.content.filter((b) => b.type === 'text').map((b) => b.text).join('\n')
@@ -72,7 +83,7 @@ export default async function handler(req, res) {
       for (const block of r.content) {
         if (block.type !== 'tool_use') continue
         let result
-        try { result = await runTool[block.name](block.input ?? {}) }
+        try { result = await tools_run[block.name](block.input ?? {}) }
         catch (e) { result = { error: e.message } }
         steps.push({ tool: block.name, args: block.input, count: Array.isArray(result) ? result.length : 0, error: result?.error })
         results.push({ type: 'tool_result', tool_use_id: block.id, content: JSON.stringify(result) })

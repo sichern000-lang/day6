@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { supabase } from '../lib/supabase'
 import { askAgent } from '../api/client'
+import { translate } from '../lib/i18n'
 
 // ── 여러 페이지가 함께 쓰는 "전역 상태" ─────────────────
 // 한 페이지에서만 쓰는 값(입력창, 선택한 탭 등)은 그 페이지의 useState 로 둡니다.
@@ -11,6 +12,10 @@ export const useAppStore = create(
       // ① 사용자 닉네임 — localStorage 에 저장
       nickname: '',
       setNickname: (nickname) => set({ nickname: nickname.trim() }),
+
+      // ① -2 표시 언어 — 'ko' | 'en', localStorage 에 저장
+      lang: 'ko',
+      setLang: (lang) => set({ lang }),
 
       // ② 알림
       toasts: [],
@@ -35,15 +40,15 @@ export const useAppStore = create(
         set({ saved: data })
       },
       saveStory: async ({ id, title }) => {
-        if (!supabase) return get().toast('Supabase 설정(.env.local)이 필요해요', 'warn')
-        if (get().saved.some((s) => s.story_id === id)) return get().toast('이미 수첩에 있어요', 'warn')
+        if (!supabase) return get().toast(translate(get().lang, 'toast.nosb'), 'warn')
+        if (get().saved.some((s) => s.story_id === id)) return get().toast(translate(get().lang, 'toast.dup'), 'warn')
         const { data, error } = await supabase
           .from('saved_stories')
           .insert({ nickname: get().nickname || '익명', story_id: id, title })
           .select().single()
         if (error) return get().toast(error.message, 'error')
         set({ saved: [data, ...get().saved] })
-        get().toast(`'${title}' 수첩에 담았어요`)
+        get().toast(translate(get().lang, 'toast.saved', { title }))
       },
       toggleVisited: async (row) => {
         if (!supabase) return
@@ -65,7 +70,7 @@ export const useAppStore = create(
         const history = get().messages.map((m) => ({ role: m.role, content: m.text }))
         set({ messages: [...get().messages, { role: 'user', text }], chatLoading: true })
         try {
-          const { answer, steps } = await askAgent(text, history)
+          const { answer, steps } = await askAgent(text, history, get().lang)
           set({ messages: [...get().messages, { role: 'assistant', text: answer, steps }] })
         } catch (e) {
           get().toast(e.message, 'error')
@@ -76,7 +81,7 @@ export const useAppStore = create(
     }),
     {
       name: 'sinhwa-map-store',
-      partialize: (s) => ({ nickname: s.nickname }),
+      partialize: (s) => ({ nickname: s.nickname, lang: s.lang }),
     },
   ),
 )

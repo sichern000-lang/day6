@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom'
+import { useT } from '../lib/useT'
 
 export default function NotFound() {
+  const t = useT()
   return (
     <main className="container">
       <div className="hero-lite">
-        <h1>길을 잃었어요</h1>
-        <p>없는 주소예요. 홈에서 다시 출발해 보세요.</p>
-        <Link className="btn" to="/">홈으로</Link>
+        <h1>{t('nf.title')}</h1>
+        <p>{t('nf.text')}</p>
+        <Link className="btn" to="/">{t('nf.home')}</Link>
       </div>
     </main>
   )

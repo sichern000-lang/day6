@@ -26,7 +26,7 @@ export default {
   'review.uploadFail': 'No se pudo subir la foto',
   'review.stars': '{n} estrellas',
 
-  'home.h1a': 'Explora el saber de Jeju,', 'home.h1pre': 'guarda las ', 'home.h1em': 'historias', 'home.h1post': ' que amas',
+  'home.h1a': 'Historias de Jeju,', 'home.h1pre': 'para leer y ', 'home.h1em': 'guardar', 'home.h1post': '',
   'home.cta': 'EXPLORAR EL ARCHIVO',
   'home.display': 'Historias contadas despacio,\ncon sus lugares.', 'home.lede': 'Empieza por la historia de hoy.',
   'home.nbTitle': 'Toca el corazón de\nlas historias que te gusten', 'home.nbSub': 'Las historias con corazón van a tu cuaderno. Marca los lugares visitados y deja una nota.', 'home.nbOpen': 'Abrir mi cuaderno', 'home.shuffle': 'Ver otras',

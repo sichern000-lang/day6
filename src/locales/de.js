@@ -26,7 +26,7 @@ export default {
   'review.uploadFail': 'Das Foto konnte nicht hochgeladen werden',
   'review.stars': '{n} Sterne',
 
-  'home.h1a': 'Entdecke Jejus Überlieferung,', 'home.h1pre': 'speichere die ', 'home.h1em': 'Geschichten', 'home.h1post': ', die du liebst',
+  'home.h1a': 'Jejus Geschichten,', 'home.h1pre': 'zum Lesen und ', 'home.h1em': 'Bewahren', 'home.h1post': '',
   'home.cta': 'ARCHIV DURCHSTÖBERN',
   'home.display': 'Geschichten, langsam erzählt,\nmit ihren Orten.', 'home.lede': 'Beginne mit der Geschichte des Tages.',
   'home.nbTitle': 'Tippe auf das Herz bei\nden Geschichten, die dir gefallen', 'home.nbSub': 'Geschichten mit Herz landen in deinem Notizbuch. Hake besuchte Orte ab und schreib eine Notiz.', 'home.nbOpen': 'Mein Notizbuch öffnen', 'home.shuffle': 'Andere zeigen',

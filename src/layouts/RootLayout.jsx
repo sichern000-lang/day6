@@ -7,6 +7,9 @@ import AuthModal from '../components/AuthModal'
 import { useAppStore } from '../store/useAppStore'
 import { LANGS } from '../lib/langs'
 import { useT } from '../lib/useT'
+import { translate } from '../lib/i18n'
+
+const en = (key) => translate('en', key)   // 상단 메뉴는 언어와 상관없이 영어로 고정
 
 export default function RootLayout() {
   const t = useT()
@@ -39,19 +42,19 @@ export default function RootLayout() {
       <nav className={`topbar ${isHome ? 'over' : ''} ${isHome && scrolled ? 'solid' : ''}`}>
         <div className="links">
           {NAV_ITEMS.map((n) => n.action ? (
-            <button key={n.action} className="navbtn" onClick={openChat}>{t(n.key)}</button>
+            <button key={n.action} className="navbtn" onClick={openChat}>{en(n.key)}</button>
           ) : (
-            <NavLink key={n.to} to={n.to} end={n.to === '/'}>{t(n.key)}</NavLink>
+            <NavLink key={n.to} to={n.to} end={n.to === '/'}>{en(n.key)}</NavLink>
           ))}
         </div>
-        <NavLink to="/" className="brand">{t('brand')}</NavLink>
+        <NavLink to="/" className="brand">{en('brand')}</NavLink>
         <div className="right">
           <div className="lang" role="group" aria-label="Language">
             {LANGS.map((l) => (
               <button key={l.id} className={lang === l.id ? 'on' : ''} onClick={() => setLang(l.id)} title={l.name} aria-pressed={lang === l.id}>{l.label}</button>
             ))}
           </div>
-          <button className={`who ${user ? 'in' : ''}`} onClick={openAuth}>{user ? (nickname || user.email) : t('auth.login')}</button>
+          <button className={`who ${user ? 'in' : ''}`} onClick={openAuth}>{user ? (nickname || user.email) : en('auth.login')}</button>
         </div>
       </nav>
       <main className={isHome ? '' : 'container'}><Outlet /></main>

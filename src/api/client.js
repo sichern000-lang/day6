@@ -21,6 +21,7 @@ export const ping = () => get('/api/hello')
 export const fetchWeather = (place = '제주시') => get(`/api/weather?place=${encodeURIComponent(place)}`)
 export const fetchPlaces = (keyword = '') => get(`/api/tour?keyword=${encodeURIComponent(keyword)}`)
 export const fetchPlacesEn = (keyword = '') => get(`/api/tour-en?keyword=${encodeURIComponent(keyword)}`)
+export const fetchCatalog = () => get('/api/catalog')
 export const fetchHeritage = (keyword = '') => get(`/api/heritage?keyword=${encodeURIComponent(keyword)}`)
 
 // AI

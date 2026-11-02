@@ -1,0 +1,26 @@
+{
+  "kinds": [
+    { "id": "myth", "ko": "신화", "en": "Myths" },
+    { "id": "folktale", "ko": "민담", "en": "Folktales" }
+  ],
+  "groups": [
+    { "id": "myth-general", "kind": "myth", "codes": ["MYTH2.001"], "ko": "일반신 본풀이", "en": "General-deity myths",
+      "keywords": [["서천꽃밭", "Western Flower Garden"], ["하늘옥황", "Heavenly Emperor"], ["할망", "Grandmother goddess"], ["천상베필", "Heavenly match"], ["해산", "Childbirth"], ["불공", "Buddhist offering"]] },
+    { "id": "myth-shrine", "kind": "myth", "codes": ["MYTH2.002"], "ko": "당신 본풀이", "en": "Village-shrine myths",
+      "keywords": [["본향당", "Village shrine"], ["소천국", "Socheon-guk"], ["백주또", "Baekjuddo"], ["돼지고기", "Pork"], ["용왕국", "Dragon-king realm"], ["귀양", "Exile"], ["산신백관", "Mountain spirits"], ["무쇠상자", "Iron box"]] },
+    { "id": "myth-ancestor", "kind": "myth", "codes": ["MYTH2.003"], "ko": "조상·가문 본풀이", "en": "Ancestor & clan myths",
+      "keywords": [["큰굿", "Great ritual"], ["삼형제", "Three brothers"], ["조상신", "Ancestor spirit"], ["기우제", "Rain rite"], ["용소", "Dragon pool"], ["양씨아미", "Yangssi Ami"]] },
+    { "id": "myth-epic", "kind": "myth", "codes": ["MYTH2.019"], "ko": "서사무가·기타", "en": "Ritual epics & others",
+      "keywords": [["원천강", "Wonchongang"], ["세민황제", "Emperor Semin"], ["저승·이승", "Afterlife & this world"], ["적선", "Good deeds"], ["버드나무", "Willow tree"]] },
+    { "id": "tale-dokkaebi", "kind": "folktale", "codes": ["MYTH2.016"], "ko": "도깨비 이야기", "en": "Dokkaebi tales",
+      "keywords": [["도체비(도깨비)", "Dokkaebi"], ["도체빗불", "Dokkaebi fire"], ["귀신", "Ghost"], ["굿", "Shaman ritual"], ["심방", "Shaman"], ["제사", "Ancestral rite"], ["밤", "Night"]] },
+    { "id": "tale-people", "kind": "folktale", "codes": ["MYTH2.015"], "ko": "사람살이 이야기", "en": "Tales of everyday people",
+      "keywords": [["할망", "Grandmother"], ["하르방", "Grandfather"], ["지붕", "Roof"], ["호박", "Pumpkin"], ["콩데기", "Kongdegi"], ["다슴애기", "Stepdaughter"], ["각시", "Bride"]] },
+    { "id": "tale-humor", "kind": "folktale", "codes": ["MYTH2.017"], "ko": "웃음·해학", "en": "Humor & jokes",
+      "keywords": [["하르방", "Grandfather"], ["거짓말", "Lies"], ["우스갯소리", "Jokes"], ["똥", "Dung"], ["며느리", "Daughter-in-law"], ["시아버지", "Father-in-law"], ["장독", "Jar"]] },
+    { "id": "tale-animal", "kind": "folktale", "codes": ["MYTH2.014"], "ko": "동물·교훈", "en": "Animals & lessons",
+      "keywords": [["말(馬)", "Horse"], ["여우", "Fox"], ["환생", "Reincarnation"], ["호랑이", "Tiger"], ["복", "Fortune"], ["개와 닭", "Dog & chicken"]] },
+    { "id": "tale-spirit", "kind": "folktale", "codes": ["MYTH2.013", "MYTH2.018"], "ko": "귀신·영혼", "en": "Ghosts & spirits",
+      "keywords": [["바당(바다)", "Sea"], ["헛게", "Phantom"], ["처녀", "Maiden"], ["영혼", "Soul"], ["도깨비", "Dokkaebi"]] }
+  ]
+}

@@ -21,6 +21,10 @@ const STR = {
 
     'map.title': '신화 지도', 'map.sub': '핀을 눌러 이야기를 만나 보세요 (위치는 대략적인 표시예요)', 'map.selected': '선택한 이야기',
     'stories.title': '이야기 목록', 'stories.sub': '신화·전설 {n}편', 'stories.search': '이름·장소로 검색', 'stories.none': '맞는 이야기가 없어요',
+    'stories.sub2': '신화·민담 {n}편 · 대표 이야기 {f}편', 'stories.all': '전체', 'stories.featured': '대표 이야기',
+    'stories.kw': '키워드', 'stories.more': '더 보기', 'stories.groupAll': '모두', 'stories.search2': '제목·키워드로 검색',
+    'stories.note': '제주도청 OpenAPI 는 제목·분류·핵심어만 제공해요. 원문(PDF·전자책) 링크는 현재 열리지 않아 본문은 대표 이야기에만 있어요.',
+    'stories.err': '신화·민담 목록을 불러오지 못했어요', 'stories.web': '검색',
 
     'detail.back': '지도로', 'detail.note': '신화는 전승에 따라 내용이 조금씩 달라요.', 'detail.save': '＋ 내 수첩에 담기',
     'detail.places': '이야기의 무대', 'detail.placesSrc': '한국관광공사', 'detail.noPlaces': '관련 장소가 없어요',
@@ -62,6 +66,10 @@ const STR = {
 
     'map.title': 'Myth Map', 'map.sub': 'Tap a pin to meet a story (locations are approximate)', 'map.selected': 'Selected story',
     'stories.title': 'All stories', 'stories.sub': '{n} myths and legends', 'stories.search': 'Search by name or place', 'stories.none': 'No matching stories',
+    'stories.sub2': '{n} myths & folktales · {f} featured stories', 'stories.all': 'All', 'stories.featured': 'Featured',
+    'stories.kw': 'Keywords', 'stories.more': 'MORE', 'stories.groupAll': 'All', 'stories.search2': 'Search titles & keywords',
+    'stories.note': 'The Jeju provincial OpenAPI only provides titles, categories and keywords. Its full-text PDF/e-book links currently do not open, so full texts exist only for the featured stories. Titles are translated automatically; keywords stay in Korean.',
+    'stories.err': 'Could not load the myth and folktale list', 'stories.web': 'Search',
 
     'detail.back': 'Back to map', 'detail.note': 'Myths differ a little from one telling to another.', 'detail.save': '＋ Add to my notebook',
     'detail.places': 'Where it happened', 'detail.placesSrc': 'Korea Tourism Organization', 'detail.noPlaces': 'No related places found',

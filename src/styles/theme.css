@@ -253,11 +253,11 @@ form.row .input { flex: 1; width: auto; margin: 0; }
 
 /* 장소·국가유산 줄 — 윤곽선 없이 위쪽 선만 있는 버튼 */
 .rows { list-style: none; margin: 0; padding: 0; }
-.rows a, .rows .row-item {
+.rows a, .rows .row-item, .rows .lore-item {
   display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 6px;
   border-top: 1.5px solid var(--ink); transition: background .2s, padding .2s;
 }
-.rows a:hover, .rows a:focus-visible, .rows .row-item:hover { background: rgba(243, 227, 160, .6); padding-left: 16px; outline: none; }
+.rows a:hover, .rows a:focus-visible, .rows .row-item:hover, .rows .lore-item:hover { background: rgba(243, 227, 160, .6); padding-left: 16px; outline: none; }
 .h-text { display: grid; gap: 2px; }
 .h-text strong { font-weight: 600; }
 .h-text strong small { font-weight: 400; color: var(--muted); }
@@ -274,7 +274,7 @@ form.row .input { flex: 1; width: auto; margin: 0; }
 body.bright { background: #fcfbf3; }
 body.bright .topbar:not(.over) { background: #fcfbf3; }
 body.bright .story-panel { background: #fffefa; }
-body.bright .rows a:hover, body.bright .rows .row-item:hover { background: rgba(243, 227, 160, .45); }
+body.bright .rows a:hover, body.bright .rows .row-item:hover, body.bright .rows .lore-item:hover { background: rgba(243, 227, 160, .45); }
 
 /* 랜딩 — 섹션마다 한 화면, 스크롤하면 다음 섹션에 맞춰짐 */
 html.snap { scroll-snap-type: y mandatory; }
@@ -287,3 +287,19 @@ html.snap .footer { scroll-snap-align: end; }
 .snap-sec .display.small { margin-top: 0; }
 /* 작은 화면·낮은 화면은 내용이 한 화면을 넘을 수 있어 느슨하게 */
 @media (max-width: 900px), (max-height: 640px) { html.snap { scroll-snap-type: y proximity; } }
+
+/* 이야기 목록 — 종류·분류 버튼, 키워드, 신화·민담 줄 */
+.count { opacity: .55; font-size: .78em; }
+.tabs.sub { margin-top: -4px; }
+.tabs.sub button { font-size: .8rem; padding: 4px 13px; border-width: 1px; }
+.kw { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 2px 0 18px; font-size: .85rem; }
+.kw b { margin-right: 6px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
+.tag { border: 0; background: rgba(179, 196, 170, .45); color: var(--ink); font: inherit; font-size: .78rem; padding: 2px 10px; border-radius: 999px; cursor: pointer; }
+.tag:hover { background: var(--butter); }
+.feature-grid { margin-bottom: 26px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.feature-grid .story-card h3 { font-size: 1.2rem; }
+.lore .lore-item { align-items: flex-start; }
+.lore .copy-btn { text-decoration: none; font-size: 1.05rem; }
+.lore-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; align-items: center; }
+.lore-meta em { font-style: normal; font-size: .72rem; letter-spacing: .06em; padding: 2px 9px; border-radius: 999px; background: var(--ink); color: var(--cream); }
+.lore .h-text > .lore-meta { color: inherit; font-size: inherit; }

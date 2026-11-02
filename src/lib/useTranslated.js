@@ -17,13 +17,17 @@ export function useTranslated(texts, enabled) {
     const need = [...new Set(texts)].filter((t) => t && !(t in cache))
     if (need.length === 0) return
     let cancelled = false
-    translateTexts(need)
-      .then(({ texts: out }) => {
-        need.forEach((t, i) => { cache[t] = out[i] })
-        save()
-        if (!cancelled) bump((n) => n + 1)
-      })
-      .catch(() => {}) // 실패하면 원문(한국어)을 그대로 보여줌
+    // 서버 함수는 한 번에 40개까지만 받으므로 나눠서 요청
+    for (let i = 0; i < need.length; i += 40) {
+      const chunk = need.slice(i, i + 40)
+      translateTexts(chunk)
+        .then(({ texts: out }) => {
+          chunk.forEach((t, j) => { cache[t] = out[j] })
+          save()
+          if (!cancelled) bump((n) => n + 1)
+        })
+        .catch(() => {}) // 실패하면 원문(한국어)을 그대로 보여줌
+    }
     return () => { cancelled = true }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, enabled])

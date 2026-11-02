@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ping } from '../api/client'
 import { isSupabaseReady, supabase } from '../lib/supabase'
-import { STORIES } from '../lib/stories'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 import WeatherChip from '../components/WeatherChip'
@@ -60,11 +59,6 @@ export default function Home() {
           <WeatherChip place="제주시" />
           <h1>{t('home.h1a')}<br />{t('home.h1pre')}<em>{t('home.h1em')}</em>{t('home.h1post')}</h1>
           <Link className="btn" to="/map">{t('home.cta')}</Link>
-        </div>
-        <div className="stickers" aria-hidden="true">
-          <div className="sticker blue"><b>18,000</b><span>gods of jeju</span></div>
-          <div className="sticker cream"><b>{STORIES.length}</b><span>tales on the map</span></div>
-          <div className="sticker butter"><b>3</b><span>open data</span></div>
         </div>
       </section>
 

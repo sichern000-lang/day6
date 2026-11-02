@@ -57,16 +57,6 @@ a { color: inherit; text-decoration: none; }
 .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(245, 242, 222, .35), transparent 30%); pointer-events: none; }
 .hero-copy { position: relative; text-align: center; display: grid; gap: 22px; justify-items: center; padding: 100px 20px 150px; }
 .hero-copy h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); color: var(--ink); }
-.stickers { position: absolute; right: 22px; top: 96px; display: grid; gap: 16px; z-index: 2; }
-.sticker {
-  width: 92px; height: 92px; display: grid; place-content: center; text-align: center;
-  line-height: 1.05; font-size: .6rem; text-transform: uppercase; letter-spacing: .06em;
-  border: 2px solid var(--ink); box-shadow: 0 4px 10px rgba(52, 66, 31, .15);
-}
-.sticker b { font-family: var(--serif); font-weight: 400; font-size: 1.5rem; letter-spacing: 0; }
-.sticker.blue { background: var(--blue); border-radius: 50%; }
-.sticker.cream { background: var(--paper); border-radius: 6px; }
-.sticker.butter { background: var(--butter); border-radius: 46% 54% 50% 50% / 52% 48% 52% 48%; }
 
 /* 크림 시트 — 히어로 위로 둥글게 올라옴 */
 .display { font-size: clamp(2rem, 4.5vw, 3rem); }
@@ -192,7 +182,6 @@ form.row .input { flex: 1; width: auto; margin: 0; }
   .topbar .who { grid-column: 2; grid-row: 1; }
   .topbar .links { grid-column: 1 / -1; grid-row: 2; }
   .topbar.over { top: 26px; }
-  .stickers { display: none; }
   .split { grid-template-columns: 1fr; }
   .split-text { padding: 36px 22px; }
   .wrap { padding: 0 16px; }
@@ -457,6 +446,6 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 @keyframes drawOn { to { stroke-dashoffset: 0; } }
 @keyframes popIn { to { opacity: 1; } }
 .hero .hero-copy { z-index: 2; }
-.hero .hero-copy, .hero .stickers { transition: opacity 1.6s .5s, transform 1.6s .5s; }
-.hero.phase-idle .hero-copy, .hero.phase-draw .hero-copy, .hero.phase-idle .stickers, .hero.phase-draw .stickers { opacity: 0; transform: translateY(16px); }
+.hero .hero-copy { transition: opacity 1.6s .5s, transform 1.6s .5s; }
+.hero.phase-idle .hero-copy, .hero.phase-draw .hero-copy { opacity: 0; transform: translateY(16px); }
 @media (prefers-reduced-motion: reduce) { .note, .intro-hint { animation: none; } }

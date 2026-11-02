@@ -2,12 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import Modal from '../components/Modal'
+import Doodle, { DOODLES } from '../components/Doodle'
 import { Empty, Loading } from '../components/Status'
 import { isSupabaseReady } from '../lib/supabase'
 import { getStoryById, localize } from '../lib/stories'
 import { folkTitle } from '../lib/folkTitle'
 import { rng } from '../lib/rng'
 import { shareText } from '../lib/askShare'
+import { fetchRandomDrawings } from '../lib/places'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
@@ -15,6 +17,7 @@ import { useT } from '../lib/useT'
 // 북마크한 메모는 맨 앞(맨 위)에 오고, "리스트로 보기"를 누르면 가지런히 정리됨.
 // (북마크는 saved_stories.visited 칸을 그대로 씀)
 const TONES = ['#c9d8ee', '#cfe0d2', '#d9d3ee', '#ebd2cc', '#d3e3ea']
+const PAPER = ['#f1f5f1', '#e6edf2', '#e8efe6']   // 두들 종이 조각 색 (랜딩 인트로와 같은 톤)
 const STEP = 202   // 메모지 사이 간격(px) — 카드보다 좁아서 살짝 겹침
 const pad2 = (n) => String(n).padStart(2, '0')
 const dateOf = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : `${pad2(d.getMonth() + 1)} / ${pad2(d.getDate())} / ${pad2(d.getFullYear() % 100)}` }
@@ -57,7 +60,7 @@ export default function Notebook() {
 
       {notes.length > 0 && (list
         ? <ul className="nb-list" key="list">{notes.map((s, i) => <li key={s.id}><Note s={s} i={i} lang={lang} t={t} list onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} /></li>)}</ul>
-        : <Slider key="notes" count={notes.length} hint={t('nb.hint')}>
+        : <Slider key="notes" count={notes.length} hint={t('nb.hint')} decor={<Scraps count={notes.length} />}>
             {notes.map((s, i) => <Note key={s.id} s={s} i={i} lang={lang} t={t} onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} />)}
           </Slider>)}
 
@@ -67,7 +70,7 @@ export default function Notebook() {
 }
 
 // 옆으로 밀어서 넘기는 줄 — 마우스는 끌어서, 터치·트랙패드는 그대로 스크롤
-function Slider({ count, hint, children }) {
+function Slider({ count, hint, decor, children }) {
   const box = useRef(null)
   const drag = useRef(null)
   const down = (e) => {
@@ -80,11 +83,34 @@ function Slider({ count, hint, children }) {
   return (
     <>
       <div className="nb-slide" ref={box} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerLeave={up}>
-        <div className="nb-track" style={{ width: `${count * STEP + 340}px` }}>{children}</div>
+        <div className="nb-track" style={{ width: `${count * STEP + 340}px` }}>{decor}{children}</div>
       </div>
       <p className="nb-hint">← {hint} →</p>
     </>
   )
+}
+
+// 메모지 사이에 섞이는 두들 종이 조각들 (랜딩 인트로의 그림과 다른 사람들이 그린 그림) — 리스트 보기에서는 나오지 않음
+function Scraps({ count }) {
+  const [mine, setMine] = useState([])
+  useEffect(() => { let on = true; fetchRandomDrawings(5).then((d) => on && setMine(d)); return () => { on = false } }, [])
+  const width = count * STEP + 340
+  const scraps = useMemo(() => {
+    const r = rng(`scraps-${count}`)
+    const n = Math.max(5, Math.round(count * 0.9) + 2)
+    const bag = [...DOODLES].sort(() => r() - 0.5)
+    return Array.from({ length: n }, (_, k) => ({
+      id: k, doodle: bag[k % bag.length], size: 120 + Math.round(r() * 70),
+      x: ((k + 0.15 + r() * 0.7) / n) * (width - 160), y: Math.round(10 + r() * 340),
+      rot: ((r() - 0.5) * 50).toFixed(1), z: r() < 0.5 ? 0 : 3, tone: Math.floor(r() * 3),
+    }))
+  }, [count, width])
+  return scraps.map((s, k) => (
+    <figure key={s.id} className="scrap" aria-hidden="true"
+      style={{ left: s.x, top: s.y, width: s.size, '--rot': `${s.rot}deg`, zIndex: s.z }}>
+      <Doodle variant={mine[k] ? 'mine' : s.doodle} d={mine[k]?.drawing} seed={`nb-${s.id}`} cut paper={PAPER[s.tone]} />
+    </figure>
+  ))
 }
 
 function Note({ s, i, lang, t, list = false, onMark, onMemo, onDel, onRead }) {
@@ -97,7 +123,7 @@ function Note({ s, i, lang, t, list = false, onMark, onMemo, onDel, onRead }) {
   // 같은 메모는 항상 같은 색·기울기·높이로 흩어짐
   const style = useMemo(() => {
     const r = rng(`note-${s.id}`)
-    return { '--tone': TONES[Math.floor(r() * TONES.length)], '--rot': `${((r() - 0.5) * 14).toFixed(1)}deg`, '--dy': `${Math.round((r() - 0.5) * 70)}px`, '--i': i }
+    return { '--tone': TONES[Math.floor(r() * TONES.length)], '--rot': `${((r() - 0.5) * 24).toFixed(1)}deg`, '--dy': `${Math.round((r() - 0.5) * 190)}px`, '--dx': `${Math.round((r() - 0.5) * 70)}px`, '--i': i, zIndex: 1 + Math.floor(r() * 2) * 2 }
   }, [s.id, i])
   const marked = !!s.visited
 

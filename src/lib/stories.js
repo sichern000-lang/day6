@@ -10,7 +10,7 @@ export const KIND_LABEL = {
   es: { 전체: 'Todas', 창조신화: 'Mito de la creación', 건국신화: 'Mito fundacional', 지형전설: 'Leyenda del paisaje', 마을전설: 'Leyenda de aldea', 당신화: 'Mito de santuario' },
   de: { 전체: 'Alle', 창조신화: 'Schöpfungsmythos', 건국신화: 'Gründungsmythos', 지형전설: 'Landschaftslegende', 마을전설: 'Dorflegende', 당신화: 'Schreinmythos' },
 }
-export const kindLabel = (kind, lang) => KIND_LABEL[lang]?.[kind] ?? KIND_LABEL.en[kind] ?? kind
+export const kindLabel = (kind, lang) => (lang === 'ko' ? kind : KIND_LABEL[lang]?.[kind] ?? KIND_LABEL.en[kind] ?? kind)
 
 // 한국관광공사 영문 관광정보를 찾을 때 쓰는 영어 검색어 (영어·스페인어·독일어 화면 모두 영문 서비스를 씀)
 export const tourKeywordEn = (story) => i18n.en[story.id]?.tourKeyword ?? story.tourKeyword

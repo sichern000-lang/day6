@@ -449,3 +449,18 @@ html.intro-lock, html.intro-lock body { overflow: hidden; }
 .hero .hero-copy { transition: opacity 1.6s .5s, transform 1.6s .5s; }
 .hero.phase-idle .hero-copy, .hero.phase-draw .hero-copy { opacity: 0; transform: translateY(16px); }
 @media (prefers-reduced-motion: reduce) { .note, .intro-hint { animation: none; } }
+
+/* 모달 버튼 3개를 같은 크기·같은 글자 크기로 */
+.modal-actions .btn { padding: 9px 18px; font-size: .88rem; letter-spacing: 0; line-height: 1.4; border: 1.5px solid var(--ink); text-decoration: none; }
+.modal-actions .btn.dark { border-color: var(--ink); }
+
+/* Ask: 추천 질문, 입력창 안의 종이비행기 버튼 */
+.suggest { display: flex; flex-wrap: wrap; gap: 8px; }
+.suggest .hint { flex-basis: 100%; margin: 0 0 2px; }
+.suggest button { border: 1.5px solid var(--ink); background: transparent; color: var(--ink); border-radius: 999px; padding: 8px 14px; font: inherit; font-size: .88rem; text-align: left; cursor: pointer; }
+.suggest button:hover { background: var(--butter); }
+.chat-input { position: relative; }
+.chat-input .input { padding-right: 54px; }
+.send { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border: 0; border-radius: 50%; background: var(--ink); color: var(--cream); display: grid; place-items: center; cursor: pointer; transition: opacity .2s, background .2s; }
+.send:hover:not(:disabled) { background: #4c5a2c; }
+.send:disabled { opacity: .3; cursor: not-allowed; }

@@ -79,7 +79,10 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
         <button className="btn dark" disabled={isSaved} onClick={() => saveStory({ id: item.id, title: item.title })}>
           {isSaved ? `✓ ${t('modal.saved')}` : `+ ${t('detail.save').replace('＋ ', '')}`}
         </button>
-        <button className="btn ghost small" onClick={() => { onSearch(plain(item.title)); onClose() }}>{t('modal.findSame')}</button>
+        <button className="btn ghost" onClick={() => { onSearch(plain(item.title)); onClose() }}>{t('modal.findSame')}</button>
+        {/* 도청의 원문 PDF·전자책 주소는 모두 열리지 않아서, 제목으로 웹 검색을 열어 줌 */}
+        <a className="btn ghost" href={`https://www.google.com/search?q=${encodeURIComponent(`제주 ${item.kind === 'myth' ? '신화' : '민담'} ${plain(item.title)}`)}`}
+          target="_blank" rel="noopener noreferrer" title={t('modal.sourceHint')}>{t('modal.source')} ↗</a>
       </div>
 
       <h3 className="modal-label places-title">

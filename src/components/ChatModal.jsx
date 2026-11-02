@@ -31,7 +31,14 @@ export default function ChatModal() {
         <p className="modal-sub">{t('guide.sub')}</p>
 
         <div className="chat-scroll">
-          {messages.length === 0 && <p className="hint">{t('guide.example')}</p>}
+          {messages.length === 0 && (
+            <div className="suggest">
+              <p className="hint">{t('guide.try')}</p>
+              {[1, 2, 3, 4].map((n) => (
+                <button key={n} type="button" onClick={() => sendMessage(t(`guide.s${n}`))}>{t(`guide.s${n}`)}</button>
+              ))}
+            </div>
+          )}
           {messages.map((m, i) => (
             <div key={i} className={`msg ${m.role} ${m.error ? 'err' : ''}`}>
               {m.steps?.length > 0 && (
@@ -50,9 +57,15 @@ export default function ChatModal() {
           <div ref={end} />
         </div>
 
-        <form onSubmit={onSubmit} className="row chat-form">
-          <input className="input" autoFocus value={input} onChange={(e) => setInput(e.target.value)} placeholder={t('guide.ph')} />
-          <button className="btn" disabled={loading}>{t('guide.send')}</button>
+        <form onSubmit={onSubmit} className="chat-form">
+          <div className="chat-input">
+            <input className="input" autoFocus value={input} onChange={(e) => setInput(e.target.value)} placeholder={t('guide.ph')} />
+            <button className="send" disabled={loading || !input.trim()} aria-label={t('guide.send')} title={t('guide.send')}>
+              <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+                <path d="M17 3 3 9.2l5.6 2.2L10.8 17Z M8.6 11.4 17 3" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
         </form>
       </div>
     </Modal>

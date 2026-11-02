@@ -15,7 +15,7 @@ export default {
   'review.all': 'Todas', 'review.recommended': 'Recomendadas', 'review.sortNew': 'Más recientes', 'review.sortStar': 'Mejor valoradas',
   'review.empty': 'Aún no hay reseñas. Sé el primero en escribir una.',
   'review.sampleBanner': 'Estas son reseñas de ejemplo. Crea la tabla place_reviews en Supabase para guardar las tuyas.',
-  'review.noSupabase': 'Se necesita configurar Supabase (.env.local)',
+  'review.noSupabase': 'Se necesita configurar Supabase — en local en .env.local (reinicia el servidor), en Vercel como variables de entorno (vuelve a desplegar)',
   'review.sample': 'Ejemplo',
   'review.formTitle': 'Escribir una reseña', 'review.step1': '1. El lugar que visitaste', 'review.step2': '2. Foto', 'review.step3': '3. Valoración y recomendación',
   'review.searchPlace': 'Buscar por nombre del lugar', 'review.quick': 'Lugares de las historias', 'review.change': 'Cambiar',
@@ -57,15 +57,17 @@ export default {
 
   'guide.title': 'Ask', 'guide.sub': 'Un agente de IA que elige sus propias herramientas: historias, lugares, tiempo y patrimonio',
   'guide.example': 'p. ej. «Cuéntame la leyenda de Sanbangsan y dime si hoy hace buen tiempo en Seogwipo para ir»',
-  'guide.loading': 'La guía está usando sus herramientas…', 'guide.ph': 'Pregunta lo que quieras', 'guide.send': 'ENVIAR',
+  'guide.loading': 'La guía está usando sus herramientas…', 'modal.source': 'Buscar el relato en línea', 'modal.sourceHint': 'Los enlaces oficiales al texto completo ya no se abren; esto busca en la web',
+  'guide.try': 'Prueba a preguntar', 'guide.s1': 'Cuéntame la leyenda de Sanbangsan', 'guide.s2': '¿Quién es la abuela Seolmundae?', 'guide.s3': '¿Qué lugares de las historias van bien con el tiempo de hoy en Seogwipo?', 'guide.s4': '¿Qué se puede ver cerca de Yongduam?',
+  'guide.ph': 'Pregunta lo que quieras', 'guide.send': 'ENVIAR',
   'tool.get_story': 'Historia', 'tool.search_tour_places': 'Lugares', 'tool.get_weather': 'Tiempo', 'tool.search_heritage': 'Patrimonio',
 
   'nb.title': 'Mi cuaderno', 'nb.sub': 'Historias guardadas por {who} · almacenadas en Supabase',
-  'nb.nosb': 'Se necesita configurar Supabase (.env.local)', 'nb.empty': 'Aún no hay nada guardado. Abre una historia y pulsa «Añadir a mi cuaderno».',
+  'nb.nosb': 'Se necesita configurar Supabase — en local en .env.local (reinicia el servidor), en Vercel como variables de entorno (vuelve a desplegar)', 'nb.empty': 'Aún no hay nada guardado. Abre una historia y pulsa «Añadir a mi cuaderno».',
   'nb.visited': '✅ Visitado', 'nb.notyet': 'Aún sin visitar', 'nb.visit': 'VISITADO', 'nb.cancel': 'DESHACER', 'nb.del': 'ELIMINAR',
 
   'nf.title': 'Te has perdido', 'nf.text': 'Esa página no existe. Vuelve a empezar desde el inicio.', 'nf.home': 'INICIO',
   'wx.loading': 'Consultando el tiempo…', 'wx.fail': 'No se pudo cargar el tiempo', 'wx.pop': 'lluvia',
   loading: 'Cargando…', empty: 'Sin resultados',
-  'toast.nosb': 'Se necesita configurar Supabase (.env.local)', 'toast.dup': 'Ya está en tu cuaderno', 'toast.saved': "«{title}» guardado en tu cuaderno",
+  'toast.nosb': 'Se necesita configurar Supabase — en local en .env.local (reinicia el servidor), en Vercel como variables de entorno (vuelve a desplegar)', 'toast.dup': 'Ya está en tu cuaderno', 'toast.saved': "«{title}» guardado en tu cuaderno",
 }

@@ -15,7 +15,7 @@ export default {
   'review.all': 'Alle', 'review.recommended': 'Empfohlen', 'review.sortNew': 'Neueste', 'review.sortStar': 'Beste zuerst',
   'review.empty': 'Noch keine Bewertungen. Schreibe die erste.',
   'review.sampleBanner': 'Das sind Beispielbewertungen. Lege die Tabelle place_reviews in Supabase an, um eigene zu speichern.',
-  'review.noSupabase': 'Supabase muss eingerichtet sein (.env.local)',
+  'review.noSupabase': 'Supabase muss eingerichtet sein — lokal in .env.local (Server neu starten), auf Vercel als Umgebungsvariablen (neu deployen)',
   'review.sample': 'Beispiel',
   'review.formTitle': 'Bewertung schreiben', 'review.step1': '1. Der besuchte Ort', 'review.step2': '2. Foto', 'review.step3': '3. Bewertung und Empfehlung',
   'review.searchPlace': 'Nach Ortsnamen suchen', 'review.quick': 'Orte aus den Geschichten', 'review.change': 'Ändern',
@@ -57,15 +57,17 @@ export default {
 
   'guide.title': 'Ask', 'guide.sub': 'Ein KI-Agent, der selbst Werkzeuge wählt: Geschichten, Orte, Wetter und Kulturerbe',
   'guide.example': 'z. B. „Erzähl mir die Legende vom Sanbangsan und sag mir, ob das Wetter in Seogwipo heute zum Besuch passt“',
-  'guide.loading': 'Die Guide nutzt ihre Werkzeuge…', 'guide.ph': 'Frag, was du willst', 'guide.send': 'SENDEN',
+  'guide.loading': 'Die Guide nutzt ihre Werkzeuge…', 'modal.source': 'Erzählung online suchen', 'modal.sourceHint': 'Die offiziellen Volltext-Links öffnen sich nicht mehr; hier wird im Web gesucht',
+  'guide.try': 'Frag zum Beispiel', 'guide.s1': 'Erzähl mir die Legende vom Sanbangsan', 'guide.s2': 'Wer ist Großmutter Seolmundae?', 'guide.s3': 'Welche Orte der Geschichten passen zum heutigen Wetter in Seogwipo?', 'guide.s4': 'Was gibt es in der Nähe von Yongduam zu sehen?',
+  'guide.ph': 'Frag, was du willst', 'guide.send': 'SENDEN',
   'tool.get_story': 'Geschichte', 'tool.search_tour_places': 'Orte', 'tool.get_weather': 'Wetter', 'tool.search_heritage': 'Erbe',
 
   'nb.title': 'Mein Notizbuch', 'nb.sub': 'Von {who} gespeicherte Geschichten · in Supabase gespeichert',
-  'nb.nosb': 'Supabase muss eingerichtet sein (.env.local)', 'nb.empty': 'Noch nichts gespeichert. Öffne eine Geschichte und tippe auf „In mein Notizbuch“.',
+  'nb.nosb': 'Supabase muss eingerichtet sein — lokal in .env.local (Server neu starten), auf Vercel als Umgebungsvariablen (neu deployen)', 'nb.empty': 'Noch nichts gespeichert. Öffne eine Geschichte und tippe auf „In mein Notizbuch“.',
   'nb.visited': '✅ Besucht', 'nb.notyet': 'Noch nicht besucht', 'nb.visit': 'BESUCHT', 'nb.cancel': 'RÜCKGÄNGIG', 'nb.del': 'LÖSCHEN',
 
   'nf.title': 'Du hast dich verirrt', 'nf.text': 'Diese Seite gibt es nicht. Beginne noch einmal auf der Startseite.', 'nf.home': 'START',
   'wx.loading': 'Wetter wird geprüft…', 'wx.fail': 'Das Wetter konnte nicht geladen werden', 'wx.pop': 'Regen',
   loading: 'Wird geladen…', empty: 'Keine Ergebnisse',
-  'toast.nosb': 'Supabase muss eingerichtet sein (.env.local)', 'toast.dup': 'Bereits in deinem Notizbuch', 'toast.saved': "„{title}“ in deinem Notizbuch gespeichert",
+  'toast.nosb': 'Supabase muss eingerichtet sein — lokal in .env.local (Server neu starten), auf Vercel als Umgebungsvariablen (neu deployen)', 'toast.dup': 'Bereits in deinem Notizbuch', 'toast.saved': "„{title}“ in deinem Notizbuch gespeichert",
 }

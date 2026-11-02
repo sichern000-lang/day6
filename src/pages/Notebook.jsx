@@ -5,6 +5,7 @@ import { Empty, Loading } from '../components/Status'
 import { isSupabaseReady } from '../lib/supabase'
 import { getStoryById, localize } from '../lib/stories'
 import { folkTitle } from '../lib/folkTitle'
+import { shareText } from '../lib/askShare'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
@@ -46,6 +47,9 @@ export default function Notebook() {
 function Row({ s, lang, t, onVisit, onMemo, onDel }) {
   const [memo, setMemo] = useState(s.memo ?? '')
   useEffect(() => setMemo(s.memo ?? ''), [s.memo])
+  const [open, setOpen] = useState(false)
+  const ask = s.story_id.startsWith('ask:')
+  const toast = useAppStore((st) => st.toast)
   const story = getStoryById(s.story_id)
   const title = (story ? localize(story, lang)?.title : folkTitle(s.title, lang)) ?? s.title
   const to = story ? `/stories/${s.story_id}` : `/stories?q=${encodeURIComponent(s.title)}`
@@ -55,7 +59,16 @@ function Row({ s, lang, t, onVisit, onMemo, onDel }) {
         <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="m4 10.5 4 4 8-9" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
       <div className="check-main">
-        <Link to={to}><strong>{title}</strong></Link>
+        {ask ? (
+          <>
+            <button className="ask-title" onClick={() => setOpen((o) => !o)} aria-expanded={open}><em className="chip-soft">Ask</em><strong>{title}</strong></button>
+            <p className={`ask-answer ${open ? 'open' : ''}`}>{s.answer}</p>
+            <span className="ask-tools">
+              <button onClick={() => setOpen((o) => !o)}>{open ? t('nb.less') : t('nb.more')}</button>
+              <button onClick={async () => { const r = await shareText({ title: t('chat.shareHead'), text: `Q. ${s.title}\n\n${s.answer}` }); if (r === 'copied') toast(t('chat.copied')) }}>{t('chat.share')}</button>
+            </span>
+          </>
+        ) : <Link to={to}><strong>{title}</strong></Link>}
         <input className="memo" value={memo} maxLength={140} placeholder={t('nb.memoph')} aria-label={t('nb.memoph')}
           onChange={(e) => setMemo(e.target.value)} onBlur={() => onMemo(s, memo.trim())}
           onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()} />

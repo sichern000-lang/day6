@@ -24,6 +24,7 @@ export default function NotebookFloat() {
   const nickname = useAppStore((s) => s.nickname)
   const loadSaved = useAppStore((s) => s.loadSaved)
   const toggleSave = useAppStore((s) => s.toggleSave)
+  const toast = useAppStore((s) => s.toast)
   const [round, setRound] = useState(0)
   const items = useMemo(pickItems, [round])   // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -42,7 +43,7 @@ export default function NotebookFloat() {
             style={{ left: `${x}%`, top: `${y}%`, '--d': `${(i * 0.7) % 3}s`, '--t': `${4.2 + (i % 4) * 0.6}s` }}>
             <span>{show(it)}</span>
             <button aria-pressed={on} aria-label={`${t('nb.heart')}: ${show(it)}`} title={t('nb.heart')}
-              onClick={() => toggleSave({ id: it.id, title: it.ko })}>
+              onClick={async () => { if (await toggleSave({ id: it.id, title: it.ko }, true) && !on) toast(t('home.nbDone')) }}>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
                 <path d="M12 20.5s-7.5-4.6-9.2-9.3C1.7 8 3.6 5 6.8 5c2 0 3.6 1.2 5.2 3 1.6-1.8 3.2-3 5.2-3 3.2 0 5.1 3 4 6.2-1.7 4.7-9.2 9.3-9.2 9.3Z"
                   fill={on ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />

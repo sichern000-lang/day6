@@ -3,6 +3,7 @@ import Modal from './Modal'
 import { Loading } from './Status'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
+import { askId, clip, shareText } from '../lib/askShare'
 
 // Ask — 이야기·장소·날씨·유산 도구를 스스로 골라 쓰는 AI 에이전트와의 대화 (어느 페이지에서든 모달로 열림)
 export default function ChatModal() {
@@ -12,12 +13,24 @@ export default function ChatModal() {
   const sendMessage = useAppStore((s) => s.sendMessage)
   const closeChat = useAppStore((s) => s.closeChat)
   const clearChat = useAppStore((s) => s.clearChat)
+  const saved = useAppStore((s) => s.saved)
+  const toggleSave = useAppStore((s) => s.toggleSave)
+  const toast = useAppStore((s) => s.toast)
   const [input, setInput] = useState('')
   const end = useRef(null)
   const inputRef = useRef(null)
 
   // 새 메시지가 오면 맨 아래로
   useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [messages, loading])
+
+  // 마음에 드는 답을 수첩에 담고(다시 누르면 뺌), 공유함
+  const questionOf = (i) => [...messages.slice(0, i)].reverse().find((m) => m.role === 'user')?.text ?? ''
+  const keep = (i) => toggleSave({ id: askId(messages[i].text), title: clip(questionOf(i), 80), answer: messages[i].text })
+  async function share(i) {
+    const r = await shareText({ title: t('chat.shareHead'), text: `Q. ${questionOf(i)}\n\n${messages[i].text}` })
+    if (r === 'copied') toast(t('chat.copied'))
+    if (r === 'fail') toast(t('chat.copyFail'), 'warn')
+  }
 
   function onSubmit(e) {
     e.preventDefault()
@@ -59,6 +72,19 @@ export default function ChatModal() {
                 </ol>
               )}
               {m.error && <b>{t('chat.error')} · </b>}{m.text}
+              {m.role === 'assistant' && !m.error && (
+                <div className="msg-actions">
+                  <button type="button" className={saved.some((s) => s.story_id === askId(m.text)) ? 'on' : ''} onClick={() => keep(i)}
+                    aria-pressed={saved.some((s) => s.story_id === askId(m.text))}>
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1Z" fill={saved.some((s) => s.story_id === askId(m.text)) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /></svg>
+                    {saved.some((s) => s.story_id === askId(m.text)) ? t('chat.saved') : t('chat.save')}
+                  </button>
+                  <button type="button" onClick={() => share(i)}>
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 15V4m0 0L8 8m4-4 4 4M5 13v6h14v-6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    {t('chat.share')}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
           {loading && <Loading text={t('guide.loading')} />}

@@ -16,6 +16,9 @@ create table if not exists public.saved_stories (
 -- 이미 테이블을 만든 경우를 위한 보강 (메모 칸)
 alter table public.saved_stories add column if not exists memo text not null default '';
 
+-- Ask 답변을 수첩에 저장할 때 답변 본문을 담는 칸
+alter table public.saved_stories add column if not exists answer text not null default '';
+
 -- 닉네임으로 목록을 불러오므로 인덱스
 create index if not exists saved_stories_nickname_idx on public.saved_stories (nickname, created_at desc);
 

@@ -87,16 +87,17 @@ export const useAppStore = create(
         if (error) return get().toast(error.message, 'error')
         set({ saved: data })
       },
-      saveStory: async ({ id, title }) => {
+      saveStory: async ({ id, title, answer }, quiet = false) => {
         if (!supabase) return get().toast(translate(get().lang, 'toast.nosb'), 'warn')
         if (get().saved.some((s) => s.story_id === id)) return get().toast(translate(get().lang, 'toast.dup'), 'warn')
         const { data, error } = await supabase
           .from('saved_stories')
-          .insert({ nickname: get().nickname || '익명', story_id: id, title })
+          .insert({ nickname: get().nickname || '익명', story_id: id, title, ...(answer ? { answer } : {}) })
           .select().single()
         if (error) return get().toast(error.message, 'error')
         set({ saved: [data, ...get().saved] })
-        get().toast(translate(get().lang, 'toast.saved', { title }))
+        if (!quiet) get().toast(translate(get().lang, 'toast.saved', { title }))
+        return true
       },
       toggleVisited: async (row) => {
         if (!supabase) return
@@ -105,10 +106,10 @@ export const useAppStore = create(
         set({ saved: get().saved.map((s) => (s.id === row.id ? { ...s, visited: !s.visited } : s)) })
       },
       // 하트: 담겨 있으면 빼고, 없으면 담음 (랜딩 수첩 섹션)
-      toggleSave: async (item) => {
+      toggleSave: async (item, quiet = false) => {
         const row = get().saved.find((s) => s.story_id === item.id)
         if (row) return get().removeStory(row.id)
-        return get().saveStory(item)
+        return get().saveStory(item, quiet)
       },
       // 수첩 메모 (saved_stories.memo 컬럼 — supabase.sql 참고)
       updateMemo: async (row, memo) => {

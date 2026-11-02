@@ -107,7 +107,6 @@ export default function Home() {
           <div className="nb-head">
             <span className="eyebrow">MY NOTEBOOK</span>
             <h2 className="display small">{t('home.nbTitle').split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</h2>
-            <p className="lede">{t('home.nbSub')}</p>
           </div>
           <NotebookFloat />
           <div className="nb-foot">

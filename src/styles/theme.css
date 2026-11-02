@@ -558,11 +558,11 @@ body.sage .tag:hover { background: var(--butter); }
 .ask-sec { background: #f7faf6; }
 .nb-sec { background: #e7ece4; }
 .statement > .wrap, .stories-sec > .wrap { position: relative; z-index: 1; }
-.land-map { position: absolute; right: -14%; bottom: -12%; width: min(150vw, 1900px); aspect-ratio: 1775 / 886; background: #b9c0b5; opacity: .75; pointer-events: none;
+.land-map { position: absolute; left: 50%; bottom: -22%; width: min(150vw, 1900px, 175vh); margin-left: calc(min(150vw, 1900px, 175vh) / -2); aspect-ratio: 1775 / 886; background: #b9c0b5; opacity: .75; pointer-events: none;
   -webkit-mask: url('../assets/jeju-map.svg') center / contain no-repeat; mask: url('../assets/jeju-map.svg') center / contain no-repeat; }
 .statement-text { max-width: 760px; margin-left: clamp(0px, 5vw, 64px); display: grid; gap: 2.1em; }
 .statement-text p { margin: 0; font-family: 'Gowun Batang', 'Instrument Serif', serif; font-size: clamp(1.25rem, 2.2vw, 1.85rem); line-height: 1.75; word-break: keep-all; }
-.statement { justify-content: flex-start; padding-top: clamp(84px, 10vh, 112px); }
+.statement { justify-content: center; }
 
 .stories-sec > .wrap { max-width: none; padding: 0 0 0 max(24px, calc(50vw - 548px)); }
 .stories-grid { display: grid; grid-template-columns: minmax(170px, 220px) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
@@ -585,7 +585,7 @@ body.sage .tag:hover { background: var(--butter); }
   .stories-grid { grid-template-columns: 1fr; }
   .stories-sec > .wrap { padding-left: 20px; }
   .stories-sec .slide { flex-basis: 62%; }
-  .land-map { right: -30%; bottom: 2%; width: 130vw; opacity: .6; }
+  .land-map { left: 50%; right: auto; bottom: -4%; width: 130vw; margin-left: -65vw; opacity: .6; }
   .sc-grass { display: none; }
 }
 .tabs button.search-btn { border: 0; background: transparent; padding: 8px; color: var(--ink); }
@@ -721,3 +721,4 @@ button.who.in { background: rgba(179, 196, 170, .55); }
 .lore-place.on { background: rgba(207, 224, 236, .55); box-shadow: 0 0 0 1.5px var(--ink); }
 @media (max-width: 900px) { .lore-places { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .lore-places { grid-template-columns: 1fr; } }
+button.who { white-space: nowrap; }

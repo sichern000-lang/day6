@@ -23,8 +23,15 @@ export default function StoryDetail() {
   const story = localize(base, lang)
   const [places, setPlaces] = useState(idle)
   const [heritage, setHeritage] = useState(idle)
+  const [copiedId, setCopiedId] = useState(null)
 
   useEffect(() => { loadSaved() }, [loadSaved])
+
+  // 이 페이지에서만 배경을 더 밝게
+  useEffect(() => {
+    document.body.classList.add('bright')
+    return () => document.body.classList.remove('bright')
+  }, [])
 
   useEffect(() => {
     if (!base) return
@@ -50,7 +57,7 @@ export default function StoryDetail() {
   const meta = `${kindLabel(base.kind, lang)} · ${story.place}`.split(' · ')
 
   // 클립보드 API 가 막힌 환경(권한·http)에서는 임시 입력창으로 복사를 다시 시도
-  async function copyAddress(addr) {
+  async function copyAddress(id, addr) {
     try {
       await navigator.clipboard.writeText(addr)
     } catch {
@@ -65,6 +72,8 @@ export default function StoryDetail() {
       if (!ok) return toast(t('toast.copyfail'), 'error')
     }
     toast(t('toast.copied'))
+    setCopiedId(id)
+    setTimeout(() => setCopiedId((cur) => (cur === id ? null : cur)), 1500)
   }
 
   return (
@@ -82,7 +91,6 @@ export default function StoryDetail() {
       </div>
 
       <div className="story-panel">
-        <MountainWash className="wash-card" />
         <p className="story-body">{story.story}</p>
         <p className="hint">{t('detail.note')}</p>
         <div className="row">
@@ -101,25 +109,33 @@ export default function StoryDetail() {
           {places.loading && <Loading />}
           <ErrorBox error={places.error} />
           {!places.loading && !places.error && places.data.length === 0 && <Empty text={t('detail.noPlaces')} />}
-          <ul className="list">
+          <ul className="rows">
             {places.data.map((p) => (
               <li key={p.id}>
-                {p.image && <img src={p.image} alt="" loading="lazy" />}
-                <div><strong>{p.title}</strong><span>{p.addr}</span></div>
-                {p.addr && (
-                  <button className="btn ghost small" onClick={() => copyAddress(p.addr)}>{t('detail.copy')}</button>
-                )}
+                <div className="row-item">
+                  {p.image && <img src={p.image} alt="" loading="lazy" />}
+                  <span className="h-text"><strong>{p.title}</strong><span>{p.addr}</span></span>
+                  {p.addr && (
+                    <button className="copy-btn" onClick={() => copyAddress(p.id, p.addr)}
+                      aria-label={t('detail.copy')} title={t('detail.copy')}>
+                      {copiedId === p.id ? (
+                        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      ) : (
+                        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="7" y="7" width="9" height="9" rx="1.8" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M13 7V5.5A1.5 1.5 0 0 0 11.5 4h-6A1.5 1.5 0 0 0 4 5.5v6A1.5 1.5 0 0 0 5.5 13H7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+                      )}
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
         </section>
         <section>
           <h2 className="section-title">{t('detail.heritage')} <small>{t('detail.heritageSrc')}</small></h2>
-          {t('detail.heritageNote') && <p className="hint">{t('detail.heritageNote')}</p>}
           {heritage.loading && <Loading />}
           <ErrorBox error={heritage.error} />
           {!heritage.loading && !heritage.error && heritage.data.length === 0 && <Empty text={t('detail.noHeritage')} />}
-          <ul className="heritage">
+          <ul className="rows">
             {heritage.data.map((h, i) => (
               <li key={i}>
                 <a href={`https://www.google.com/search?q=${encodeURIComponent(h.name)}`} target="_blank" rel="noopener noreferrer">
@@ -132,6 +148,7 @@ export default function StoryDetail() {
               </li>
             ))}
           </ul>
+          {t('detail.heritageNote') && <p className="hint">{t('detail.heritageNote')}</p>}
         </section>
       </div>
     </>

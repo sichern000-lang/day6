@@ -17,6 +17,12 @@ export default function Home() {
   const [db, setDb] = useState(isSupabaseReady ? { state: 'wait' } : { state: 'fail', key: 'check.sbfail' })
   const [api, setApi] = useState({ state: 'wait' })
 
+  // 랜딩에서만 섹션 단위 스크롤 스냅 (다른 페이지로 가면 해제)
+  useEffect(() => {
+    document.documentElement.classList.add('snap')
+    return () => document.documentElement.classList.remove('snap')
+  }, [])
+
   useEffect(() => {
     if (isSupabaseReady) {
       supabase.from('saved_stories').select('id').limit(1).then(({ error }) =>
@@ -44,15 +50,20 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="sheet">
+      <section className="snap-sec">
         <div className="wrap">
           <h2 className="display">{t('home.display').split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</h2>
           <p className="lede">{t('home.lede')}</p>
-
-          {/* 대표 이야기 캐러셀 — 키워드 사물 사진 */}
           <FeatureCarousel />
+          <div className="more">
+            <Link className="btn ghost small" to="/stories">{t('home.more')}</Link>
+          </div>
+        </div>
+      </section>
 
-          <section className="split">
+      <section className="snap-sec">
+        <div className="wrap">
+          <div className="split">
             <div className="split-text">
               <span className="eyebrow">OUR TELLING</span>
               <p>{t('home.telling')}</p>
@@ -62,8 +73,12 @@ export default function Home() {
               <img src={heroImg} alt="" loading="lazy" />
               <span className="tape" />
             </div>
-          </section>
+          </div>
+        </div>
+      </section>
 
+      <section className="snap-sec">
+        <div className="wrap">
           <h2 className="display small">{t('home.status')}</h2>
           <div className="grid three">
             <div className="panel">
@@ -76,7 +91,7 @@ export default function Home() {
             <Check title="/api" state={api.state} msg={api.msg ?? (api.key ? t(api.key) : t('check.wait'))} />
           </div>
         </div>
-      </div>
+      </section>
     </>
   )
 }

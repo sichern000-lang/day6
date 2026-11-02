@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { NAV_ITEMS } from '../router'
 import Toasts from '../components/Toasts'
 import { useAppStore } from '../store/useAppStore'
@@ -14,10 +14,19 @@ export default function RootLayout() {
 
   useEffect(() => { document.documentElement.lang = lang }, [lang])
 
+  // 랜딩: 맨 위에서는 투명, 스크롤하면 크림색 배경으로
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 30)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <>
       <div className="announce">{t('announce')}</div>
-      <nav className={`topbar ${isHome ? 'over' : ''}`}>
+      <nav className={`topbar ${isHome ? 'over' : ''} ${isHome && scrolled ? 'solid' : ''}`}>
         <div className="links">
           {NAV_ITEMS.map((n) => (
             <NavLink key={n.to} to={n.to} end={n.to === '/'}>{t(n.key)}</NavLink>

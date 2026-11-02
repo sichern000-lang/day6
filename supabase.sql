@@ -8,9 +8,13 @@ create table if not exists public.saved_stories (
   story_id    text        not null,                 -- 대표 이야기 id(seolmundae …) 또는 신화·민담 코드(T_M_001 …)
   title       text        not null,                 -- 담을 때의 제목
   visited     boolean     not null default false,   -- '가 봤어요'
+  memo        text        not null default '',      -- 수첩에 남기는 짧은 메모
   created_at  timestamptz not null default now(),
   unique (nickname, story_id)                       -- 같은 이야기는 한 번만 담김
 );
+
+-- 이미 테이블을 만든 경우를 위한 보강 (메모 칸)
+alter table public.saved_stories add column if not exists memo text not null default '';
 
 -- 닉네임으로 목록을 불러오므로 인덱스
 create index if not exists saved_stories_nickname_idx on public.saved_stories (nickname, created_at desc);

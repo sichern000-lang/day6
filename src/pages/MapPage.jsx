@@ -11,7 +11,7 @@ export default function MapPage() {
   const [selected, setSelected] = useState(STORIES[0])
   return (
     <>
-      <PageHeader title={t('map.title')} subtitle={t('map.sub')} />
+      <PageHeader title="Myth Map" subtitle={t('map.sub')} />
       <div className="panel map-wrap">
         <IslandMap selectedId={selected.id} onSelect={setSelected} />
       </div>

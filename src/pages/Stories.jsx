@@ -26,6 +26,7 @@ export default function Stories() {
   const [params] = useSearchParams()
   const [q, setQ] = useState(params.get('q') ?? '')
   const [modal, setModal] = useState(null)                       // 모달로 열어 둔 신화·민담
+  const [searchOpen, setSearchOpen] = useState(Boolean(params.get('q')))   // 돋보기를 누르면 검색창이 열림
   const [kind, setKind] = useState('all')                         // all | featured | folktale | myth
   const [opened, setOpened] = useState(fresh(Boolean(params.get('q'))))  // 접힘/펼침 (처음엔 모두 접힘)
   const [shown, setShown] = useState(fresh(PAGE))                // 종류별로 지금 보여 주는 개수
@@ -77,8 +78,7 @@ export default function Stories() {
 
   return (
     <>
-      <PageHeader center title={t('stories.title')} subtitle={t('stories.sub2', { n: catalog.data.length || '…', f: STORIES.length })} />
-      <input className="input search-slim" placeholder={t('stories.search2')} value={q} onChange={(e) => search(e.target.value)} />
+      <PageHeader center title="All stories" subtitle={t('stories.sub2', { n: catalog.data.length || '…', f: STORIES.length })} />
 
       <div className="tabs center pills">
         {[['all', t('stories.all'), catalog.data.length + STORIES.length], ['featured', t('stories.featured'), STORIES.length],
@@ -87,7 +87,12 @@ export default function Stories() {
             {name}{n ? <span className="count"> {n}</span> : null}
           </button>
         ))}
+        <button className="search-btn" data-tip={t('stories.searchTip')} aria-label={t('stories.searchTip')} aria-expanded={searchOpen}
+          onClick={() => setSearchOpen((o) => !o)}>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.8" /><path d="m15.5 15.5 5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+        </button>
       </div>
+      {searchOpen && <input className="input search-slim" autoFocus placeholder={t('stories.search2')} value={q} onChange={(e) => search(e.target.value)} />}
 
       {showFeatured && featured.length > 0 && (
         <div className="feature-ruled">{featured.map((s) => <StoryCard key={s.id} story={s} ruled />)}</div>
@@ -115,20 +120,21 @@ export default function Stories() {
                   {label(k, lang)}
                   <small>{catalog.loading ? '…' : filtered ? `${list.length} / ${counts[id] ?? 0}` : (counts[id] ?? 0)}</small>
                 </span>
-                <svg className="chev" viewBox="0 0 20 20" width="22" height="22" aria-hidden="true">
-                  <path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
               </button>
               {isOpen && (
-                <div className="tabs sub" role="group" aria-label={label(k, lang)}>
-                  <button className={group[id] === '' ? 'on' : ''} onClick={() => { setFor(setGroup, id, ''); setFor(setShown, id, PAGE) }}>{t('stories.groupAll')}<span className="count"> {counts[id] ?? 0}</span></button>
-                  {groups.map((g) => (
-                    <button key={g.id} className={group[id] === g.id ? 'on' : ''} onClick={() => { setFor(setGroup, id, g.id); setFor(setShown, id, PAGE) }}>
-                      {label(g, lang)}<span className="count"> {counts[g.id] ?? 0}</span>
-                    </button>
-                  ))}
-                </div>
+                <label className="group-select">
+                  <span className="sr-only">{label(k, lang)}</span>
+                  <select value={group[id]} onChange={(e) => { setFor(setGroup, id, e.target.value); setFor(setShown, id, PAGE) }}>
+                    <option value="">{t('stories.groupAll')} ({counts[id] ?? 0})</option>
+                    {groups.map((g) => <option key={g.id} value={g.id}>{label(g, lang)} ({counts[g.id] ?? 0})</option>)}
+                  </select>
+                </label>
               )}
+              <button className="fold-chev" tabIndex={-1} aria-hidden="true" onClick={() => setFor(setOpened, id, !isOpen)}>
+                <svg className="chev" viewBox="0 0 20 20" width="30" height="30" aria-hidden="true">
+                  <path d="m5 7.5 5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
             </div>
 
             {isOpen && (

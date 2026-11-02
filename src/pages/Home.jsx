@@ -8,6 +8,7 @@ import WeatherChip from '../components/WeatherChip'
 import FeatureCarousel from '../components/FeatureCarousel'
 import IntroNotes from '../components/IntroNotes'
 import AskShowcase from '../components/AskShowcase'
+import NotebookFloat from '../components/NotebookFloat'
 import TypedTitle from '../components/TypedTitle'
 import { Scribble } from '../components/LandingArt'
 import heroImg from '../assets/hero.jpg'
@@ -33,7 +34,7 @@ export default function Home() {
   // 스크롤해서 보이는 만큼 내용이 차례로 나타남
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
-    const els = [...document.querySelectorAll('.snap-sec .wrap > :not(.split):not(.grid), .split-text, .split-art, .snap-sec .grid > *')]
+    const els = [...document.querySelectorAll('.statement-text > p, .land-map, .scribble, .stories-intro > *, .track > .slide, .ask-copy > *, .ask-window, .nb-sec .nb-head > *, .nb-float, .nb-foot')]
     els.forEach((el) => el.classList.add('reveal'))
     const io = new IntersectionObserver((entries) => entries.forEach((e) => {
       if (!e.isIntersecting) return
@@ -100,16 +101,18 @@ export default function Home() {
 
       <AskShowcase />
 
-      <section className="snap-sec status-sec">
+      <section className="snap-sec nb-sec">
         <div className="wrap">
-          <h2 className="display small">{t('home.status')}</h2>
-          <div className="grid three">
-            <div className="panel">
-              <strong>{t('home.nick')}</strong>
-              <input className="input" placeholder={t('home.nickph')} value={nickname}
-                onChange={(e) => setNickname(e.target.value)} onBlur={loadSaved} />
-              <p className="hint">{t('home.nickhint')}</p>
-            </div>
+          <div className="nb-head">
+            <span className="eyebrow">MY NOTEBOOK</span>
+            <h2 className="display small">{t('home.nbTitle').split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</h2>
+            <p className="lede">{t('home.nbSub')}</p>
+          </div>
+          <NotebookFloat />
+          <div className="nb-foot">
+            <Link className="btn" to="/notebook">{t('home.nbOpen')}</Link>
+            <input className="input nb-nick" placeholder={t('home.nickph')} aria-label={t('home.nick')} value={nickname}
+              onChange={(e) => setNickname(e.target.value)} onBlur={loadSaved} />
             <Check title="Supabase" state={db.state} msg={db.msg ?? (db.key ? t(db.key) : t('check.wait'))} />
             <Check title="/api" state={api.state} msg={api.msg ?? (api.key ? t(api.key) : t('check.wait'))} />
           </div>
@@ -121,9 +124,8 @@ export default function Home() {
 
 function Check({ title, state, msg }) {
   return (
-    <div className="panel">
-      <strong className={`mark ${state}`}>{state === 'wait' ? '○' : '●'}</strong> <strong>{title}</strong>
-      <p className="hint">{msg}</p>
-    </div>
+    <span className="check-chip" title={msg}>
+      <strong className={`mark ${state}`}>{state === 'wait' ? '○' : '●'}</strong> {title}
+    </span>
   )
 }

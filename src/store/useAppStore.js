@@ -70,6 +70,19 @@ export const useAppStore = create(
         if (error) return get().toast(error.message, 'error')
         set({ saved: get().saved.map((s) => (s.id === row.id ? { ...s, visited: !s.visited } : s)) })
       },
+      // 하트: 담겨 있으면 빼고, 없으면 담음 (랜딩 수첩 섹션)
+      toggleSave: async (item) => {
+        const row = get().saved.find((s) => s.story_id === item.id)
+        if (row) return get().removeStory(row.id)
+        return get().saveStory(item)
+      },
+      // 수첩 메모 (saved_stories.memo 컬럼 — supabase.sql 참고)
+      updateMemo: async (row, memo) => {
+        if (!supabase || (row.memo ?? '') === memo) return
+        const { error } = await supabase.from('saved_stories').update({ memo }).eq('id', row.id)
+        if (error) return get().toast(error.message, 'error')
+        set({ saved: get().saved.map((s) => (s.id === row.id ? { ...s, memo } : s)) })
+      },
       removeStory: async (id) => {
         if (!supabase) return
         const { error } = await supabase.from('saved_stories').delete().eq('id', id)

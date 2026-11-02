@@ -46,7 +46,7 @@ const STR = {
     'map.title': '신화 지도', 'map.sub': '핀을 눌러 이야기를 만나 보세요 (위치는 대략적인 표시예요)', 'map.selected': '선택한 이야기',
     'stories.title': '이야기 목록', 'stories.sub': '신화·전설 {n}편', 'stories.search': '이름·장소로 검색', 'stories.none': '맞는 이야기가 없어요',
     'stories.sub2': '신화·민담 {n}편 · 대표 이야기 {f}편', 'stories.all': '전체', 'stories.featured': '대표 이야기',
-    'stories.kw': '키워드', 'stories.more': '더 보기', 'stories.groupAll': '모두', 'stories.search2': '제목·키워드로 검색',
+    'stories.searchTip': '검색하기', 'stories.kw': '키워드', 'stories.more': '더 보기', 'stories.groupAll': '모두', 'stories.search2': '제목·키워드로 검색',
     'stories.note': '제주도청 OpenAPI 는 제목·분류·핵심어만 제공해요. 원문(PDF·전자책) 링크는 현재 열리지 않아 본문은 대표 이야기에만 있어요.',
     'stories.err': '신화·민담 목록을 불러오지 못했어요',
     'modal.close': '닫기', 'modal.tags': '핵심어', 'modal.tagHint': '핵심어를 누르면 그 낱말로 관련 장소를 다시 찾아요',
@@ -69,6 +69,8 @@ const STR = {
 
     'nb.title': '내 수첩', 'nb.sub': '{who} 님이 담은 이야기 · Supabase 에 저장',
     'nb.nosb': 'Supabase 설정이 필요해요 — 로컬은 .env.local(저장 후 서버 재시작), 배포는 Vercel 환경변수(저장 후 재배포)', 'nb.empty': '아직 담은 이야기가 없어요. 이야기 상세에서 ＋ 내 수첩에 담기를 눌러 보세요',
+    'home.nbTitle': '마음에 드는 이야기에\n하트를 눌러 보세요', 'home.nbSub': '하트를 누르면 내 수첩에 담겨요. 수첩에서 가 본 곳을 체크하고 메모도 남길 수 있어요.', 'home.nbOpen': '내 수첩 열기', 'home.shuffle': '다른 이야기 보기',
+    'nb.progress': '{done} / {total} 곳 다녀왔어요', 'nb.memoph': '메모 추가…', 'nb.heart': '수첩에 담기',
     'nb.visited': '✅ 가 봤어요', 'nb.notyet': '아직 안 가 봤어요', 'nb.visit': '가 봤어요', 'nb.cancel': '취소', 'nb.del': '삭제',
 
     'nf.title': '길을 잃었어요', 'nf.text': '없는 주소예요. 홈에서 다시 출발해 보세요.', 'nf.home': '홈으로',
@@ -119,7 +121,7 @@ const STR = {
     'map.title': 'Myth Map', 'map.sub': 'Tap a pin to meet a story (locations are approximate)', 'map.selected': 'Selected story',
     'stories.title': 'All stories', 'stories.sub': '{n} myths and legends', 'stories.search': 'Search by name or place', 'stories.none': 'No matching stories',
     'stories.sub2': '{n} myths & folktales · {f} featured stories', 'stories.all': 'All', 'stories.featured': 'Featured',
-    'stories.kw': 'Keywords', 'stories.more': 'MORE', 'stories.groupAll': 'All', 'stories.search2': 'Search titles & keywords',
+    'stories.searchTip': 'Search', 'stories.kw': 'Keywords', 'stories.more': 'MORE', 'stories.groupAll': 'All', 'stories.search2': 'Search titles & keywords',
     'stories.note': 'The Jeju provincial OpenAPI only provides titles, categories and keywords. Its full-text PDF/e-book links currently do not open, so full texts exist only for the featured stories. Titles are translated automatically; keywords stay in Korean.',
     'stories.err': 'Could not load the myth and folktale list',
     'modal.close': 'Close', 'modal.tags': 'Keywords', 'modal.tagHint': 'Tap a keyword to search related places with that word',
@@ -142,6 +144,8 @@ const STR = {
 
     'nb.title': 'My Notebook', 'nb.sub': 'Stories saved by {who} · stored in Supabase',
     'nb.nosb': 'Supabase setup is required — locally in .env.local (restart the server), on Vercel as environment variables (redeploy)', 'nb.empty': 'Nothing saved yet. Open a story and tap “Add to my notebook”.',
+    'home.nbTitle': 'Tap the heart on\nthe stories you like', 'home.nbSub': 'Hearted stories land in your notebook. Tick the places you have visited and jot down a note.', 'home.nbOpen': 'Open my notebook', 'home.shuffle': 'Show others',
+    'nb.progress': '{done} / {total} visited', 'nb.memoph': 'Add a note…', 'nb.heart': 'Add to notebook',
     'nb.visited': '✅ Visited', 'nb.notyet': 'Not visited yet', 'nb.visit': 'VISITED', 'nb.cancel': 'UNDO', 'nb.del': 'DELETE',
 
     'nf.title': 'You’re lost', 'nf.text': 'That page doesn’t exist. Start again from home.', 'nf.home': 'HOME',

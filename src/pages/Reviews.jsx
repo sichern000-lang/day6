@@ -49,7 +49,7 @@ export default function Reviews() {
 
   return (
     <>
-      <PageHeader title={t('review.title')} subtitle={t('review.sub')} />
+      <PageHeader title="Trip reviews" subtitle={t('review.sub')} />
       <div className="review-bar">
         <p className="avg"><Stars value={Math.round(avg) || 0} size={20} /> <span>{t('review.avg', { avg, n: state.list.length })}</span></p>
         <button className="btn dark" onClick={() => (isSupabaseReady && !state.demo ? setWriting(true) : toast(t(isSupabaseReady ? 'review.sampleBanner' : 'review.noSupabase'), 'warn'))}>

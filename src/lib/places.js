@@ -70,6 +70,17 @@ export async function createPlace(owner, p, mode) {
   wr(LS, [...rd(LS, []), local])
   return local
 }
+export async function updatePlaceRow(id, p, mode) {
+  const patch = { name: p.name, memo: p.memo, category: p.category, address: p.address, lat: p.lat ?? null, lng: p.lng ?? null, drawing: p.drawing }
+  if (mode === 'db' && supabase) {
+    const { data, error } = await supabase.from('my_places').update(patch).eq('id', id).select().single()
+    if (error) throw error
+    return data
+  }
+  const rows = rd(LS, [])
+  wr(LS, rows.map((r) => (r.id === id ? { ...r, ...patch } : r)))
+  return rd(LS, []).find((r) => r.id === id)
+}
 export async function deletePlace(id, mode) {
   if (mode === 'db' && supabase) {
     const { error } = await supabase.from('my_places').delete().eq('id', id)

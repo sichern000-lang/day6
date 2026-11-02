@@ -6,12 +6,15 @@ import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 
 // 내 이야기 장소 추가: 이름 · 종류 · 나의 이야기(메모) · 주소 검색 · 대표 그림
-export default function PlaceModal({ onClose }) {
+export default function PlaceModal({ onClose, place }) {
   const t = useT()
   const lang = useAppStore((s) => s.lang)
   const addPlace = useAppStore((s) => s.addPlace)
+  const updatePlace = useAppStore((s) => s.updatePlace)
   const toast = useAppStore((s) => s.toast)
-  const [f, setF] = useState({ name: '', memo: '', category: 'cafe', address: '', lat: null, lng: null, drawing: '' })
+  const [f, setF] = useState(place
+    ? { name: place.name, memo: place.memo ?? '', category: place.category, address: place.address ?? '', lat: place.lat ?? null, lng: place.lng ?? null, drawing: place.drawing ?? '' }
+    : { name: '', memo: '', category: 'cafe', address: '', lat: null, lng: null, drawing: '' })
   const [q, setQ] = useState('')
   const [found, setFound] = useState(null)       // null: 아직 검색 안 함 | []: 결과 없음
   const [busy, setBusy] = useState(false)
@@ -30,16 +33,17 @@ export default function PlaceModal({ onClose }) {
     e.preventDefault()
     if (!f.name.trim()) return toast(t('map.needName'), 'warn')
     setBusy(true)
-    const ok = await addPlace({ ...f, name: f.name.trim(), memo: f.memo.trim() })
+    const data = { ...f, name: f.name.trim(), memo: f.memo.trim() }
+    const ok = place ? await updatePlace(place, data) : await addPlace(data)
     setBusy(false)
     if (ok) onClose()
   }
 
   return (
-    <Modal onClose={onClose} label={t('map.add')}>
+    <Modal onClose={onClose} label={t(place ? 'map.edit' : 'map.add')}>
       <form className="place-form" onSubmit={save}>
-        <h2 className="modal-title">{t('map.add')}</h2>
-        <p className="modal-sub">{t('map.addSub')}</p>
+        <h2 className="modal-title">{t(place ? 'map.edit' : 'map.add')}</h2>
+        <p className="modal-sub">{t(place?.sample ? 'map.editSample' : 'map.addSub')}</p>
 
         <label>{t('map.name')}
           <input className="input" value={f.name} onChange={set('name')} placeholder={t('map.nameph')} maxLength={30} required autoFocus />
@@ -69,11 +73,11 @@ export default function PlaceModal({ onClose }) {
 
         <div>
           <span className="lbl">{t('map.draw')}</span>
-          <DrawPad onChange={(d) => setF((o) => ({ ...o, drawing: d }))} undoLabel={t('map.undo')} clearLabel={t('map.clear')} hint={t('map.drawHint')} />
+          <DrawPad initial={f.drawing} onChange={(d) => setF((o) => ({ ...o, drawing: d }))} undoLabel={t('map.undo')} clearLabel={t('map.clear')} hint={t('map.drawHint')} />
         </div>
 
         <div className="modal-actions">
-          <button className="btn dark" disabled={busy}>{t('map.save')}</button>
+          <button className="btn dark" disabled={busy}>{t(place ? 'map.update' : 'map.save')}</button>
           <button type="button" className="btn ghost" onClick={onClose}>{t('map.cancel')}</button>
         </div>
       </form>

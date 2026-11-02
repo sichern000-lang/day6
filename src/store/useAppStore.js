@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { askAgent } from '../api/client'
 import { translate } from '../lib/i18n'
 import { LANGS } from '../lib/langs'
-import { createPlace, deletePlace, loadHidden, loadMine, ownerOf, saveHidden } from '../lib/places'
+import { createPlace, deletePlace, loadHidden, loadMine, ownerOf, saveHidden, updatePlaceRow } from '../lib/places'
 
 // ── 여러 페이지가 함께 쓰는 "전역 상태" ─────────────────
 // 한 페이지에서만 쓰는 값(입력창, 선택한 탭 등)은 그 페이지의 useState 로 둡니다.
@@ -140,6 +140,20 @@ export const useAppStore = create(
           const row = await createPlace(ownerOf(get().user), p, get().placesMode)
           set({ places: [row, ...get().places] })
           get().toast(translate(get().lang, 'map.saved'))
+          return true
+        } catch (e) { get().toast(e.message, 'error'); return false }
+      },
+      // 장소 수정. 예시 장소는 코드에 들어 있는 견본이라, 고치면 내 장소로 새로 저장하고 예시는 숨김
+      updatePlace: async (place, p) => {
+        if (place.sample) {
+          const ok = await get().addPlace(p)
+          if (ok) { const hiddenSamples = [...get().hiddenSamples, place.id]; saveHidden(hiddenSamples); set({ hiddenSamples }) }
+          return ok
+        }
+        try {
+          const row = await updatePlaceRow(place.id, p, get().placesMode)
+          set({ places: get().places.map((x) => (x.id === place.id ? row : x)) })
+          get().toast(translate(get().lang, 'map.updated'))
           return true
         } catch (e) { get().toast(e.message, 'error'); return false }
       },

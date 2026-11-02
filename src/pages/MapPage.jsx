@@ -25,6 +25,7 @@ export default function MapPage() {
   const [selected, setSelected] = useState(STORIES[0])
   const [selectedPlace, setSelectedPlace] = useState(null)
   const [adding, setAdding] = useState(false)
+  const [editing, setEditing] = useState(null)   // 수정 중인 장소
   const [cat, setCat] = useState('')
 
   useEffect(() => { loadPlaces() }, [loadPlaces, user])
@@ -76,6 +77,10 @@ export default function MapPage() {
               </span>
               {p.memo && <p>{p.memo}</p>}
             </div>
+            <button className="x edit" aria-label={`${t('map.edit')}: ${p.name}`} title={t('map.edit')}
+              onClick={(e) => { e.stopPropagation(); setEditing(p) }}>
+              <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
             <button className="x trash" aria-label={`${t('map.del')}: ${p.name}`} title={t('map.del')}
               onClick={(e) => { e.stopPropagation(); removePlace(p) }}>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -93,6 +98,7 @@ export default function MapPage() {
         ))}
       </div>
       {adding && <PlaceModal onClose={() => setAdding(false)} />}
+      {editing && <PlaceModal place={editing} onClose={() => setEditing(null)} />}
     </>
   )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Modal from './Modal'
-import { Empty, ErrorBox, Loading } from './Status'
-import { fetchPlaces } from '../api/client'
+import { ErrorBox, Loading } from './Status'
+import { fetchPlaces, summarizeLore } from '../api/client'
 import { GROUP, label } from '../lib/folk'
 import { copyText } from '../lib/copy'
 import { isKo } from '../lib/langs'
@@ -48,6 +48,25 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.id, picked])
 
+  // 이야기 요약: 도청 데이터에는 본문이 없어서 Gemini 가 Google 검색으로 찾은 내용을 요약함 (같은 이야기·언어는 한 번만 요청)
+  const [sum, setSum] = useState({ text: '', sources: [], loading: true, error: false })
+  useEffect(() => {
+    const key = `sinhwa-sum2|${lang}|${item.id}`
+    let cached = null
+    try { cached = JSON.parse(sessionStorage.getItem(key)) } catch { /* 저장소를 못 써도 동작에는 지장 없음 */ }
+    if (cached) return setSum({ ...cached, loading: false, error: false })
+    let alive = true
+    setSum({ text: '', sources: [], loading: true, error: false })
+    summarizeLore(item, lang)
+      .then(({ summary, sources }) => {
+        try { sessionStorage.setItem(key, JSON.stringify({ text: summary, sources })) } catch { /* 위와 같음 */ }
+        if (alive) setSum({ text: summary, sources, loading: false, error: false })
+      })
+      .catch(() => alive && setSum({ text: '', sources: [], loading: false, error: true }))
+    return () => { alive = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item.id, lang])
+
   const shown = state.list.slice(0, 6)
   const tr = useTranslated(shown.map((p) => p.title), translated)
 
@@ -61,6 +80,19 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
       <span className="lore-kind">{label(GROUP[item.group], lang)}</span>
       <h2 className="modal-title">{titleLocal ?? item.title}</h2>
       {titleLocal && <p className="modal-sub">{item.title}</p>}
+
+      <div className="modal-block lore-summary">
+        <b className="modal-label">{t('modal.summary')} <i className="ai-tag">AI</i></b>
+        {sum.loading && <Loading />}
+        {sum.text && <p className="lore-summary-text">{sum.text}</p>}
+        {sum.error && <p className="hint">{t('modal.summaryFail')}</p>}
+        {sum.sources.length > 0 && (
+          <p className="lore-sources">{t('modal.sources')}: {sum.sources.map((src, i) => (
+            <a key={i} href={src.url} target="_blank" rel="noopener noreferrer">{src.title}</a>
+          ))}</p>
+        )}
+        {sum.text && <p className="hint">{t('modal.summaryNote')}</p>}
+      </div>
 
       {item.tags.length > 0 && (
         <div className="modal-block">
@@ -85,12 +117,13 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
           target="_blank" rel="noopener noreferrer" title={t('modal.sourceHint')}>{t('modal.source')} ↗</a>
       </div>
 
-      <h3 className="modal-label places-title">
-        {t('detail.places')} <small>{t('detail.placesSrc')}{state.used && ` · “${state.used}”`}</small>
-      </h3>
+      {(state.loading || state.error || shown.length > 0) && (
+        <h3 className="modal-label places-title">
+          {t('detail.places')} <small>{t('detail.placesSrc')}{state.used && ` · “${state.used}”`}</small>
+        </h3>
+      )}
       {state.loading && <Loading />}
       <ErrorBox error={state.error} />
-      {!state.loading && !state.error && shown.length === 0 && <Empty text={t('detail.noPlaces')} />}
       <ul className="rows">
         {shown.map((p) => (
           <li key={p.id}>

@@ -12,7 +12,7 @@ export class GeminiError extends Error {
 }
 
 // contents: [{ role: 'user' | 'model', parts: [...] }]
-export async function generate({ system, contents, tools, json = false, maxTokens = 1024, model = MODEL }) {
+export async function generate({ system, contents, tools, search = false, json = false, maxTokens = 1024, model = MODEL }) {
   const key = process.env.GEMINI_API_KEY
   if (!key) throw new GeminiError('GEMINI_API_KEY 가 없어요 (.env.local 확인)', 500)
 
@@ -22,6 +22,7 @@ export async function generate({ system, contents, tools, json = false, maxToken
   }
   if (system) body.systemInstruction = { parts: [{ text: system }] }
   if (tools) body.tools = [{ functionDeclarations: tools }]
+  if (search) body.tools = [{ google_search: {} }]   // Google 검색으로 근거를 찾아 답함 (출처는 groundingMetadata)
 
   let r
   try {
@@ -45,7 +46,8 @@ export async function generate({ system, contents, tools, json = false, maxToken
   if (!cand?.content) {
     throw new GeminiError(`Gemini 가 답을 만들지 못했어요 (${cand?.finishReason ?? data.promptFeedback?.blockReason ?? '이유 모름'})`, 502)
   }
-  return cand.content // { role: 'model', parts: [{ text } | { functionCall: { name, args } }] }
+  // 검색을 쓴 답이면 출처 정보를 content 에 붙여 돌려줌
+  return search ? { ...cand.content, groundingMetadata: cand.groundingMetadata } : cand.content // { role: 'model', parts: [{ text } | { functionCall: { name, args } }] }
 }
 
 export const textOf = (content) => (content.parts ?? []).map((p) => p.text ?? '').join('')

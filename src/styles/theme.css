@@ -735,3 +735,14 @@ button.who { white-space: nowrap; }
 .ask-tools { display: flex; gap: 14px; }
 .ask-tools button { border: 0; background: transparent; padding: 0; color: var(--muted); font: inherit; font-size: .8rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .ask-tools button:hover { color: var(--ink); }
+
+/* 모달: AI 이야기 요약 */
+.lore-summary-text { margin: 0 0 6px; font-size: 1.02rem; line-height: 1.7; word-break: keep-all; }
+.ai-tag { font-style: normal; font-size: .62rem; letter-spacing: .1em; padding: 1px 7px; margin-left: 6px; border-radius: 99px; background: rgba(207, 224, 236, .9); vertical-align: middle; }
+.lore-sources { margin: 0 0 6px; font-size: .82rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.lore-sources a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+/* 장소 수정 */
+.place-row .edit { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; transition: background .2s, color .2s; }
+.place-row .edit:hover { background: rgba(207, 224, 236, .8); color: var(--ink); }
+.drawpad-base { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }

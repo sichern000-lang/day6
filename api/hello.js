@@ -3,6 +3,7 @@ export default function handler(req, res) {
   res.status(200).json({
     ok: true,
     hasDataKey: Boolean(process.env.DATA_GO_KR_KEY),
+    hasEngKey: Boolean(process.env.TOUR_ENG_KEY || process.env.DATA_GO_KR_KEY),
     hasClaudeKey: Boolean(process.env.ANTHROPIC_API_KEY),
   })
 }

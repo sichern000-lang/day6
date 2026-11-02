@@ -44,7 +44,7 @@ export default function MapPage() {
   return (
     <>
       <PageHeader title="Story Map" subtitle={t('map.sub')} />
-      <div className="panel map-wrap">
+      <div className="map-wrap">
         <IslandMap selectedId={selected.id} onSelect={pickStory} places={shown} selectedPlaceId={selectedPlace?.id} onSelectPlace={setSelectedPlace} />
       </div>
 

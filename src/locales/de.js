@@ -20,6 +20,7 @@ export default {
   'chat.save': "Im Notizbuch speichern", 'chat.saved': "Gespeichert", 'chat.share': "Teilen", 'chat.copied': "In die Zwischenablage kopiert", 'chat.copyFail': "Kopieren fehlgeschlagen", 'chat.shareHead': "Jeju-Geschichtenarchiv · Ask", 'nb.more': "Mehr", 'nb.less': "Weniger",
   'modal.summary': "Zusammenfassung", 'modal.summaryNote': "Von der KI aus Google-Suchergebnissen zusammengefasst. Bitte prüfe die Quellen.", 'modal.sources': "Quellen", 'modal.summaryFail': "Die Such-Zusammenfassung konnte nicht geladen werden. Probiere unten „Original suchen“.",
   'map.edit': "Ort bearbeiten", 'map.update': "Änderungen speichern", 'map.updated': "Ort aktualisiert", 'map.editSample': "Wenn du ein Beispiel bearbeitest, wird es als dein eigener Ort gespeichert.",
+  'nb.list': "Als Liste anzeigen", 'nb.notes': "Als Notizen anzeigen", 'nb.mark': "Lesezeichen", 'nb.hint': "Seitlich ziehen oder scrollen",
   'home.today': 'HEUTE', 'home.read': 'LESEN', 'home.more': 'MEHR LESEN',
   'home.statement': 'Wir verbinden die Erzählungen wieder mit dem Land, das sie geboren hat.\n\nAuf dem Weg vorbei am Hallasan, an Felsen, Höhlen und Dorfschreinen\nbegegnen wir den Orten, an denen die Geschichten begannen, und ihrer Zeit.\n\nWir lesen nicht nur, wir erleben Geschichten, die in der Erde wurzeln.',
   'home.storiesTitle': 'Geschichten von der Insel', 'home.storiesSub': 'Jeju-Sagen,\nnach Stichwort',

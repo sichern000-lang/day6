@@ -134,9 +134,10 @@ form.row .input { flex: 1; width: auto; margin: 0; }
 .one { max-width: 320px; }
 
 .story-text p { margin: 0 0 12px; font-size: 1.08rem; }
-.map-wrap { padding: 8px; background: var(--paper); }
+.map-wrap { width: min(1280px, calc(100vw - 32px)); margin: 8px 0 0 50%; transform: translateX(-50%); }
+.map-stage { position: relative; }
 .island-map { width: 100%; height: auto; display: block; }
-.island-map .land-img { opacity: .55; }
+.island-map .land-img { fill: #5d7352; opacity: .92; }
 .island-map .pin { cursor: pointer; }
 .island-map .pin circle { fill: var(--butter); stroke: var(--ink); stroke-width: 3; transition: r .15s; }
 .island-map .pin.on circle { fill: var(--ink); }
@@ -746,3 +747,50 @@ button.who { white-space: nowrap; }
 .place-row .edit { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; transition: background .2s, color .2s; }
 .place-row .edit:hover { background: rgba(207, 224, 236, .8); color: var(--ink); }
 .drawpad-base { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+
+/* 내 수첩: 색색의 메모지가 흩어져 있고 옆으로 넘김 / 리스트로 정리 */
+.nb-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.nb-toggle { flex: none; margin-top: 14px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ink); background: transparent; color: var(--ink); font: inherit; font-size: .82rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; transition: background .2s; }
+.nb-toggle:hover { background: rgba(207, 224, 236, .7); }
+.nb-slide { overflow-x: auto; margin: 0 -20px; padding: 0 20px; cursor: grab; scrollbar-width: thin; scrollbar-color: rgba(52, 66, 31, .3) transparent; }
+.nb-slide.grabbing { cursor: grabbing; user-select: none; }
+.nb-track { position: relative; height: 470px; min-width: 100%; }
+.nb-hint { text-align: center; color: var(--muted); font-size: .82rem; margin: 6px 0 40px; }
+
+.note-card { --tone: #c9d8ee; position: relative; width: 224px; min-height: 290px; padding: 16px 18px 12px; background: var(--tone); color: #1d2616; border-radius: 3px;
+  box-shadow: 0 10px 22px rgba(36, 58, 46, .16), 0 1px 0 rgba(255, 255, 255, .5) inset; display: flex; flex-direction: column; gap: 8px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .3  0 0 0 0 .25  0 0 0 .1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  transition: transform .35s cubic-bezier(.2, .7, .2, 1), box-shadow .3s; }
+.nb-track .note-card { position: absolute; left: calc(var(--i) * 202px + 24px); top: calc(54px + var(--dy)); transform: rotate(var(--rot)); }
+.nb-track .note-card:hover, .nb-track .note-card:focus-within { transform: rotate(0deg) translateY(-14px) scale(1.04); z-index: 5; box-shadow: 0 18px 34px rgba(36, 58, 46, .24); }
+.note-card.marked { box-shadow: 0 10px 22px rgba(36, 58, 46, .16), 0 0 0 2px var(--ink); }
+.note-kind { margin: 0 24px 0 0; text-align: center; font-family: var(--serif); font-style: italic; font-size: .92rem; padding-bottom: 6px; border-bottom: 1px solid rgba(29, 38, 22, .55); }
+.note-title { border: 0; background: transparent; padding: 0; text-align: left; font-family: 'Gowun Batang', var(--serif); font-size: 1.22rem; line-height: 1.3; color: inherit; cursor: pointer; display: block; }
+.note-title:hover { text-decoration: underline; text-underline-offset: 4px; }
+.note-answer { margin: 0; font-size: .82rem; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.note-memo { flex: 1; width: 100%; resize: none; border: 0; background: transparent; font: inherit; font-family: 'Gowun Batang', var(--serif); font-size: .95rem; line-height: 1.5; color: inherit; outline: none; padding: 0;
+  background-image: repeating-linear-gradient(transparent 0 22px, rgba(29, 38, 22, .18) 22px 23px); background-attachment: local; }
+.note-memo::placeholder { color: rgba(29, 38, 22, .45); }
+.note-foot { display: flex; align-items: center; justify-content: space-between; font-size: .7rem; letter-spacing: .04em; border-top: 1px solid rgba(29, 38, 22, .35); padding-top: 6px; margin-top: auto; }
+.note-del { border: 0; background: transparent; color: rgba(29, 38, 22, .6); font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 0 2px; }
+.note-del:hover { color: #b3452f; }
+.note-mark { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: transparent; color: #1d2616; display: grid; place-items: center; cursor: pointer; transition: background .2s, transform .2s; }
+.note-mark:hover { background: rgba(255, 255, 255, .55); transform: scale(1.1); }
+
+/* 리스트로 보기: 가지런히 정리 */
+.nb-list { list-style: none; margin: 18px 0 56px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 22px; animation: tidy .45s ease; }
+.note-card.as-list { width: auto; min-height: 250px; transform: none; }
+@keyframes tidy { from { opacity: 0; transform: scale(.97); } }
+.ask-full { white-space: pre-wrap; line-height: 1.65; margin: 14px 0 6px; }
+@media (max-width: 560px) { .nb-top { flex-direction: column; } .nb-toggle { margin-top: 0; } }
+@media (prefers-reduced-motion: reduce) { .nb-list { animation: none; } .note-card { transition: none; } }
+
+/* 지도 핀 말풍선: 장소 이름과 주소 */
+.map-tip { position: absolute; transform: translate(-50%, calc(-100% - 26px)); width: max-content; max-width: 260px; display: grid; gap: 2px; padding: 8px 12px; border-radius: 10px; background: var(--ink); color: #fff; font-size: .8rem; line-height: 1.35; pointer-events: none; z-index: 3; box-shadow: 0 8px 20px rgba(36, 58, 46, .3); animation: fade .12s ease; }
+.map-tip strong { font-weight: 600; font-size: .86rem; }
+.map-tip span { opacity: .8; font-size: .76rem; }
+.map-tip::after { content: ''; position: absolute; left: 50%; bottom: -5px; width: 10px; height: 10px; background: var(--ink); transform: translateX(-50%) rotate(45deg); }
+.map-tip.edge-r { transform: translate(-88%, calc(-100% - 26px)); }
+.map-tip.edge-r::after { left: 88%; }
+.map-tip.edge-l { transform: translate(-12%, calc(-100% - 26px)); }
+.map-tip.edge-l::after { left: 12%; }

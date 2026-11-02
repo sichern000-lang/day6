@@ -20,6 +20,7 @@ export default {
   'chat.save': "Guardar en el cuaderno", 'chat.saved': "Guardado", 'chat.share': "Compartir", 'chat.copied': "Copiado al portapapeles", 'chat.copyFail': "No se pudo copiar", 'chat.shareHead': "Archivo de historias de Jeju · Ask", 'nb.more': "Ver más", 'nb.less': "Ver menos",
   'modal.summary': "Resumen", 'modal.summaryNote': "Resumido por IA a partir de resultados de Google. Revisa las fuentes.", 'modal.sources': "Fuentes", 'modal.summaryFail': "No se pudo obtener el resumen de la búsqueda. Prueba «Buscar el original» más abajo.",
   'map.edit': "Editar lugar", 'map.update': "Guardar cambios", 'map.updated': "Lugar actualizado", 'map.editSample': "Al editar un ejemplo, se guarda como tu propio lugar.",
+  'nb.list': "Ver como lista", 'nb.notes': "Ver como notas", 'nb.mark': "Marcador", 'nb.hint': "Desliza hacia los lados",
   'home.today': 'HOY', 'home.read': 'LEER', 'home.more': 'VER MÁS',
   'home.statement': 'Volvemos a unir las leyendas con la tierra que las vio nacer.\n\nCaminando junto al Hallasan, las rocas, las cuevas y los santuarios de aldea,\nnos encontramos con los lugares donde empezaron las historias y con su tiempo.\n\nMás allá de leer, vivimos historias con raíces en la tierra.',
   'home.storiesTitle': 'Historias que viajan por la isla', 'home.storiesSub': 'Leyendas de Jeju,\npor palabras clave',

@@ -13,6 +13,7 @@
   --bad: #b3452f;
   --ok: #4d7a34;
   --radius: 14px;
+  --sketch-bg: #e8ebde;
   --serif: 'Instrument Serif', 'Gowun Batang', serif;
 }
 
@@ -135,15 +136,11 @@ form.row .input { flex: 1; width: auto; margin: 0; }
 
 /* 이야기 카드 — 상품 카드처럼 큰 이미지 + 제목 */
 .story-card { display: flex; flex-direction: column; gap: 4px; }
-.story-card .art { aspect-ratio: 1; border-radius: var(--radius); display: grid; place-items: center; margin-bottom: 8px; transition: transform .2s; }
+.story-card .art { position: relative; overflow: hidden; aspect-ratio: 1; border-radius: var(--radius); display: grid; place-items: center; margin-bottom: 8px; background: var(--sketch-bg); color: var(--ink); transition: transform .2s; }
 .story-card:hover .art { transform: translateY(-3px); }
 .story-card h3 { font-size: 1.55rem; }
 .story-card .meta { margin: 0; font-size: .82rem; color: var(--muted); }
 .story-card .sum { margin: 6px 0 0; font-size: .95rem; }
-.art.sage { background: var(--sage); } .art.blue { background: var(--blue); } .art.butter { background: var(--butter); }
-.art.clay { background: var(--clay); } .art.moss { background: var(--moss); }
-.kind-art { width: 52%; fill: var(--cream); stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
-.kind-art .cut { fill: none; }
 .one { max-width: 320px; }
 
 .story-text p { margin: 0 0 12px; font-size: 1.08rem; }
@@ -296,10 +293,25 @@ html.snap .footer { scroll-snap-align: end; }
 .kw b { margin-right: 6px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; }
 .tag { border: 0; background: rgba(179, 196, 170, .45); color: var(--ink); font: inherit; font-size: .78rem; padding: 2px 10px; border-radius: 999px; cursor: pointer; }
 .tag:hover { background: var(--butter); }
-.feature-grid { margin-bottom: 26px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-.feature-grid .story-card h3 { font-size: 1.2rem; }
 .lore .lore-item { align-items: flex-start; }
 .lore .copy-btn { text-decoration: none; font-size: 1.05rem; }
 .lore-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; align-items: center; }
 .lore-meta em { font-style: normal; font-size: .72rem; letter-spacing: .06em; padding: 2px 9px; border-radius: 999px; background: var(--ink); color: var(--cream); }
 .lore .h-text > .lore-meta { color: inherit; font-size: inherit; }
+
+/* 색연필 스케치 썸네일 + 바둑판 배치 */
+.sketch { width: 100%; height: 100%; display: block; color: var(--ink); }
+.place-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .35s; pointer-events: none; }
+.place-photo.on { opacity: 1; }
+.sketch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 24px; margin-bottom: 30px; }
+.cell { position: relative; display: block; border-top: 1px solid var(--ink); padding: 14px 4px 22px; min-height: 230px; overflow: hidden; }
+.cell.text:hover .cell-title { text-decoration: underline; text-underline-offset: 3px; }
+.cell-title { display: flex; align-items: baseline; gap: 8px; margin: 0 0 18px; font-size: 1.12rem; line-height: 1.35; }
+.bullet { flex: none; width: 11px; height: 11px; border-radius: 50%; background: var(--ink); transform: translateY(1px); }
+.cell ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 1.02rem; }
+.cell ul li::before { content: '↘'; margin-right: 8px; }
+.cell.art-cell { padding: 14px 0 22px; background: transparent; }
+.cell.art-cell .sketch { padding: 6px; }
+.cell.art-cell .place-photo { top: 14px; bottom: 22px; height: calc(100% - 36px); border-radius: 4px; }
+.story-card .art .sketch { padding: 14px; }
+@media (max-width: 720px) { .sketch-grid { grid-template-columns: repeat(2, 1fr); gap: 0 14px; } .cell { min-height: 190px; } }

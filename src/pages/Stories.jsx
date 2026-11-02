@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import PageHeader from '../components/PageHeader'
-import StoryCard from '../components/StoryCard'
+import FeaturedGrid from '../components/FeaturedGrid'
 import { Empty, ErrorBox, Loading } from '../components/Status'
 import { fetchCatalog } from '../api/client'
 import folk from '../data/folk-groups.json'
@@ -89,7 +89,7 @@ export default function Stories() {
       )}
 
       {showFeatured && featured.length > 0 && (
-        <div className="grid three feature-grid">{featured.map((s) => <StoryCard key={s.id} story={s} />)}</div>
+        <FeaturedGrid stories={featured} />
       )}
 
       {showRows && (

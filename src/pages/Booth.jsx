@@ -44,7 +44,7 @@ export default function Booth() {
       for (const n of [3, 2, 1]) { setCount(n); await sleep(900) }
       setCount(0); setFlash(true); setTimeout(() => setFlash(false), 160)
       const v = video.current
-      out.push(squareFrom(v, v.videoWidth, v.videoHeight, facing === 'user'))
+      out.push(squareFrom(v, v.videoWidth, v.videoHeight, true))     // 보이는 화면 그대로 좌우 반전해서 저장
       setTaken(i + 1); await sleep(650)
     }
     setBusy(false); finishShots(out)
@@ -149,7 +149,7 @@ export default function Booth() {
       {!shots ? (
         <div className="booth-cam">
           <div className="booth-view">
-            <video ref={video} playsInline muted autoPlay className={facing === 'user' ? 'mirror' : ''} />
+            <video ref={video} playsInline muted autoPlay className="mirror" />
             {cam !== 'on' && (
               <div className="booth-msg">
                 <p>{cam === 'wait' ? t('booth.wait') : t('booth.denied')}</p>

@@ -17,9 +17,9 @@ export const FRAMES = [
 ]
 // 필터: 선명하지 않고 살짝 흐리고 바랜 듯 예쁘게 (채도↓, 검정은 들뜨게, 색 입힘, 번짐, 가장자리 어둡게, 필름 알갱이)
 export const FILTERS = {
-  soft: { sat: 0.8, fade: 20, contrast: 0.93, tint: [7, 2, -6], glow: 0.3, grain: 18, vig: 0.22 },
-  sage: { sat: 0.76, fade: 22, contrast: 0.93, tint: [-8, 7, -2], glow: 0.3, grain: 18, vig: 0.22 },
-  mono: { sat: 0, fade: 16, contrast: 1.06, tint: [-4, 0, 7], glow: 0.22, grain: 24, vig: 0.28 },
+  soft: { sat: 0.82, fade: 12, contrast: 1.08, bright: 14, tint: [7, 2, -6], glow: 0.26, grain: 16, vig: 0.2 },
+  sage: { sat: 0.78, fade: 12, contrast: 1.08, bright: 14, tint: [-8, 7, -2], glow: 0.26, grain: 16, vig: 0.2 },
+  mono: { sat: 0, fade: 10, contrast: 1.16, bright: 12, tint: [-4, 0, 7], glow: 0.2, grain: 22, vig: 0.26 },
 }
 
 // ── 두들(SVG) → 그림 ──
@@ -74,14 +74,14 @@ function applyFilter(canvas, id) {
   small.getContext('2d').drawImage(canvas, 0, 0, small.width, small.height)
   g.save(); g.globalAlpha = f.glow; g.imageSmoothingQuality = 'high'; g.drawImage(small, 0, 0, w, h); g.restore()   // 몽글하게 번지는 느낌
   const img = g.getImageData(0, 0, w, h), d = img.data, cx = w / 2, cy = h / 2, invMd = 1 / Math.hypot(cx, cy)
-  const [tr, tg, tb] = f.tint, sat = f.sat, con = f.contrast, k = f.fade / 255, fade = f.fade, grain = f.grain, vig = f.vig
+  const br = f.bright ?? 0, [tr, tg, tb] = f.tint, sat = f.sat, con = f.contrast, k = f.fade / 255, fade = f.fade, grain = f.grain, vig = f.vig
   for (let y = 0, i = 0; y < h; y++) {
     const dy2 = (y - cy) * (y - cy)
     for (let x = 0; x < w; x++, i += 4) {
       let r = d[i], gg = d[i + 1], b = d[i + 2]
       const l = 0.299 * r + 0.587 * gg + 0.114 * b
       r = (l + (r - l) * sat - 128) * con + 128; gg = (l + (gg - l) * sat - 128) * con + 128; b = (l + (b - l) * sat - 128) * con + 128
-      r = r * (1 - k) + fade + tr; gg = gg * (1 - k) + fade + tg; b = b * (1 - k) + fade + tb
+      r = r * (1 - k) + fade + tr + br; gg = gg * (1 - k) + fade + tg + br; b = b * (1 - k) + fade + tb + br
       const dd = Math.sqrt((x - cx) * (x - cx) + dy2) * invMd
       let v = 1
       if (dd > 0.55) { const q = (dd - 0.55) / 0.45; v = 1 - vig * q * q }

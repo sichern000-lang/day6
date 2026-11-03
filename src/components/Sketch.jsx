@@ -91,10 +91,52 @@ const MAKE = {
   },
 }
 
+// 이야기마다 직접 그린 스케치 (seed = 이야기 id). 획은 { d, w(굵기) } — 윤곽은 굵게, 결은 가늘게
+const poly = (pts) => (y) => {                                  // 다각형을 가로로 가르는 선 위의 구간들 [[x0, x1], ...]
+  const xs = []
+  for (let i = 0; i < pts.length; i++) {
+    const [ax, ay] = pts[i], [bx, by] = pts[(i + 1) % pts.length]
+    if ((ay <= y && by > y) || (by <= y && ay > y)) xs.push(ax + ((y - ay) / (by - ay)) * (bx - ax))
+  }
+  xs.sort((a, b) => a - b)
+  const out = []; for (let i = 0; i + 1 < xs.length; i += 2) out.push([xs[i], xs[i + 1]])
+  return out
+}
+const CUSTOM = {
+  // 용두암 — 바다와 파도를 상징하는 추상 그림: 겹겹이 출렁이는 물결 줄과, 위쪽에서 말려 올라가는 큰 물결 한 줄기
+  yongduam(r) {
+    const out = []
+    // 물결 한 줄: 시작 x, 높이 y, 길이, 물결 크기(진폭), 한 물결의 너비
+    const wave = (x, y, len, amp, wl) => {
+      let d = `M${f(x)} ${f(y)}`
+      const n = Math.max(2, Math.round(len / (wl / 2)))
+      for (let i = 0; i < n; i++) d += i === 0 ? ` q${f(wl / 4)} ${f(-amp)} ${f(wl / 2)} 0` : ` t${f(wl / 2)} 0`
+      return d
+    }
+    for (let row = 0; row < 8; row++) {
+      const y = 70 + row * 15, amp = 5.5 + r() * 3.5, wl = 30 + r() * 16
+      let x = 14 + r() * 26
+      const pieces = 1 + Math.floor(r() * 2)
+      for (let k = 0; k < pieces; k++) {
+        const len = pieces === 1 ? 150 + r() * 20 : 60 + r() * 50
+        out.push({ d: wave(x, y + r() * 3, len, amp, wl), w: 2.2 + (row % 3) * 0.55 })
+        x += len + 8 + r() * 14
+        if (x > 170) break
+      }
+    }
+    // 위에서 말려 올라가는 큰 물결 (소용돌이 모양의 파도 머리)
+    out.push({ d: 'M26 66 C48 66 70 52 92 40 C110 30 132 28 146 38 C158 47 156 62 142 64 C130 66 122 56 130 50 C136 46 143 49 142 54', w: 3.8 })
+    out.push({ d: 'M44 58 C66 56 84 46 102 38', w: 2.4 })
+    for (const [x, y, dx, dy] of [[150, 30, 4, -6], [158, 36, 6, -4], [140, 24, 1, -7], [164, 46, 7, -1]]) out.push({ d: `M${x} ${y} l${dx} ${dy}`, w: 2.2 })      // 튀어 오르는 물보라
+    for (let i = 0; i < 14; i++) { const x = 18 + r() * 160, y = 82 + r() * 76; out.push({ d: `M${f(x)} ${f(y)} l${f(5 + r() * 9)} ${f(-1.5 - r() * 2)}`, w: 1.5 + r() * 0.8 }) }   // 물방울처럼 흩어진 짧은 획
+    return out
+  },
+}
+
 export default function Sketch({ kind, seed = kind, className = '' }) {
   const id = useId().replace(/:/g, '')
   const pattern = PATTERN[kind] ?? 'ridge'
-  const paths = useMemo(() => MAKE[pattern](rng(seed)), [pattern, seed])
+  const paths = useMemo(() => (CUSTOM[seed] ?? MAKE[pattern])(rng(seed)), [pattern, seed])
   const base = pattern === 'flow' ? 1.7 : pattern === 'burst' ? 2.6 : 3.2 // 촘촘한 패턴은 획을 가늘게
   return (
     <svg className={`sketch ${className}`} viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -109,7 +151,9 @@ export default function Sketch({ kind, seed = kind, className = '' }) {
         </filter>
       </defs>
       <g filter={`url(#${id}-c)`} fill="none" stroke="currentColor" strokeLinecap="round">
-        {paths.map((d, i) => <path key={i} d={d} strokeWidth={base + ((i * 7) % 5) * 0.4} opacity={0.86 + ((i * 3) % 4) * 0.04} />)}
+        {paths.map((p, i) => (typeof p === 'string'
+          ? <path key={i} d={p} strokeWidth={base + ((i * 7) % 5) * 0.4} opacity={0.86 + ((i * 3) % 4) * 0.04} />
+          : <path key={i} d={p.d} strokeWidth={p.w} opacity={0.9} />))}
       </g>
     </svg>
   )

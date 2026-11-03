@@ -38,7 +38,6 @@ export default function RootLayout() {
 
   return (
     <>
-      <div className="announce">{t('announce')}</div>
       <nav className={`topbar ${isHome ? 'over' : ''} ${isHome && scrolled ? 'solid' : ''}`}>
         <div className="links">
           {NAV_ITEMS.map((n) => n.action ? (

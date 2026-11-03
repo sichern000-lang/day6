@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Modal from './Modal'
-import { Loading } from './Status'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
 import { askId, clip, shareText } from '../lib/askShare'
@@ -17,6 +16,9 @@ export default function ChatModal() {
   const toggleSave = useAppStore((s) => s.toggleSave)
   const toast = useAppStore((s) => s.toast)
   const [input, setInput] = useState('')
+  const [round, setRound] = useState(0)          // 새로고침할 때마다 올라가서 추천 질문이 바뀜
+  // 추천 질문: 열 때마다 전체 16개 중 무작위 4개
+  const picks = useMemo(() => [...Array(16).keys()].map((n) => n + 1).sort(() => Math.random() - 0.5).slice(0, 4), [round]) // eslint-disable-line react-hooks/exhaustive-deps
   const end = useRef(null)
   const inputRef = useRef(null)
 
@@ -42,7 +44,7 @@ export default function ChatModal() {
   return (
     <Modal onClose={closeChat} label="Ask">
       <div className="chat-modal">
-        <button className="chat-refresh" onClick={() => { clearChat(); setInput(''); inputRef.current?.focus() }}
+        <button className="chat-refresh" onClick={() => { clearChat(); setInput(''); setRound((r) => r + 1); inputRef.current?.focus() }}
           disabled={messages.length === 0 && !loading} aria-label={t('chat.refresh')} title={t('chat.refresh')}>
           <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
             <path d="M16.2 9.6A6.4 6.4 0 1 0 14.4 14.3 M16.4 4.2v5.2h-5.2" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -55,7 +57,7 @@ export default function ChatModal() {
           {messages.length === 0 && (
             <div className="suggest">
               <p className="hint">{t('guide.try')}</p>
-              {[1, 2, 3, 4].map((n) => (
+              {picks.map((n) => (
                 <button key={n} type="button" onClick={() => sendMessage(t(`guide.s${n}`))}>{t(`guide.s${n}`)}</button>
               ))}
             </div>
@@ -87,7 +89,11 @@ export default function ChatModal() {
               )}
             </div>
           ))}
-          {loading && <Loading text={t('guide.loading')} />}
+          {loading && (
+            <div className="msg assistant waiting" role="status">
+              {t(`guide.wait${(messages.length % 3) + 1}`)}<span className="dots" aria-hidden="true"><i /><i /><i /></span>
+            </div>
+          )}
           <div ref={end} />
         </div>
 

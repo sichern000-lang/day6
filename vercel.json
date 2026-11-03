@@ -17,10 +17,6 @@
       "maxDuration": 30,
       "includeFiles": "src/lib/**"
     },
-    "api/summary.js": {
-      "maxDuration": 30,
-      "includeFiles": "src/lib/**"
-    },
     "api/catalog.js": {
       "maxDuration": 30,
       "includeFiles": "src/data/**"

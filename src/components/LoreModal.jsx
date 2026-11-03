@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Modal from './Modal'
 import { ErrorBox, Loading } from './Status'
-import { fetchPlaces, summarizeLore } from '../api/client'
+import { fetchPlaces } from '../api/client'
 import { GROUP, label, tagLabel } from '../lib/folk'
 import SpeakButton from './SpeakButton'
 import { GoButton } from './GoModal'
@@ -51,25 +51,6 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.id, picked])
 
-  // 이야기 요약: 도청 데이터에는 본문이 없어서 Gemini 가 Google 검색으로 찾은 내용을 요약함 (같은 이야기·언어는 한 번만 요청)
-  const [sum, setSum] = useState({ text: '', sources: [], loading: true, error: false })
-  useEffect(() => {
-    const key = `sinhwa-sum2|${lang}|${item.id}`
-    let cached = null
-    try { cached = JSON.parse(sessionStorage.getItem(key)) } catch { /* 저장소를 못 써도 동작에는 지장 없음 */ }
-    if (cached) return setSum({ ...cached, loading: false, error: false })
-    let alive = true
-    setSum({ text: '', sources: [], loading: true, error: false })
-    summarizeLore(item, lang)
-      .then(({ summary, sources }) => {
-        try { sessionStorage.setItem(key, JSON.stringify({ text: summary, sources })) } catch { /* 위와 같음 */ }
-        if (alive) setSum({ text: summary, sources, loading: false, error: false })
-      })
-      .catch(() => alive && setSum({ text: '', sources: [], loading: false, error: true }))
-    return () => { alive = false }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [item.id, lang])
-
   const shown = state.list.slice(0, 6)
   const tr = useTranslated(shown.map((p) => p.title), translated)
 
@@ -86,18 +67,9 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
         <p className="modal-sub korean-name">{item.title} · {romanize(item.title)} <SpeakButton text={item.title} /></p>
       )}
 
-      <div className="modal-block lore-summary">
-        <b className="modal-label">{t('modal.summary')} <i className="ai-tag">AI</i></b>
-        {sum.loading && <Loading />}
-        {sum.text && <p className="lore-summary-text">{sum.text}</p>}
-        {sum.error && <p className="hint">{t('modal.summaryFail')}</p>}
-        {sum.sources.length > 0 && (
-          <p className="lore-sources">{t('modal.sources')}: {sum.sources.map((src, i) => (
-            <a key={i} href={src.url} target="_blank" rel="noopener noreferrer">{src.title}</a>
-          ))}</p>
-        )}
-        {sum.text && <p className="hint">{t('modal.summaryNote')}</p>}
-      </div>
+      {/* 도청의 원문 PDF·전자책 주소는 모두 열리지 않아서, 제목으로 웹 검색을 열어 줌 */}
+      <a className="lore-find" href={`https://www.google.com/search?q=${encodeURIComponent(`제주 ${item.kind === 'myth' ? '신화' : '민담'} ${plain(item.title)}`)}`}
+        target="_blank" rel="noopener noreferrer" title={t('modal.sourceHint')}>{t('modal.source')} ↗</a>
 
       {item.tags.length > 0 && (
         <div className="modal-block">
@@ -117,9 +89,6 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
           {isSaved ? `✓ ${t('modal.saved')}` : `+ ${t('detail.save').replace('＋ ', '')}`}
         </button>
         <button className="btn ghost" onClick={() => { onSearch(plain(item.title)); onClose() }}>{t('modal.findSame')}</button>
-        {/* 도청의 원문 PDF·전자책 주소는 모두 열리지 않아서, 제목으로 웹 검색을 열어 줌 */}
-        <a className="btn ghost" href={`https://www.google.com/search?q=${encodeURIComponent(`제주 ${item.kind === 'myth' ? '신화' : '민담'} ${plain(item.title)}`)}`}
-          target="_blank" rel="noopener noreferrer" title={t('modal.sourceHint')}>{t('modal.source')} ↗</a>
       </div>
 
       {(state.loading || state.error || shown.length > 0) && (

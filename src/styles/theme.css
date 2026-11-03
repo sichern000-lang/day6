@@ -27,12 +27,11 @@ em { font-style: italic; }
 a { color: inherit; text-decoration: none; }
 
 /* 상단 안내 띠 + 메뉴 */
-.announce { background: var(--blue); text-align: center; font-size: .78rem; padding: 4px 12px; letter-spacing: .02em; }
 .topbar {
   position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: 12px;
   padding: 12px 24px; background: var(--cream); border-bottom: 1px solid var(--line);
 }
-.topbar.over { position: fixed; left: 0; right: 0; top: 26px; background: transparent; border-color: transparent; transition: top .25s, background .25s; }
+.topbar.over { position: fixed; left: 0; right: 0; top: 0; background: transparent; border-color: transparent; transition: top .25s, background .25s; }
 .topbar.over.solid { top: 0; background: rgba(238, 242, 236, .94); backdrop-filter: blur(8px); border-bottom-color: var(--line); }
 .brand { font-family: var(--serif); font-size: 1.5rem; text-align: center; white-space: nowrap; letter-spacing: -.01em; }
 .links { display: flex; gap: 4px; overflow-x: auto; }
@@ -52,7 +51,7 @@ a { color: inherit; text-decoration: none; }
 .section-title small { font-family: 'Pretendard', sans-serif; font-size: .8rem; color: var(--muted); margin-left: 8px; }
 
 /* 히어로 */
-.hero { position: relative; min-height: calc(100svh - 26px); overflow: hidden; display: grid; place-items: center; }
+.hero { position: relative; min-height: 100svh; overflow: hidden; display: grid; place-items: center; }
 .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 78%; }
 .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(238, 242, 236, .35), transparent 30%); pointer-events: none; }
 .hero-copy { position: relative; text-align: center; display: grid; gap: 22px; justify-items: center; padding: 100px 20px 150px; }
@@ -139,11 +138,11 @@ form.row .input { flex: 1; width: auto; margin: 0; }
 .island-map { width: 100%; height: auto; display: block; }
 .island-map .land-img { fill: #5d7352; opacity: .92; }
 .island-map .pin { cursor: pointer; }
-.island-map .pin circle { fill: var(--butter); stroke: var(--ink); stroke-width: 3; transition: r .15s; }
+.island-map .pin circle { fill: var(--butter); stroke: var(--ink); stroke-width: 2px; vector-effect: non-scaling-stroke; transition: r .15s; }
 .island-map .pin.on circle { fill: var(--ink); }
 .island-map .pin text { fill: var(--ink); font-size: 14px; font-weight: 600; paint-order: stroke; stroke: var(--cream); stroke-width: 4px; }
 .island-map .pin:focus { outline: none; }
-.island-map .pin:focus circle { stroke-width: 5; }
+.island-map .pin:focus circle { stroke-width: 3px; }
 
 .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .list li {
@@ -182,7 +181,6 @@ form.row .input { flex: 1; width: auto; margin: 0; }
   .topbar .brand { grid-column: 1; grid-row: 1; text-align: left; }
   .topbar .who { grid-column: 2; grid-row: 1; }
   .topbar .links { grid-column: 1 / -1; grid-row: 2; }
-  .topbar.over { top: 26px; }
   .split { grid-template-columns: 1fr; }
   .split-text { padding: 36px 22px; }
   .wrap { padding: 0 16px; }
@@ -265,7 +263,6 @@ body.bright .rows a:hover, body.bright .rows .row-item:hover, body.bright .rows 
 
 /* 랜딩 — 섹션마다 한 화면, 스크롤하면 다음 섹션에 맞춰짐 */
 html.snap { scroll-snap-type: y mandatory; }
-html.snap .announce { scroll-snap-align: start; }
 html.snap .footer { scroll-snap-align: end; }
 .snap-sec { min-height: 100svh; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; padding: 96px 0 56px; }
 .snap-sec > .wrap { width: 100%; }
@@ -563,8 +560,8 @@ body.sage .tag:hover { background: var(--butter); }
 .statement > .wrap, .stories-sec > .wrap { position: relative; z-index: 1; }
 .land-map { position: absolute; left: 50%; bottom: -22%; width: min(150vw, 1900px, 175vh); margin-left: calc(min(150vw, 1900px, 175vh) / -2); aspect-ratio: 1775 / 886; background: #b9c0b5; opacity: .75; pointer-events: none;
   -webkit-mask: url('../assets/jeju-map.svg') center / contain no-repeat; mask: url('../assets/jeju-map.svg') center / contain no-repeat; }
-.statement-text { max-width: 760px; margin-left: clamp(0px, 5vw, 64px); display: grid; gap: 2.1em; }
-.statement-text p { margin: 0; font-family: 'Gowun Batang', 'Instrument Serif', serif; font-size: clamp(1.25rem, 2.2vw, 1.85rem); line-height: 1.75; word-break: keep-all; }
+.statement-text { max-width: none; margin-left: clamp(0px, 5vw, 64px); display: grid; gap: 1.5em; }
+.statement-text p { margin: 0; font-family: 'Gowun Batang', 'Instrument Serif', serif; font-size: clamp(1.2rem, 2.1vw, 1.7rem); line-height: 1.5; word-break: keep-all; text-wrap: pretty; }
 .statement { justify-content: center; }
 
 .stories-sec > .wrap { max-width: none; padding: 0 0 0 max(24px, calc(50vw - 548px)); }
@@ -671,8 +668,8 @@ button.who.in { background: rgba(179, 196, 170, .55); }
 
 /* 지도: 내 이야기 장소 */
 .statement-cta { margin: 36px 0 0 clamp(0px, 5vw, 64px); }
-.island-map .pin.mine circle { fill: #fbfdfb; stroke: var(--ink); stroke-width: 2.4; }
-.island-map .pin.mine.on circle { fill: #cfe0ec; stroke-width: 3.4; }
+.island-map .pin.mine circle { fill: #fbfdfb; stroke: var(--ink); stroke-width: 2px; }
+.island-map .pin.mine.on circle { fill: #cfe0ec; stroke-width: 2px; }
 .island-map .pin.mine .dot { fill: var(--ink); stroke: none; }
 .island-map .pin-art path { stroke: var(--ink); }
 .places-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 56px; }
@@ -830,8 +827,8 @@ body { overflow-x: clip; }
 .search-slim.helper-search { margin: 0 auto 28px; }
 
 /* Helper 단어 카드 + 수첩에 담은 단어 카드 */
-.helper-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 6px; }
-.helper-add { display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(52, 66, 31, .4); background: transparent; color: var(--ink); font: inherit; font-size: .78rem; padding: 4px 12px; border-radius: 999px; cursor: pointer; transition: background .2s; margin-left: auto; }
+.helper-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: auto; padding-top: 6px; }
+.helper-add { display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(52, 66, 31, .4); background: transparent; color: var(--ink); font: inherit; font-size: .78rem; padding: 4px 12px; border-radius: 999px; cursor: pointer; transition: background .2s; margin-left: auto; white-space: nowrap; }
 .helper-add:hover { background: rgba(207, 224, 236, .7); }
 .helper-add.on { background: var(--ink); border-color: var(--ink); color: #fff; }
 .word-card { position: relative; width: 224px; min-height: 250px; padding: 16px 18px 14px; background: #fbfdfb; border-top: 1px solid var(--ink); border-radius: 2px; display: flex; flex-direction: column; gap: 6px; color: var(--ink);
@@ -843,3 +840,23 @@ body { overflow-x: clip; }
 .nb-track .word-card { position: absolute; left: calc(var(--i) * 202px + 24px + var(--dx)); top: calc(150px + var(--dy)); transform: rotate(var(--rot)); }
 .nb-track .word-card:hover, .nb-track .word-card:focus-within { transform: rotate(0deg) translateY(-14px) scale(1.04); z-index: 6 !important; box-shadow: 0 18px 34px rgba(36, 58, 46, .24); }
 .word-card.as-list { width: auto; min-height: 250px; transform: none; }
+
+/* 접힌 두 섹션은 붙여서 빈 공간 없이 (위 섹션이 펼쳐져 있을 때만 간격을 둠) */
+.fold:not(.open) + .fold { margin-top: 0; }
+.fold:not(.open) + .fold .fold-bar { border-top: 0; }
+
+/* 모달: 이야기 원문 찾아보기 — 길고 연한 연두색 네모 버튼 */
+.lore-find { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin: 18px 0 4px; padding: 14px 18px; border-radius: 6px; background: #cfe0c4; color: var(--ink); font-size: 1rem; font-weight: 600; text-decoration: none; transition: background .2s, transform .2s; }
+.lore-find:hover { background: #bcd3ae; transform: translateY(-1px); }
+
+.helper-actions .textlink { white-space: nowrap; }
+
+/* Ask: 답을 기다리는 말풍선 (왼쪽) + 말끝에서 반복되는 점 세 개 */
+.msg.waiting { color: var(--muted); }
+.dots { display: inline-flex; margin-left: 2px; }
+.dots i { font-style: normal; opacity: .15; animation: dotPulse 1.2s infinite; }
+.dots i::before { content: '.'; }
+.dots i:nth-child(2) { animation-delay: .2s; }
+.dots i:nth-child(3) { animation-delay: .4s; }
+@keyframes dotPulse { 0%, 60%, 100% { opacity: .15; } 30% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .dots i { animation: none; opacity: .6; } }

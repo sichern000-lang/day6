@@ -26,5 +26,4 @@ export const fetchHeritage = (keyword = '') => get(`/api/heritage?keyword=${enco
 
 // AI
 export const translateTexts = (texts, lang = 'en') => post('/api/translate', { texts, lang })
-export const summarizeLore = (item, lang) => post('/api/summary', { title: item.title, kind: item.kind, group: item.group, tags: item.tags, lang })
 export const askAgent = (message, history, lang) => post('/api/agent', { message, history, lang })

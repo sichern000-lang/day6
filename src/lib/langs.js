@@ -6,5 +6,4 @@ export const LANGS = [
   { id: 'de', label: 'DE', name: 'Deutsch', locale: 'de-DE', english: 'German' },
 ]
 export const isKo = (lang) => lang === 'ko'
-export const localeOf = (lang) => LANGS.find((l) => l.id === lang)?.locale ?? 'ko-KR'
 export const englishName = (lang) => LANGS.find((l) => l.id === lang)?.english ?? 'English'

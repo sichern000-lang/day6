@@ -18,7 +18,6 @@ export default function Home() {
   const nickname = useAppStore((s) => s.nickname)
   const setNickname = useAppStore((s) => s.setNickname)
   const loadSaved = useAppStore((s) => s.loadSaved)
-  const openChat = useAppStore((s) => s.openChat)
   const [db, setDb] = useState(isSupabaseReady ? { state: 'wait' } : { state: 'fail', key: 'check.sbfail' })
   const [api, setApi] = useState({ state: 'wait' })
   const introDone = useAppStore((s) => s.introDone)

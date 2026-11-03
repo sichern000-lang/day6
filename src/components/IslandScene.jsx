@@ -49,7 +49,7 @@ const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick,
     const el = mount.current
     let renderer
     try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' }) } catch { cb.current.onHover?.({ error: true }); return }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 760 ? 1.5 : 2))   // 폰은 화면 밀도가 높아서 낮춰 그려야 부드럽게 돔
     renderer.setClearColor(0x000000, 0)
     el.appendChild(renderer.domElement)
 

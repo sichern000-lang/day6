@@ -27,11 +27,6 @@ export const getStoryById = (id) => stories.find((s) => s.id === id)
 // 메인에 올리는 대표 이야기 — 대표 키워드(사물)가 있는 이야기
 export const FEATURED = stories.filter((s) => s.image)
 
-// 오늘의 이야기 — 날짜로 고정
-export function storyOfTheDay(date = new Date()) {
-  return stories[Math.floor(date.getTime() / 86400000) % stories.length]
-}
-
 // 지도 투영: 제주도 위경도를 지도 SVG(jeju-map.svg, 원본 1775×886) 좌표로 — 지도 속 섬 그림이 차지하는 범위(87~1658, 118~773)에 위경도 범위를 맞춤
 const LNG = [126.15, 126.97], LAT = [33.11, 33.56]
 const K = 800 / 1775

@@ -1,5 +1,3 @@
-import { romanize } from './romanize'
-
 // 노트 카드를 그림 파일(PNG)로: 인스타그램에 올리기 좋은 4:5 세로 그림에 카드 한 장이 가운데 놓임
 const W = 1080, H = 1350, BG = '#eef2ec', INK = '#1d2616'
 const SERIF = '"Gowun Batang", "Instrument Serif", serif', SANS = '"Pretendard", sans-serif'
@@ -30,7 +28,6 @@ export async function noteToBlob(item) {
 
   const CW = 760, X = (W - CW) / 2, pad = 54
   // 1) 카드 안의 내용을 먼저 줄바꿈해서 높이를 구함
-  const body = []
   let photo = null
   g.textBaseline = 'alphabetic'
   if (item.kind === 'photo') photo = await loadImage(item.image)
@@ -40,11 +37,9 @@ export async function noteToBlob(item) {
   const name = item.kind === 'word' && item.name ? lines(`600 36px ${SANS}`, item.name, 3) : []
   const text = item.kind === 'photo' ? [] : lines(`400 ${item.kind === 'word' ? 34 : 38}px ${SERIF}`, item.body, item.kind === 'ask' ? 12 : 9)
   const photoH = photo ? Math.min(900, ((CW - pad * 2) * photo.height) / photo.width) : 0
-  const lh = (n) => n * 1.35
   let ch = pad + 60 + (title.length ? title.length * 70 + 20 : 0) + (rom.length ? 54 : 0) + (name.length ? name.length * 50 + 14 : 0) + (text.length ? text.length * 56 + 20 : 0) + (photo ? photoH + 24 : 0) + 96 + pad / 2
   ch = Math.max(ch, 560)
   const Y = Math.round((H - ch) / 2) - 20
-  void lh
 
   // 2) 카드 그리기
   g.save(); g.translate(W / 2, Y + ch / 2); g.rotate(-0.025); g.translate(-W / 2, -(Y + ch / 2))
@@ -78,7 +73,6 @@ export async function noteToBlob(item) {
   g.fillStyle = '#67776a'; g.font = `400 26px ${SANS}`; g.fillText(item.sub ?? '', W / 2, H - 50)
   return new Promise((res) => c.toBlob(res, 'image/png'))
 }
-export { romanize }
 
 // 공유(휴대폰은 공유 창 → 인스타그램 선택) 또는 저장
 export async function shareBlob(blob, name, title) {

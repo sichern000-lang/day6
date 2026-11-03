@@ -92,16 +92,6 @@ const MAKE = {
 }
 
 // 이야기마다 직접 그린 스케치 (seed = 이야기 id). 획은 { d, w(굵기) } — 윤곽은 굵게, 결은 가늘게
-const poly = (pts) => (y) => {                                  // 다각형을 가로로 가르는 선 위의 구간들 [[x0, x1], ...]
-  const xs = []
-  for (let i = 0; i < pts.length; i++) {
-    const [ax, ay] = pts[i], [bx, by] = pts[(i + 1) % pts.length]
-    if ((ay <= y && by > y) || (by <= y && ay > y)) xs.push(ax + ((y - ay) / (by - ay)) * (bx - ax))
-  }
-  xs.sort((a, b) => a - b)
-  const out = []; for (let i = 0; i + 1 < xs.length; i += 2) out.push([xs[i], xs[i + 1]])
-  return out
-}
 const CUSTOM = {
   // 용두암 — 바다와 파도를 상징하는 추상 그림: 겹겹이 출렁이는 물결 줄과, 위쪽에서 말려 올라가는 큰 물결 한 줄기
   yongduam(r) {

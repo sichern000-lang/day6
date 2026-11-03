@@ -15,6 +15,7 @@ export async function shrinkToJpeg(src, maxW = 640, quality = 0.74) {
 }
 export async function uploadPhoto(blob) {
   if (!supabase) throw new Error('Supabase')
+  if (blob.type !== 'image/jpeg' || blob.size > 1_000_000) throw new Error('사진은 1MB 이하 JPEG 만 올릴 수 있어요')
   const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`
   const { error } = await supabase.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', cacheControl: '31536000' })
   if (error) throw error

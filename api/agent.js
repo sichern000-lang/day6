@@ -3,7 +3,8 @@ import { searchTour } from '../server/tour.js'
 import { searchTourEng } from '../server/tourEng.js'
 import { getWeather } from '../server/weather.js'
 import { searchHeritage } from '../server/heritage.js'
-import { generate, callsOf, textOf } from '../server/gemini.js'
+import { generate, callsOf, textOf, GeminiError } from '../server/gemini.js'
+import { fail, tooMany } from '../server/guard.js'
 import { englishName } from '../src/lib/langs.js'
 
 // ① 도구 설명서 — Gemini 는 이 설명만 보고 어떤 도구를 쓸지 정한다 (functionDeclarations)
@@ -58,7 +59,10 @@ const langRule = (language) => `
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' })
+  if (tooMany(req, res, { max: 30 })) return // 분당 30번 (IP 기준)
   const { message, history = [], lang = 'ko' } = req.body ?? {}
+  if (typeof message !== 'string' || !message.trim() || message.length > 500) return res.status(400).json({ error: '질문은 1~500자로 적어 주세요.' })
+  if (!Array.isArray(history) || history.length > 40) return res.status(400).json({ error: '대화 기록이 올바르지 않아요.' })
   const foreign = lang !== 'ko' // 한국어 외에는 영문 관광정보 + 해당 언어로 답변
   // 영어 모드: 영문 관광정보 API 와 영어 답변
   const run = foreign ? { ...runTool, search_tour_places: searchTourEng } : runTool
@@ -66,7 +70,7 @@ export default async function handler(req, res) {
 
   // 화면에서 온 대화({role:'user'|'assistant', content}) → Gemini 형식({role:'user'|'model', parts})
   const contents = [
-    ...history.slice(-10).map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: String(m.content ?? '') }] })),
+    ...history.slice(-10).map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: String(m.content ?? '').slice(0, 2000) }] })),
     { role: 'user', parts: [{ text: String(message ?? '') }] },
   ]
   const steps = [] // 화면에 "에이전트가 무엇을 했는지" 보여주기용 호출 내역
@@ -87,7 +91,7 @@ export default async function handler(req, res) {
           result = await run[call.name](call.args ?? {})
         }
         catch (e) { result = { error: e.message } }
-        steps.push({ tool: call.name, args: call.args, count: Array.isArray(result) ? result.length : 0, error: result?.error })
+        steps.push({ tool: call.name, args: call.args, count: Array.isArray(result) ? result.length : 0, error: result?.error ? '실패' : undefined })
         // functionResponse.response 는 객체여야 해서 배열은 { items } 로 감쌈
         responses.push({ functionResponse: { name: call.name, response: Array.isArray(result) ? { items: result } : result } })
       }
@@ -95,6 +99,7 @@ export default async function handler(req, res) {
     }
     res.status(200).json({ answer: '도구를 너무 많이 써서 멈췄어요. 질문을 좁혀 주세요.', steps })
   } catch (e) {
-    res.status(e.status ?? 500).json({ error: e.message })
+    if (e instanceof GeminiError) return res.status(e.status ?? 500).json({ error: e.message })
+    fail(res, e)
   }
 }

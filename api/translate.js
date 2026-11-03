@@ -1,9 +1,11 @@
-import { FAST_MODEL, generate, textOf } from '../server/gemini.js'
+import { FAST_MODEL, GeminiError, generate, textOf } from '../server/gemini.js'
+import { fail, tooMany } from '../server/guard.js'
 import { LANGS, englishName } from '../src/lib/langs.js'
 
 // 국가유산 이름처럼 한국어로만 오는 짧은 낱말들을 영어로 옮긴다 (고유명사는 로마자 + 뜻)
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' })
+  if (tooMany(req, res, { max: 60 })) return
   const { texts, lang = 'en' } = req.body ?? {}
   if (lang === 'ko' || !LANGS.some((l) => l.id === lang)) return res.status(400).json({ error: 'lang: en, es, de 중 하나여야 해요' })
   if (!Array.isArray(texts) || texts.length === 0 || texts.length > 40 || texts.some((t) => typeof t !== 'string' || t.length > 100)) {
@@ -24,6 +26,7 @@ export default async function handler(req, res) {
     if (!Array.isArray(out) || out.length !== texts.length) throw new Error('번역 결과 개수가 맞지 않아요')
     res.status(200).json({ texts: out.map(String) })
   } catch (e) {
-    res.status(e.status ?? 500).json({ error: e.message })
+    if (e instanceof GeminiError) return res.status(e.status ?? 500).json({ error: e.message })
+    fail(res, e)
   }
 }

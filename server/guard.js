@@ -1,3 +1,5 @@
+import { MAINTENANCE } from '../src/maintenance.js'
+
 // 공개 /api 를 지키는 작은 도구들 — 호출 횟수 제한(함수 인스턴스 안에서만 세는 간이 방식), 입력 길이 확인, 오류 문구 정리
 const hits = new Map() // ip → [시각, ...]
 
@@ -22,4 +24,11 @@ export function tooMany(req, res, { max, windowMs = 60_000 }) {
 export function fail(res, e, status = 500) {
   console.error(e)
   res.status(status).json({ error: '데이터를 가져오지 못했어요. 잠시 뒤 다시 시도해 주세요.' })
+}
+
+// 점검 중 스위치: Vercel 환경변수 VITE_MAINTENANCE=1 (설정 후 재배포) 이면 화면은 점검 안내만, /api 는 503 으로 닫힘
+export function closed(res) {
+  if (!MAINTENANCE && process.env.VITE_MAINTENANCE !== '1') return false
+  res.status(503).json({ error: '잠시 점검 중이에요.' })
+  return true
 }

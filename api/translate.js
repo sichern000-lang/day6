@@ -1,9 +1,10 @@
 import { FAST_MODEL, GeminiError, generate, textOf } from '../server/gemini.js'
-import { fail, tooMany } from '../server/guard.js'
+import { closed, fail, tooMany } from '../server/guard.js'
 import { LANGS, englishName } from '../src/lib/langs.js'
 
 // 국가유산 이름처럼 한국어로만 오는 짧은 낱말들을 영어로 옮긴다 (고유명사는 로마자 + 뜻)
 export default async function handler(req, res) {
+  if (closed(res)) return
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' })
   if (tooMany(req, res, { max: 60 })) return
   const { texts, lang = 'en' } = req.body ?? {}

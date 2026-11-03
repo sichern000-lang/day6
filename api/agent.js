@@ -4,7 +4,7 @@ import { searchTourEng } from '../server/tourEng.js'
 import { getWeather } from '../server/weather.js'
 import { searchHeritage } from '../server/heritage.js'
 import { generate, callsOf, textOf, GeminiError } from '../server/gemini.js'
-import { fail, tooMany } from '../server/guard.js'
+import { closed, fail, tooMany } from '../server/guard.js'
 import { englishName } from '../src/lib/langs.js'
 
 // ① 도구 설명서 — Gemini 는 이 설명만 보고 어떤 도구를 쓸지 정한다 (functionDeclarations)
@@ -58,6 +58,7 @@ const langRule = (language) => `
 - Heritage names come from a Korean-only source: give a short ${language} gloss when you mention them.`
 
 export default async function handler(req, res) {
+  if (closed(res)) return
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' })
   if (tooMany(req, res, { max: 30 })) return // 분당 30번 (IP 기준)
   const { message, history = [], lang = 'ko' } = req.body ?? {}

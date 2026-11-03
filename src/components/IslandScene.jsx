@@ -1,8 +1,8 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { BG, buildTerrainGeometry, heightAt, toWorld } from '../lib/islandTerrain'
-import { buildProps } from '../lib/islandProps'
+import { BG, buildTerrainGeometry, groundDistance, heightAt, toWorld } from '../lib/islandTerrain'
+import { buildProps, characterModel, CHAR_HEIGHT } from '../lib/islandProps'
 
 // 낮은 폴리곤 3D 제주 섬. 돌려 보고 확대하고, 핀을 누르면 onPick(key) 로 알려 줌.
 // pins: [{ key, kind: 'story' | 'place', x, y, name, sub, drawing? }]  (x, y 는 Story Map 과 같은 지도 좌표)
@@ -36,13 +36,13 @@ function badge(pin, state) {
   return t
 }
 
-const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick, onHover, autoRotate }, ref) {
+const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick, onHover, autoRotate, characters, placing, onPlace }, ref) {
   const mount = useRef(null)
   const api = useRef({})
   const cb = useRef({})
-  cb.current = { onPick, onHover }
+  cb.current = { onPick, onHover, onPlace }
 
-  useImperativeHandle(ref, () => ({ reset: () => api.current.reset?.() }), [])
+  useImperativeHandle(ref, () => ({ reset: () => api.current.reset?.(), snapshot: (o) => api.current.snapshot?.(o) }), [])
 
   // ── 장면은 한 번만 만들고, 핀·선택·자동 회전은 아래 효과에서 바꿔 줌 ──
   useEffect(() => {
@@ -85,6 +85,32 @@ const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick,
 
     const props = buildProps({ animate: !reduce() })                  // 해녀·한라봉·흑돼지·돌하르방·올레길 여행자 같은 작은 친구들
     world.add(props.root)
+
+    // ── 내 캐릭터 + 말풍선 + 놓을 자리 표시 ──
+    const charGroup = new THREE.Group(); world.add(charGroup)
+    let chars = []                                                                    // { data, obj, top(로컬 높이), el(말풍선) }
+    const ring = new THREE.Mesh(new THREE.RingGeometry(7, 9, 28), new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: 0.7, side: THREE.DoubleSide, depthTest: false }))
+    ring.rotation.x = -Math.PI / 2; ring.visible = false; ring.renderOrder = 9; world.add(ring)
+    api.current.setChars = (list) => {
+      chars.forEach((c) => c.el.remove()); charGroup.clear(); chars = []
+      for (const d of list) {
+        const obj = characterModel(d.type), w = toWorld(d.x, d.y)
+        obj.position.set(w.x, Math.max(0.8, heightAt(d.x, d.y)), w.z); obj.userData.char = d.id
+        charGroup.add(obj)
+        const el = document.createElement('div'); el.className = 'island-bubble'; el.textContent = d.msg || ''
+        el.style.display = d.msg ? '' : 'none'
+        el.dataset.id = d.id; el.addEventListener('click', () => cb.current.onPick?.(`char:${d.id}`))
+        el.style.pointerEvents = 'auto'; el.style.cursor = 'pointer'
+        el.addEventListener('pointerdown', (e) => e.stopPropagation())
+        el.style.transform = 'translate(-9999px, -9999px)'
+        mount.current.appendChild(el)
+        chars.push({ data: d, obj, top: (CHAR_HEIGHT[d.type] ?? 18) * 1.35 + 5, el, yaw: 0 })
+      }
+    }
+    const topOf = (c) => c.obj.localToWorld(new THREE.Vector3(0, c.top, 0))
+    let placingOn = false
+    api.current.setPlacing = (on) => { placingOn = on; ring.visible = false; renderer.domElement.style.cursor = on ? 'crosshair' : 'grab' }
+    const land_ = () => land
 
     // ── 핀 ──
     const pinGroup = new THREE.Group()
@@ -148,6 +174,13 @@ const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick,
       ray.setFromCamera(ndc, camera)
       const hits = ray.intersectObjects(items.map((i) => i.sprite))
       if (hits.length) { const it = items.find((i) => i.sprite === hits[0].object); return { key: it.pin.key, pin: it.pin, world: it.world } }
+      const ch = ray.intersectObjects(chars.map((c) => c.obj), true)
+      if (ch.length) {
+        let o = ch[0].object
+        while (o && o.userData.char === undefined) o = o.parent
+        const c = chars.find((x) => x.obj === o)
+        if (c) { const w = new THREE.Vector3(); c.obj.getWorldPosition(w); return { key: `char:${c.data.id}`, char: c.data.id, world: topOf(c), ground: w } }
+      }
       const ph = ray.intersectObjects(props.interactive, true)
       if (ph.length) {
         let o = ph[0].object
@@ -161,20 +194,40 @@ const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick,
       return { x: (p.x * 0.5 + 0.5) * r.width, y: (-p.y * 0.5 + 0.5) * r.height }
     }
     let down = null, idle
+    const landPoint = (e) => {                                                   // 화면 위치 → 땅 위의 지도 좌표 (바다면 null)
+      const r = renderer.domElement.getBoundingClientRect()
+      ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1)
+      ray.setFromCamera(ndc, camera)
+      const h = ray.intersectObject(land_())[0]
+      if (!h) return null
+      const x = h.point.x + 400, y = h.point.z + 200
+      return { x, y, point: h.point, onLand: groundDistance(x, y) >= 6 }
+    }
     const onMove = (e) => {
+      if (placingOn) {
+        const lp = landPoint(e)
+        ring.visible = !!lp?.onLand
+        if (lp?.onLand) ring.position.set(lp.point.x, lp.point.y + 0.8, lp.point.z)
+        return
+      }
       if (e.buttons) return
       const it = pick(e)
       const key = it?.key ?? null
       renderer.domElement.style.cursor = it ? 'pointer' : 'grab'
       if (key !== hover) { hover = key; items.forEach(style) }
-      cb.current.onHover?.(it ? { key, pin: it.pin ?? null, prop: it.prop ?? null, ...screenOf(it.world) } : null)
+      cb.current.onHover?.(it ? { key, pin: it.pin ?? null, prop: it.prop ?? null, char: it.char ?? null, ...screenOf(it.world) } : null)
     }
     const onDown = (e) => { down = { x: e.clientX, y: e.clientY } }
     const onUp = (e) => {
       if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return
+      if (placingOn) {
+        const lp = landPoint(e)
+        cb.current.onPlace?.(lp?.onLand ? { x: lp.x, y: lp.y } : { error: 'sea' })
+        return
+      }
       const it = pick(e)
       if (!it) return
-      if (it.prop) glide = { from: controls.target.clone(), to: new THREE.Vector3(it.ground.x * 0.85, 8, it.ground.z * 0.85), t: 0 }
+      if (it.prop || it.char) glide = { from: controls.target.clone(), to: new THREE.Vector3(it.ground.x * 0.85, 8, it.ground.z * 0.85), t: 0 }
       cb.current.onPick?.(it.key)
     }
     const onLeave = () => { hover = null; items.forEach(style); cb.current.onHover?.(null) }
@@ -206,17 +259,66 @@ const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick,
         it.sprite.scale.set(s, s, 1)
       }
       props.update(clock.elapsedTime, dt)
+      {
+        const r = renderer.domElement
+        for (const c of chars) {
+          const wp = c.obj.getWorldPosition(new THREE.Vector3())
+          const want = Math.atan2(-(camera.position.z - wp.z), camera.position.x - wp.x)       // 카메라 쪽을 바라봄
+          let d = want - c.yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); c.yaw += d * Math.min(1, dt * 4)
+          c.obj.rotation.y = c.yaw
+          if (!reduce()) c.obj.position.y = Math.max(0.8, heightAt(c.data.x, c.data.y)) + Math.abs(Math.sin(clock.elapsedTime * 3 + c.data.x)) * 0.8
+          const p = topOf(c).project(camera)
+          c.el.style.transform = p.z < 1 ? `translate(${((p.x * 0.5 + 0.5) * r.clientWidth).toFixed(1)}px, ${((-p.y * 0.5 + 0.5) * r.clientHeight).toFixed(1)}px) translate(-50%, -100%)` : 'translate(-9999px, -9999px)'
+        }
+      }
       controls.update()
       renderer.render(scene, camera)
     }
     loop()
     resumeAuto(); controls.autoRotate = !reduce()
     wantAuto = !reduce()
+    // 사진: 인스타그램에 올리기 좋은 4:5 세로 그림. 지금 보는 방향 그대로, 섬 전체와 말풍선이 들어가게 찍음
+    api.current.snapshot = async ({ w = 1080, h = 1350, footer = 'Jeju Story Archive', sub = '' } = {}) => {
+      const keep = { size: renderer.getSize(new THREE.Vector2()), pr: renderer.getPixelRatio(), aspect: camera.aspect, pos: camera.position.clone(), fog: [scene.fog.near, scene.fog.far], fov: camera.fov }
+      renderer.setPixelRatio(1); renderer.setSize(w, h, false)
+      camera.aspect = w / h
+      const k = Math.min(3.4, Math.max(1, (2.5 / camera.aspect) * 0.56))
+      const dir = camera.position.clone().sub(controls.target).normalize()
+      camera.position.copy(controls.target).addScaledVector(dir, 614 * k * 0.92)
+      scene.fog.near = 950 * k; scene.fog.far = 1900 * k
+      camera.updateProjectionMatrix()
+      renderer.render(scene, camera)
+      const out = document.createElement('canvas'); out.width = w; out.height = h
+      const g = out.getContext('2d')
+      g.fillStyle = BG; g.fillRect(0, 0, w, h)
+      g.drawImage(renderer.domElement, 0, 0, w, h)
+      // 말풍선 (화면 위의 HTML 이라 사진에는 직접 그려 넣음)
+      g.textAlign = 'center'; g.textBaseline = 'middle'
+      for (const c of chars) {
+        if (!c.data.msg) continue
+        const p = topOf(c).project(camera)
+        if (p.z >= 1) continue
+        const x = (p.x * 0.5 + 0.5) * w, y = (-p.y * 0.5 + 0.5) * h - 14
+        g.font = '600 34px "Pretendard", sans-serif'
+        const tw = Math.min(520, g.measureText(c.data.msg).width), bw = tw + 44, bh = 64
+        g.fillStyle = '#ffffff'; g.strokeStyle = INK; g.lineWidth = 3
+        g.beginPath(); g.roundRect(x - bw / 2, y - bh, bw, bh, 22); g.fill(); g.stroke()
+        g.beginPath(); g.moveTo(x - 10, y - 1); g.lineTo(x, y + 14); g.lineTo(x + 10, y - 1); g.closePath(); g.fillStyle = '#ffffff'; g.fill()
+        g.fillStyle = INK; g.fillText(c.data.msg, x, y - bh / 2, 520)
+      }
+      g.fillStyle = INK; g.font = '400 54px "Instrument Serif", "Gowun Batang", serif'; g.fillText(footer, w / 2, h - 86)
+      if (sub) { g.fillStyle = '#67776a'; g.font = '400 28px "Pretendard", sans-serif'; g.fillText(sub, w / 2, h - 40) }
+      // 원래 상태로 되돌림
+      renderer.setPixelRatio(keep.pr); renderer.setSize(keep.size.x, keep.size.y, false)
+      camera.aspect = keep.aspect; camera.position.copy(keep.pos); scene.fog.near = keep.fog[0]; scene.fog.far = keep.fog[1]
+      camera.updateProjectionMatrix(); renderer.render(scene, camera)
+      return new Promise((res) => out.toBlob(res, 'image/png'))
+    }
     api.current.screenOf = screenOf
     api.current.items = () => items
 
     return () => {
-      cancelAnimationFrame(raf); clearTimeout(idle); ro.disconnect()
+      cancelAnimationFrame(raf); clearTimeout(idle); ro.disconnect(); chars.forEach((c) => c.el.remove())
       dom.removeEventListener('pointermove', onMove); dom.removeEventListener('pointerdown', onDown); dom.removeEventListener('pointerup', onUp); dom.removeEventListener('pointerleave', onLeave)
       controls.dispose()
       scene.traverse((o) => { o.geometry?.dispose?.(); const m = o.material; if (m) { (Array.isArray(m) ? m : [m]).forEach((x) => { x.map?.dispose?.(); x.alphaMap?.dispose?.(); x.dispose() }) } })
@@ -229,6 +331,8 @@ const IslandScene = forwardRef(function IslandScene({ pins, selectedKey, onPick,
   useEffect(() => { api.current.setPins?.(pins) }, [pins])
   useEffect(() => { api.current.setSelected?.(selectedKey) }, [selectedKey, pins])
   useEffect(() => { api.current.setAuto?.(autoRotate && !reduce()) }, [autoRotate])
+  useEffect(() => { api.current.setChars?.(characters ?? []) }, [characters])
+  useEffect(() => { api.current.setPlacing?.(!!placing) }, [placing])
 
   return <div className="island-canvas" ref={mount} />
 })

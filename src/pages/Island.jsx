@@ -2,8 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import IslandScene from '../components/IslandScene'
+import CharacterModal from '../components/CharacterModal'
+import Modal from '../components/Modal'
+import { MAX_CHARS, charName, createChar, deleteChar, loadChars, updateChar } from '../lib/characters'
 import { GoButton } from '../components/GoModal'
-import { SAMPLES, catLabel, sampleView } from '../lib/places'
+import { SAMPLES, catLabel, ownerOf, sampleView } from '../lib/places'
 import { GLOSSARY } from '../data/glossary'
 import { STORIES, kindLabel, localize, project } from '../lib/stories'
 import { useAppStore } from '../store/useAppStore'
@@ -36,8 +39,56 @@ export default function Island() {
   const [selected, setSelected] = useState(null)
   const [tip, setTip] = useState(null)
   const [auto, setAuto] = useState(true)
+  const toast = useAppStore((s) => s.toast)
+  // 내 캐릭터: 만들기 창 → (섬의 땅을 눌러 세우기) → 말풍선과 함께 섬 위에 서 있음
+  const [chars, setChars] = useState([])
+  const [charMode, setCharMode] = useState('db')
+  const [adding, setAdding] = useState(false)
+  const [placing, setPlacing] = useState(null)       // { type, msg } — 땅을 누르면 그 자리에 세움
+  const [photo, setPhoto] = useState(null)           // { busy } | { url, blob }
 
   useEffect(() => { loadPlaces() }, [loadPlaces, user])
+  useEffect(() => { loadChars(ownerOf(user)).then(({ rows, mode }) => { setChars(rows); setCharMode(mode) }) }, [user])
+
+  async function onPlace(at) {
+    if (!placing) return
+    if (at.error) return toast(t('island.needLand'), 'warn')
+    try {
+      const row = await createChar(ownerOf(user), { ...placing, x: at.x, y: at.y }, charMode)
+      setChars((c) => [...c, row]); setPlacing(null); setSelected(`char:${row.id}`); toast(t('island.added'))
+    } catch (e) { toast(e.message, 'error') }
+  }
+  async function saveMsg(c, msg) {
+    if ((c.msg ?? '') === msg) return
+    try { const row = await updateChar(c.id, { msg }, charMode); setChars((all) => all.map((x) => (x.id === c.id ? row : x))) } catch (e) { toast(e.message, 'error') }
+  }
+  async function removeChar(c) {
+    try { await deleteChar(c.id, charMode); setChars((all) => all.filter((x) => x.id !== c.id)); setSelected(null) } catch (e) { toast(e.message, 'error') }
+  }
+  function startAdd() {
+    if (chars.length >= MAX_CHARS) return toast(t('island.max'), 'warn')
+    setAdding(true)
+  }
+
+  // 사진: 4:5 세로 그림을 만들어 보여 주고, 휴대폰이면 공유 창(인스타그램 포함), 아니면 이미지로 저장
+  async function takePhoto() {
+    setPhoto({ busy: true })
+    try {
+      const blob = await scene.current.snapshot({ footer: 'Jeju Story Archive', sub: t('island.shareText') })
+      setPhoto({ url: URL.createObjectURL(blob), blob })
+    } catch { setPhoto(null); toast(t('island.photoFail'), 'error') }
+  }
+  const closePhoto = () => { if (photo?.url) URL.revokeObjectURL(photo.url); setPhoto(null) }
+  async function sharePhoto() {
+    const file = new File([photo.blob], 'jeju-island.png', { type: 'image/png' })
+    if (navigator.canShare?.({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: 'Jeju Story Archive', text: t('island.shareText') }) } catch { /* 공유 창을 닫은 경우 */ }
+    } else savePhoto()
+  }
+  function savePhoto() {
+    const a = document.createElement('a'); a.href = photo.url; a.download = 'jeju-island.png'; document.body.appendChild(a); a.click(); a.remove()
+  }
+
 
   const mine = useMemo(
     () => [...places, ...SAMPLES.filter((s) => !hidden.includes(s.id)).map((s) => sampleView(s, lang))].filter((p) => p.lat != null && p.lng != null),
@@ -51,6 +102,7 @@ export default function Island() {
   const story = selected?.startsWith('story:') ? STORIES.find((s) => `story:${s.id}` === selected) : null
   const place = selected?.startsWith('place:') ? mine.find((p) => `place:${p.id}` === selected) : null
   const sv = story && localize(story, lang)
+  const chr = selected?.startsWith('char:') ? chars.find((c) => `char:${c.id}` === selected) : null
   const friend = selected?.startsWith('prop:') ? friendInfo(selected.slice(5), lang) : null
   const tipFriend = tip?.prop ? friendInfo(tip.prop, lang) : null
   const noGL = tip?.error
@@ -63,14 +115,19 @@ export default function Island() {
           <div className="island-fallback"><p>{t('island.nowebgl')}</p><Link className="btn" to="/map">Story Map →</Link></div>
         ) : (
           <>
-            <IslandScene ref={scene} pins={pins} selectedKey={selected} autoRotate={auto}
+            <IslandScene ref={scene} pins={pins} selectedKey={selected} autoRotate={auto} characters={chars} placing={!!placing} onPlace={onPlace}
               onPick={(k) => setSelected((cur) => (cur === k ? null : k))} onHover={setTip} />
-            {(tip?.pin || tipFriend) && (
+            {(tip?.pin || tipFriend || tip?.char) && (
               <div className="island-tip" style={{ left: tip.x, top: tip.y }} role="tooltip">
-                <strong>{tip.pin?.name ?? tipFriend.name}</strong>{tip.pin?.sub && <span>{tip.pin.sub}</span>}
+                <strong>{tip.pin?.name ?? tipFriend?.name ?? charName(chars.find((c) => c.id === tip.char)?.type, lang)}</strong>{tip.pin?.sub && <span>{tip.pin.sub}</span>}
               </div>
             )}
+            {placing && (
+              <div className="island-banner" role="status">{t('island.placing')} <button onClick={() => setPlacing(null)}>{t('island.cancel')}</button></div>
+            )}
             <div className="island-tools">
+              <button className="char-add" onClick={startAdd}>＋ {t('island.addChar')}</button>
+              <button onClick={takePhoto}>{t('island.photo')}</button>
               <button onClick={() => { setSelected(null); scene.current?.reset() }}>{t('island.reset')}</button>
               <button className={auto ? 'on' : ''} aria-pressed={auto} onClick={() => setAuto((a) => !a)}>{t('island.auto')}</button>
             </div>
@@ -79,7 +136,7 @@ export default function Island() {
               <span><i className="lg-story" />{t('island.legendStory')}</span>
               <span><i className="lg-mine" />{t('island.legendMine')}</span>
             </div>
-            {(story || place || friend) && (
+            {(story || place || friend || chr) && (
               <aside className="island-card" aria-live="polite">
                 <button className="island-x" aria-label={t('modal.close')} onClick={() => setSelected(null)}>×</button>
                 {story && (
@@ -88,6 +145,18 @@ export default function Island() {
                     <h2>{sv.title}</h2>
                     <p>{sv.summary}</p>
                     <Link className="textlink" to={`/stories/${story.id}`}>{t('island.read')} →</Link>
+                  </>
+                )}
+                {chr && (
+                  <>
+                    <p className="island-kind">{t('island.myChar')}</p>
+                    <h2>{charName(chr.type, lang)}</h2>
+                    <input className="input char-msg" defaultValue={chr.msg} maxLength={30} placeholder={t('island.msgPh')} aria-label={t('island.msgLabel')}
+                      key={chr.id} onBlur={(e) => saveMsg(chr, e.target.value.trim())} onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()} />
+                    <div className="island-actions">
+                      <button className="textlink danger" onClick={() => removeChar(chr)}>{t('island.delete')}</button>
+                      {charMode === 'local' && <span className="island-addr">{t('island.localNote')}</span>}
+                    </div>
                   </>
                 )}
                 {friend && (
@@ -115,6 +184,23 @@ export default function Island() {
           </>
         )}
       </div>
+      {adding && <CharacterModal onClose={() => setAdding(false)} onPlace={(c) => { setPlacing(c); setAdding(false); setSelected(null) }} />}
+      {photo && (
+        <Modal onClose={closePhoto} label={t('island.photo')}>
+          <h2 className="modal-title">{t('island.photoTitle')}</h2>
+          <p className="modal-sub">{t('island.photoSub')}</p>
+          {photo.busy ? <p className="hint">{t('island.making')}</p> : (
+            <>
+              <img className="photo-preview" src={photo.url} alt="" />
+              <div className="modal-actions">
+                <button className="btn dark" onClick={sharePhoto}>{t('island.share')}</button>
+                <button className="btn ghost" onClick={savePhoto}>{t('island.saveImg')}</button>
+              </div>
+              <p className="hint">{t('island.shareHint')}</p>
+            </>
+          )}
+        </Modal>
+      )}
     </>
   )
 }

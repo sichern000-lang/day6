@@ -258,3 +258,53 @@ export function buildProps({ animate = true } = {}) {
   const update = (t, dt) => { if (animate) step(t, dt) }
   return { root, interactive, update }
 }
+
+// ── 내 캐릭터 모양 (돼지·귤·말·고양이·남자·여자) — 얼굴이 있어서 카메라를 바라봄(모델의 앞은 +x 방향) ──
+const eyes = (g, x, y, gap = 1.6, r = 0.85) => { g.add(mesh(sph(r, 0), C.ink, x, y, -gap)); g.add(mesh(sph(r, 0), C.ink, x, y, gap)) }
+function pigChar() { const g = pig(); eyes(g, 10.2, 8.6, 1.7, 0.75); g.add(mesh(sph(0.5, 0), '#d99a96', 12.6, 6.8, -0.7)); g.add(mesh(sph(0.5, 0), '#d99a96', 12.6, 6.8, 0.7)); return g }
+function ponyChar() { const g = pony(); eyes(g, 11.6, 14.8, 1.25, 0.55); return g }
+function tangerineChar() {
+  const g = new THREE.Group()
+  g.add(mesh(sph(6.6, 1), C.orange, 0, 7.4, 0, 1, 0.92, 1))                                   // 둥근 귤
+  g.add(mesh(sph(1.1, 0), '#c97a3c', 0, 13.2, 0, 1, 0.45, 1))                                  // 꼭지 자리
+  g.add(mesh(cyl(0.45, 0.6, 2, 5), C.leaf, 0, 14.2, 0))
+  const l1 = mesh(sph(2.6, 0), C.leafLight, 2.4, 14.4, 0.6, 1.6, 0.3, 0.9); l1.rotation.z = 0.3; g.add(l1)
+  const l2 = mesh(sph(2.2, 0), C.leaf, -2, 14.2, -0.6, 1.5, 0.3, 0.9); l2.rotation.z = -0.3; g.add(l2)
+  eyes(g, 5.9, 8.6, 2.3, 0.85)
+  g.add(mesh(sph(0.95, 0), '#f0a58c', 5.7, 6.4, -3.7, 0.6, 0.6, 0.4)); g.add(mesh(sph(0.95, 0), '#f0a58c', 5.7, 6.4, 3.7, 0.6, 0.6, 0.4))   // 볼터치
+  g.add(mesh(box(0.6, 0.6, 2.2), C.ink, 6.3, 6.3, 0))                                            // 입
+  for (const z of [-2.4, 2.4]) g.add(mesh(cyl(1.1, 1.3, 1.6, 6), '#c97a3c', 0.6, 0.8, z))        // 작은 발
+  return g
+}
+function catChar() {
+  const g = new THREE.Group(), fur = '#d3d6cf', dark = '#aeb3aa'
+  g.add(mesh(sph(4.7, 1), fur, 0, 6.4, 0, 1.4, 0.9, 0.9))
+  g.add(mesh(sph(3.5, 1), fur, 6, 9.4, 0))
+  for (const z of [-1.9, 1.9]) g.add(mesh(new THREE.ConeGeometry(1.4, 3, 4), dark, 6.4, 12.8, z))
+  eyes(g, 8.9, 10, 1.45, 0.6)
+  g.add(mesh(sph(0.55, 0), '#d99a96', 9.5, 8.8, 0))
+  for (const [x, z] of [[-3.6, -1.8], [-3.6, 1.8], [3.6, -1.8], [3.6, 1.8]]) g.add(mesh(cyl(0.95, 0.8, 4.2, 5), fur, x, 2.1, z))
+  const tail = mesh(cyl(0.6, 0.9, 10, 5), dark, -7.4, 10, 0); tail.rotation.z = 0.45; g.add(tail)
+  return g
+}
+function person(woman) {
+  const g = new THREE.Group()
+  const top = woman ? '#d98c8c' : C.jacket
+  if (woman) { g.add(mesh(new THREE.ConeGeometry(5.4, 10.5, 8), top, 0, 7, 0)); g.add(mesh(cyl(2.1, 2.6, 4.4, 7), top, 0, 14.4, 0)) }
+  else { g.add(mesh(cyl(2.7, 3.1, 8.4, 7), top, 0, 12.2, 0)); for (const z of [-1.3, 1.3]) g.add(mesh(box(2, 8, 2), C.ink, 0, 4, z)) }
+  if (woman) for (const z of [-1, 1]) g.add(mesh(cyl(0.6, 0.6, 3, 5), C.skin, 0, 1.5, z))
+  g.add(mesh(sph(2.9, 1), C.skin, 0, 19, 0))
+  g.add(mesh(new THREE.SphereGeometry(3.15, 8, 5, 0, Math.PI * 2, 0, Math.PI * 0.52), C.ink, -0.2, 19.3, 0))     // 머리카락
+  if (woman) { g.add(mesh(box(2, 8.4, 5.4), C.ink, -2.4, 16, 0)); g.add(mesh(sph(1.5, 0), C.ink, -1.5, 22.4, 0)) }       // 긴 머리 + 묶음
+  eyes(g, 2.6, 19.4, 1.1, 0.45)
+  const a1 = mesh(cyl(0.8, 0.8, 6.4, 5), woman ? C.skin : top, 0, 12, -3.4); a1.rotation.x = 0.15; g.add(a1)
+  const a2 = mesh(cyl(0.8, 0.8, 6.4, 5), woman ? C.skin : top, 0, 12, 3.4); a2.rotation.x = -0.15; g.add(a2)
+  return g
+}
+// 종류별 모양과 키(말풍선 높이용)
+export const CHAR_HEIGHT = { pig: 13, tangerine: 16, horse: 20, cat: 15, man: 23, woman: 24 }
+export function characterModel(type) {
+  const g = { pig: pigChar, tangerine: tangerineChar, horse: ponyChar, cat: catChar, man: () => person(false), woman: () => person(true) }[type]?.() ?? tangerineChar()
+  const wrap = new THREE.Group(); wrap.add(g); wrap.scale.setScalar(1.35)
+  return wrap
+}

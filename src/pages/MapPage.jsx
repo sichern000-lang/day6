@@ -78,6 +78,7 @@ export default function MapPage() {
               </span>
               {p.memo && <p>{p.memo}</p>}
             </div>
+            <div className="place-actions">
             <GoButton place={{ name: p.name, addr: p.address, lat: p.lat, lng: p.lng }} className="place-go" />
             <button className="x edit" aria-label={`${t('map.edit')}: ${p.name}`} title={t('map.edit')}
               onClick={(e) => { e.stopPropagation(); setEditing(p) }}>
@@ -87,6 +88,7 @@ export default function MapPage() {
               onClick={(e) => { e.stopPropagation(); removePlace(p) }}>
               <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
+            </div>
           </li>
         ))}
       </ul>

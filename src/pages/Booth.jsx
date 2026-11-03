@@ -16,10 +16,14 @@ export default function Booth() {
   const video = useRef(null), stream = useRef(null), preview = useRef(null), pick = useRef(null), fileInput = useRef(null)
   const [facing, setFacing] = useState('environment')
   const [cam, setCam] = useState('wait')                 // wait | on | denied
+  const [mirror, setMirror] = useState(true)             // 셀피(앞 카메라·노트북 웹캠)만 거울처럼 반전, 뒤 카메라는 그대로
   const [count, setCount] = useState(0), [flash, setFlash] = useState(false), [taken, setTaken] = useState(0), [busy, setBusy] = useState(false)
   const [shots, setShots] = useState(null)               // 정사각형 사진 3장 (있으면 꾸미기 화면)
   const [frameId, setFrameId] = useState('field'), [filter, setFilter] = useState('soft')
   const [stickers, setStickers] = useState([]), [sel, setSel] = useState(null), [active, setActive] = useState(0)
+  const [strokes, setStrokes] = useState([]), [pen, setPen] = useState(false), [penColor, setPenColor] = useState('#ffffff'), [penW, setPenW] = useState(10)
+  const [stickerOpen, setStickerOpen] = useState(() => !window.matchMedia('(max-width: 760px)').matches)   // 모바일은 스티커 칸을 접어 둠
+  const inking = useRef(null)
   const [assets, setAssets] = useState(null)
   const frame = FRAMES.find((f) => f.id === frameId)
 
@@ -30,6 +34,7 @@ export default function Booth() {
     if (!navigator.mediaDevices?.getUserMedia) return setCam('denied')
     try {
       stream.current = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: face }, width: { ideal: 1280 }, height: { ideal: 1280 } }, audio: false })
+      setMirror(stream.current.getVideoTracks()[0]?.getSettings?.().facingMode !== 'environment')
       if (video.current) { video.current.srcObject = stream.current; await video.current.play() }
       setCam('on')
     } catch { setCam('denied') }
@@ -44,7 +49,7 @@ export default function Booth() {
       for (const n of [3, 2, 1]) { setCount(n); await sleep(900) }
       setCount(0); setFlash(true); setTimeout(() => setFlash(false), 160)
       const v = video.current
-      out.push(squareFrom(v, v.videoWidth, v.videoHeight, true))     // 보이는 화면 그대로 좌우 반전해서 저장
+      out.push(squareFrom(v, v.videoWidth, v.videoHeight, mirror))   // 미리보기와 같은 방향으로 저장
       setTaken(i + 1); await sleep(650)
     }
     setBusy(false); finishShots(out)
@@ -57,8 +62,8 @@ export default function Booth() {
     for (let i = 0; i < 3; i++) { const bmp = await createImageBitmap(files[i % files.length]); out.push(squareFrom(bmp, bmp.width, bmp.height)) }
     finishShots(out)
   }
-  function finishShots(out) { stopCam(); setShots(out); setStickers([]); setSel(null); setActive(0); setTaken(0) }
-  const retake = () => { setShots(null); setStickers([]); setSel(null) }
+  function finishShots(out) { stopCam(); setShots(out); setStickers([]); setStrokes([]); setPen(false); setSel(null); setActive(0); setTaken(0) }
+  const retake = () => { setShots(null); setStickers([]); setStrokes([]); setPen(false); setSel(null) }
 
   // ── 프레임 무늬·스티커 그림 준비 ──
   useEffect(() => {
@@ -71,7 +76,7 @@ export default function Booth() {
   useEffect(() => {
     if (!shots || !assets) return
     const id = requestAnimationFrame(() => {
-      const c = compose({ photos: shots, stickers, frame, filter, scale: 0.5, assets, activeCell: stickers.length === 0 ? -1 : active })
+      const c = compose({ photos: shots, stickers, strokes, frame, filter, scale: 0.5, assets, activeCell: pen || stickers.length === 0 ? -1 : active })
       const el = preview.current; if (!el) return
       el.width = c.width; el.height = c.height
       const g = el.getContext('2d'); g.drawImage(c, 0, 0)
@@ -83,12 +88,21 @@ export default function Booth() {
       }
     })
     return () => cancelAnimationFrame(id)
-  }, [shots, assets, stickers, frame, filter, sel, active])
+  }, [shots, assets, stickers, strokes, pen, frame, filter, sel, active])
 
   // ── 스티커 만지기: 누르면 고르고, 끌면 옮김 ──
   const toStrip = (e) => { const r = preview.current.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * STRIP.w, y: ((e.clientY - r.top) / r.height) * STRIP_H } }
+  const cellAt = (p) => [0, 1, 2].find((k) => p.y >= cellY(k) - STRIP.gap / 2 && p.y <= cellY(k) + STRIP.cell + STRIP.gap / 2)
+  const inCell = (p, i) => [Math.max(0, Math.min(STRIP.cell, p.x - STRIP.mx)), Math.max(0, Math.min(STRIP.cell, p.y - cellY(i)))]
   const onDown = (e) => {
     const p = toStrip(e)
+    if (pen) {                                                         // 펜: 눌러서 그리기 (사진 칸 안에서만)
+      const i = cellAt(p)
+      if (i === undefined) return
+      const st = { id: `${Date.now()}${Math.random()}`, cell: i, color: penColor, w: penW, pts: [inCell(p, i)] }
+      inking.current = st.id; setActive(i); setStrokes((all) => [...all, st]); preview.current.setPointerCapture(e.pointerId)
+      return
+    }
     const hit = [...stickers].reverse().find((s) => {
       const bx = stickerBox(assets.stickers[s.kind], s.size), dx = p.x - (STRIP.mx + s.x), dy = p.y - (cellY(s.cell) + s.y), c = Math.cos(-s.rot), sn = Math.sin(-s.rot)
       return Math.abs(dx * c - dy * sn) < bx.w / 2 && Math.abs(dx * sn + dy * c) < bx.h / 2        // 회전한 스티커 안쪽인지
@@ -101,11 +115,16 @@ export default function Booth() {
     }
   }
   const onMove = (e) => {
+    if (inking.current) {
+      const p = toStrip(e), id = inking.current
+      setStrokes((all) => all.map((s) => (s.id === id ? { ...s, pts: [...s.pts, inCell(p, s.cell)] } : s)))
+      return
+    }
     if (!pick.current) return
     const p = toStrip(e), { id, dx, dy } = pick.current
     setStickers((all) => all.map((s) => (s.id === id ? { ...s, x: Math.max(0, Math.min(STRIP.cell, p.x + dx - STRIP.mx)), y: Math.max(0, Math.min(STRIP.cell, p.y + dy - cellY(s.cell))) } : s)))
   }
-  const onUp = () => { pick.current = null }
+  const onUp = () => { pick.current = null; inking.current = null }
   const addSticker = (kind) => {
     const s = { id: `${Date.now()}${Math.random()}`, kind, cell: active, x: STRIP.cell / 2 + (Math.random() - 0.5) * 140, y: STRIP.cell / 2 + (Math.random() - 0.5) * 140, size: kind.startsWith('star') ? 150 : 230, rot: (Math.random() - 0.5) * 0.4 }
     setStickers((all) => [...all, s]); setSel(s.id)
@@ -115,7 +134,7 @@ export default function Booth() {
 
   // ── 저장·공유 ──
   async function finalBlob() {
-    const c = compose({ photos: shots, stickers, frame, filter, scale: 1, assets })
+    const c = compose({ photos: shots, stickers, strokes, frame, filter, scale: 1, assets })
     return new Promise((res) => c.toBlob(res, 'image/png'))
   }
   async function save() {
@@ -134,7 +153,7 @@ export default function Booth() {
     if (noting) return
     setNoting(true)
     try {
-      const jpg = await shrinkToJpeg(compose({ photos: shots, stickers, frame, filter, scale: 1, assets }), 560)
+      const jpg = await shrinkToJpeg(compose({ photos: shots, stickers, strokes, frame, filter, scale: 1, assets }), 560)
       const url = await uploadPhoto(jpg)
       const ok = await saveStory({ id: `photo:${Date.now()}`, title: 'Photo booth', image: url }, true)
       if (ok) toast(t('booth.noted'))
@@ -149,7 +168,7 @@ export default function Booth() {
       {!shots ? (
         <div className="booth-cam">
           <div className="booth-view">
-            <video ref={video} playsInline muted autoPlay className="mirror" />
+            <video ref={video} playsInline muted autoPlay className={mirror ? 'mirror' : ''} />
             {cam !== 'on' && (
               <div className="booth-msg">
                 <p>{cam === 'wait' ? t('booth.wait') : t('booth.denied')}</p>
@@ -183,9 +202,28 @@ export default function Booth() {
             <section><b>{t('booth.filter')}</b>
               <div className="chips">{Object.keys(FILTERS).map((k) => <button key={k} className={filter === k ? 'on' : ''} onClick={() => setFilter(k)}>{t(`booth.flt.${k}`)}</button>)}</div>
             </section>
-            <section><b>{t('booth.stickers')}</b>
-              <div className="sticker-tray">{STICKERS.map((s) => <button key={s.id} onClick={() => addSticker(s.id)} aria-label={s.id}><img src={s.url} alt="" loading="lazy" /></button>)}</div>
-              <p className="hint">{t('booth.stickerHint')}</p>
+            <section><b>{t('booth.pen')}</b>
+              <div className="chips">
+                <button className={pen ? 'on' : ''} aria-pressed={pen} onClick={() => { setPen((v) => !v); setSel(null) }}>✎ {t('booth.pen')}</button>
+                {pen && <><button onClick={() => setStrokes((a) => a.slice(0, -1))} disabled={!strokes.length}>{t('booth.undo')}</button><button onClick={() => setStrokes([])} disabled={!strokes.length}>{t('booth.clear')}</button></>}
+              </div>
+              {pen && (
+                <>
+                  <div className="pen-tools">
+                    <div className="swatches">{['#ffffff', '#1d2616', '#2f6fb5', '#e0657f'].map((c) => (
+                      <button key={c} className={penColor === c ? 'on' : ''} style={{ background: c }} onClick={() => setPenColor(c)} aria-label={c} />
+                    ))}</div>
+                    <div className="pen-sizes">{[6, 10, 18].map((w) => (
+                      <button key={w} className={penW === w ? 'on' : ''} onClick={() => setPenW(w)} aria-label={`${w}`}><i style={{ width: w + 4, height: w + 4 }} /></button>
+                    ))}</div>
+                  </div>
+                  <p className="hint">{t('booth.penHint')}</p>
+                </>
+              )}
+            </section>
+            <section><button className="sticker-head" aria-expanded={stickerOpen} onClick={() => setStickerOpen((o) => !o)}><b>{t('booth.stickers')}</b><span aria-hidden="true">{stickerOpen ? '−' : '＋'}</span></button>
+              {stickerOpen && <div className="sticker-tray">{STICKERS.map((s) => <button key={s.id} onClick={() => addSticker(s.id)} aria-label={s.id}><img src={s.url} alt="" loading="lazy" /></button>)}</div>}
+              {stickerOpen && <p className="hint">{t('booth.stickerHint')}</p>}
               {selected && (
                 <div className="chips sticker-ctl">
                   <button onClick={() => tweak((s) => ({ ...s, size: Math.max(70, s.size * 0.85) }))}>−</button>

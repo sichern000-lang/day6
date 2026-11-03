@@ -15,11 +15,12 @@ export const FRAMES = [
   { id: 'sky', color: '#bcd8ec', pat: '#244a66', patAlpha: 0.3, text: '#1d2616', border: false },
   { id: 'sea', color: '#1f3556', pat: '#ffffff', patAlpha: 0.26, text: '#f4f8f6', border: false },
 ]
-// 필터: 선명하지 않고 살짝 흐리고 바랜 듯 예쁘게 (채도↓, 검정은 들뜨게, 색 입힘, 번짐, 가장자리 어둡게, 필름 알갱이)
+// 필터: 진짜 사진관 포토부스처럼 — 채도는 낮추고 대비는 아주 세게 (밝은 곳은 플래시 맞은 듯 하얗게, 그림자는 깊게), 차가운 푸른 회색빛, 질감은 아주 약한 그레인만
+// pivot: 이 밝기를 기준으로 대비를 줌 (살짝 낮게 잡아야 얼굴이 환하게 뜸)
 export const FILTERS = {
-  soft: { sat: 0.82, fade: 12, contrast: 1.08, bright: 14, tint: [7, 2, -6], glow: 0.26, grain: 16, vig: 0.2 },
-  sage: { sat: 0.78, fade: 12, contrast: 1.08, bright: 14, tint: [-8, 7, -2], glow: 0.26, grain: 16, vig: 0.2 },
-  mono: { sat: 0, fade: 10, contrast: 1.16, bright: 12, tint: [-4, 0, 7], glow: 0.2, grain: 22, vig: 0.26 },
+  soft: { sat: 0.55, fade: 0, contrast: 1.75, pivot: 118, bright: 10, tint: [-6, 0, 11], glow: 0, grain: 8, vig: 0.18 },
+  sage: { sat: 0.55, fade: 0, contrast: 1.7, pivot: 118, bright: 10, tint: [-14, 5, 8], glow: 0, grain: 8, vig: 0.18 },
+  mono: { sat: 0, fade: 0, contrast: 1.85, pivot: 118, bright: 10, tint: [-3, 0, 8], glow: 0, grain: 9, vig: 0.2 },
 }
 
 // ── 두들(SVG) → 그림 ──
@@ -70,17 +71,19 @@ export async function loadAssets(frame) {
 // ── 필터 ──
 function applyFilter(canvas, id) {
   const f = FILTERS[id] ?? FILTERS.soft, g = canvas.getContext('2d'), w = canvas.width, h = canvas.height
-  const small = document.createElement('canvas'); small.width = Math.max(2, (w / 7) | 0); small.height = Math.max(2, (h / 7) | 0)
-  small.getContext('2d').drawImage(canvas, 0, 0, small.width, small.height)
-  g.save(); g.globalAlpha = f.glow; g.imageSmoothingQuality = 'high'; g.drawImage(small, 0, 0, w, h); g.restore()   // 몽글하게 번지는 느낌
+  if (f.glow) {
+    const small = document.createElement('canvas'); small.width = Math.max(2, (w / 7) | 0); small.height = Math.max(2, (h / 7) | 0)
+    small.getContext('2d').drawImage(canvas, 0, 0, small.width, small.height)
+    g.save(); g.globalAlpha = f.glow; g.imageSmoothingQuality = 'high'; g.drawImage(small, 0, 0, w, h); g.restore()   // 몽글하게 번지는 느낌
+  }
   const img = g.getImageData(0, 0, w, h), d = img.data, cx = w / 2, cy = h / 2, invMd = 1 / Math.hypot(cx, cy)
-  const br = f.bright ?? 0, [tr, tg, tb] = f.tint, sat = f.sat, con = f.contrast, k = f.fade / 255, fade = f.fade, grain = f.grain, vig = f.vig
+  const pv = f.pivot ?? 128, br = f.bright ?? 0, [tr, tg, tb] = f.tint, sat = f.sat, con = f.contrast, k = f.fade / 255, fade = f.fade, grain = f.grain, vig = f.vig
   for (let y = 0, i = 0; y < h; y++) {
     const dy2 = (y - cy) * (y - cy)
     for (let x = 0; x < w; x++, i += 4) {
       let r = d[i], gg = d[i + 1], b = d[i + 2]
       const l = 0.299 * r + 0.587 * gg + 0.114 * b
-      r = (l + (r - l) * sat - 128) * con + 128; gg = (l + (gg - l) * sat - 128) * con + 128; b = (l + (b - l) * sat - 128) * con + 128
+      r = (l + (r - l) * sat - pv) * con + pv; gg = (l + (gg - l) * sat - pv) * con + pv; b = (l + (b - l) * sat - pv) * con + pv
       r = r * (1 - k) + fade + tr + br; gg = gg * (1 - k) + fade + tg + br; b = b * (1 - k) + fade + tb + br
       const dd = Math.sqrt((x - cx) * (x - cx) + dy2) * invMd
       let v = 1
@@ -95,7 +98,7 @@ function applyFilter(canvas, id) {
 
 // ── 한 장으로 합치기 ──
 // photos: 정사각형 canvas 3장, stickers: [{ kind, cell, x, y, size, rot }] (x, y 는 사진 안 좌표 0~680)
-export function compose({ photos, stickers, frame, filter, scale = 1, assets, activeCell = -1 }) {
+export function compose({ photos, stickers, strokes = [], frame, filter, scale = 1, assets, activeCell = -1 }) {
   const S = scale, W = Math.round(STRIP.w * S), H = Math.round(STRIP_H * S)
   const out = document.createElement('canvas'); out.width = W; out.height = H
   const g = out.getContext('2d')
@@ -117,6 +120,13 @@ export function compose({ photos, stickers, frame, filter, scale = 1, assets, ac
       c.drawImage(im, (-bx.w / 2) * S, (-bx.h / 2) * S, bx.w * S, bx.h * S); c.restore()
     }
     applyFilter(cell, filter)
+    c.save(); c.lineCap = 'round'; c.lineJoin = 'round'                                         // 펜 글씨는 필터 뒤에 올려서 고른 색 그대로 보임
+    for (const st of strokes.filter((x) => x.cell === i)) {
+      c.strokeStyle = c.fillStyle = st.color; c.lineWidth = st.w * S
+      if (st.pts.length === 1) { c.beginPath(); c.arc(st.pts[0][0] * S, st.pts[0][1] * S, (st.w * S) / 2, 0, Math.PI * 2); c.fill() }
+      else { c.beginPath(); st.pts.forEach(([px, py], k) => (k ? c.lineTo(px * S, py * S) : c.moveTo(px * S, py * S))); c.stroke() }
+    }
+    c.restore()
     const x = STRIP.mx * S, y = cellY(i) * S, b = frame.border ? 8 * S : 0
     if (b) { g.fillStyle = '#fbfcfa'; g.fillRect(x - b, y - b, cs + b * 2, cs + b * 2) }
     g.drawImage(cell, x, y)

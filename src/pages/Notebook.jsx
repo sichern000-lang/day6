@@ -75,7 +75,7 @@ export default function Notebook() {
   const updateMemo = useAppStore((s) => s.updateMemo)
   const removeStory = useAppStore((s) => s.removeStory)
   const nickname = useAppStore((s) => s.nickname)
-  const [list, setList] = useState(false)       // true: 리스트로 보기
+  const [list, setList] = useState(() => window.matchMedia('(max-width: 760px)').matches)   // true: 리스트로 보기 (모바일은 처음부터 리스트)
   const [reading, setReading] = useState(null)  // 전문을 펼쳐 보는 Ask 메모
 
   useEffect(() => { loadSaved() }, [loadSaved, nickname])

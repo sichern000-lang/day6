@@ -29,7 +29,10 @@ export default function Helper() {
     <>
       <PageHeader center title="Your Helper" subtitle={t('helper.sub')} />
       <input className="input search-slim helper-search" placeholder={t('helper.search')} value={q} onChange={(e) => setQ(e.target.value)} />
-      <div className="tabs center pills">
+      <select className="cat-select" aria-label={t('helper.all')} value={cat} onChange={(e) => setCat(e.target.value)}>
+        {['', ...CATS].map((c) => <option key={c || 'all'} value={c}>{t(c ? `helper.cat.${c}` : 'helper.all')}</option>)}
+      </select>
+      <div className="tabs center pills helper-tabs">
         {['', ...CATS].map((c) => (
           <button key={c || 'all'} className={cat === c ? 'on' : ''} onClick={() => setCat(c)}>{t(c ? `helper.cat.${c}` : 'helper.all')}</button>
         ))}

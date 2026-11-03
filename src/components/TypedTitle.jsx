@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 // 히어로 제목을 한 글자씩 타이핑. 아직 안 친 글자는 투명하게 자리만 잡아 두어 줄바꿈이 흔들리지 않음.
 // parts: [{ text, em? }, { br: true }, ...]
 // 사람이 치듯 글자마다 간격이 조금씩 다르고, 쉼표·띄어쓰기 뒤에서는 잠깐 멈춤
-const delayAfter = (ch) => 55 + Math.random() * 75 + (ch === ',' ? 320 : ch === ' ' ? 40 + Math.random() * 90 : 0)
+const delayAfter = (ch) => 28 + Math.random() * 40 + (ch === ',' ? 160 : ch === ' ' ? 20 + Math.random() * 45 : 0)
 const reduce = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 export default function TypedTitle({ parts, start = true, onDone }) {
@@ -16,7 +16,7 @@ export default function TypedTitle({ parts, start = true, onDone }) {
 
   useEffect(() => {
     if (!start || n >= total) { if (start && n >= total && total) onDone?.(); return }
-    const id = setTimeout(() => setN((v) => v + 1), n === 0 ? 700 : delayAfter(flat[n - 1]))
+    const id = setTimeout(() => setN((v) => v + 1), n === 0 ? 400 : delayAfter(flat[n - 1]))
     return () => clearTimeout(id)
   }, [start, n, total, onDone])
 

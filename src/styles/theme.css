@@ -802,3 +802,29 @@ button.who { white-space: nowrap; }
 .scrap svg.doodle { overflow: visible; }
 
 body { overflow-x: clip; }
+
+/* 외국인 도우미: 발음 · 가는 길 · 용어집 */
+.speak-btn { display: inline-grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; vertical-align: middle; transition: background .2s; }
+.speak-btn:hover { background: rgba(207, 224, 236, .85); }
+.korean-name { margin: 6px 0 0; font-size: .9rem; color: var(--muted); }
+.go-btn { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; transition: background .2s, color .2s; }
+.go-btn:hover { background: rgba(207, 224, 236, .85); color: var(--ink); }
+.taxi-card { margin: 14px 0 6px; padding: 22px 22px 18px; border: 2px solid var(--ink); border-radius: 14px; background: #fff; text-align: center; }
+.taxi-name { margin: 0; font-family: 'Gowun Batang', var(--serif); font-size: clamp(1.8rem, 6vw, 2.6rem); line-height: 1.25; word-break: keep-all; }
+.taxi-addr { margin: 10px 0 0; font-size: clamp(1.15rem, 4vw, 1.5rem); line-height: 1.45; word-break: keep-all; }
+.taxi-addr.dim { color: var(--muted); font-size: .95rem; }
+.taxi-rom { margin: 4px 0 0; font-size: .82rem; color: var(--muted); }
+.go-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+.go-links .btn { padding: 8px 16px; font-size: .86rem; letter-spacing: 0; text-decoration: none; border: 1.5px solid var(--ink); }
+.helper-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin: 16px 0 72px; }
+.helper-card { padding: 20px 22px 18px; border-top: 1px solid var(--ink); display: flex; flex-direction: column; gap: 6px; transition: background .2s; }
+.helper-card:hover { background: rgba(255, 255, 255, .5); }
+.helper-cat { margin: 0; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+.helper-ko { margin: 0; font-family: 'Gowun Batang', var(--serif); font-size: 1.9rem; line-height: 1.2; }
+.helper-rom { margin: 0; font-size: .86rem; color: var(--muted); }
+.helper-name { margin: 2px 0 0; font-size: .95rem; font-weight: 600; }
+.helper-desc { margin: 4px 0 6px; font-size: .92rem; line-height: 1.6; }
+.center-text { text-align: center; }
+@media (max-width: 900px) { .helper-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .helper-grid { grid-template-columns: 1fr; } }
+.search-slim.helper-search { margin: 0 auto 28px; }

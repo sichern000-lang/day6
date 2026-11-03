@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import Modal from './Modal'
 import { ErrorBox, Loading } from './Status'
 import { fetchPlaces, summarizeLore } from '../api/client'
-import { GROUP, label } from '../lib/folk'
+import { GROUP, label, tagLabel } from '../lib/folk'
+import SpeakButton from './SpeakButton'
+import { GoButton } from './GoModal'
+import { romanize } from '../lib/romanize'
 import { copyText } from '../lib/copy'
 import { isKo } from '../lib/langs'
 import { useTranslated } from '../lib/useTranslated'
@@ -79,7 +82,9 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
     <Modal onClose={onClose} label={item.title}>
       <span className="lore-kind">{label(GROUP[item.group], lang)}</span>
       <h2 className="modal-title">{titleLocal ?? item.title}</h2>
-      {titleLocal && <p className="modal-sub">{item.title}</p>}
+      {titleLocal && (
+        <p className="modal-sub korean-name">{item.title} · {romanize(item.title)} <SpeakButton text={item.title} /></p>
+      )}
 
       <div className="modal-block lore-summary">
         <b className="modal-label">{t('modal.summary')} <i className="ai-tag">AI</i></b>
@@ -100,7 +105,7 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
           <div className="modal-tags">
             {item.tags.map((tag) => (
               <button key={tag} className={`tag ${picked === plain(tag) ? 'on' : ''}`}
-                onClick={() => setPicked(picked === plain(tag) ? null : plain(tag))}>{tag}</button>
+                onClick={() => setPicked(picked === plain(tag) ? null : plain(tag))} title={tag}>{tagLabel(tag, lang)}</button>
             ))}
           </div>
           <p className="hint">{t('modal.tagHint')}</p>
@@ -133,6 +138,7 @@ export default function LoreModal({ item, titleLocal, onClose, onSearch }) {
                 <strong>{tr(p.title) ?? p.title}{tr(p.title) && <small> {p.title}</small>}</strong>
                 <span>{p.addr}</span>
               </span>
+              <GoButton place={{ name: p.title, addr: p.addr, lat: p.lat, lng: p.lng }} />
               {p.addr && (
                 <button className="copy-btn" onClick={() => copy(p.addr)} aria-label={t('detail.copy')} title={t('detail.copy')}>
                   <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><rect x="7" y="7" width="9" height="9" rx="1.8" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M13 7V5.5A1.5 1.5 0 0 0 11.5 4h-6A1.5 1.5 0 0 0 4 5.5v6A1.5 1.5 0 0 0 5.5 13H7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>

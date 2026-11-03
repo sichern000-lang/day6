@@ -6,6 +6,9 @@ import { fetchHeritage, fetchPlaces, fetchPlacesEn } from '../api/client'
 import { getStoryById, kindLabel, localize, tourKeywordEn } from '../lib/stories'
 import { isKo } from '../lib/langs'
 import { copyText } from '../lib/copy'
+import { GoButton } from '../components/GoModal'
+import SpeakButton from '../components/SpeakButton'
+import { romanize } from '../lib/romanize'
 import { useTranslated } from '../lib/useTranslated'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
@@ -25,6 +28,7 @@ export default function StoryDetail() {
   const story = localize(base, lang)
   const [places, setPlaces] = useState(idle)
   const [heritage, setHeritage] = useState(idle)
+  const [koPlaces, setKoPlaces] = useState({})   // 영어 모드에서도 택시 카드에 한국어 이름·주소를 쓰려고 id → 한국어 정보
   const [copiedId, setCopiedId] = useState(null)
 
   useEffect(() => { loadSaved() }, [loadSaved])
@@ -48,6 +52,11 @@ export default function StoryDetail() {
     if (!isKo(lang)) run(fetchPlacesEn, tourKeywordEn(base), setPlaces)
     else run(fetchPlaces, base.tourKeyword, setPlaces)
     run(fetchHeritage, base.heritageKeyword, setHeritage)
+    if (!isKo(lang)) {
+      fetchPlaces(base.tourKeyword)
+        .then((list) => !cancelled && setKoPlaces(Object.fromEntries(list.map((p) => [p.id, p]))))
+        .catch(() => {})
+    }
     return () => { cancelled = true }
   }, [base, lang])
 
@@ -74,6 +83,7 @@ export default function StoryDetail() {
           {t('detail.back')}
         </Link>
         <h1>{story.title}</h1>
+        {!isKo(lang) && <p className="korean-name">{base.title} · {romanize(base.title)} <SpeakButton text={base.title} /></p>}
         <p className="detail-meta">
           {meta.map((m, i) => <span key={i}>{m}</span>)}
         </p>
@@ -104,6 +114,7 @@ export default function StoryDetail() {
                 <div className="row-item">
                   {p.image && <img src={p.image} alt="" loading="lazy" />}
                   <span className="h-text"><strong>{p.title}</strong><span>{p.addr}</span></span>
+                  <GoButton place={{ name: p.title, addr: p.addr, lat: p.lat ?? koPlaces[p.id]?.lat, lng: p.lng ?? koPlaces[p.id]?.lng, koName: koPlaces[p.id]?.title, koAddr: koPlaces[p.id]?.addr }} />
                   {p.addr && (
                     <button className="copy-btn" onClick={() => copyAddress(p.id, p.addr)}
                       aria-label={t('detail.copy')} title={t('detail.copy')}>

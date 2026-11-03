@@ -25,5 +25,6 @@ export async function searchTour({ keyword = '', contentTypeId = '', rows = 8 } 
   const list = !item ? [] : Array.isArray(item) ? item : [item]
   return list.map((p) => ({
     id: p.contentid, title: p.title, addr: p.addr1, image: p.firstimage,
+    lat: p.mapy ? Number(p.mapy) : null, lng: p.mapx ? Number(p.mapx) : null,
   }))
 }

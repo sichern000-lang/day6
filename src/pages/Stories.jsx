@@ -5,7 +5,7 @@ import StoryCard from '../components/StoryCard'
 import LoreModal from '../components/LoreModal'
 import { Empty, ErrorBox, Loading } from '../components/Status'
 import { fetchCatalog } from '../api/client'
-import { FOLK as folk, GROUP, keywordLabel, label } from '../lib/folk'
+import { FOLK as folk, GROUP, keywordLabel, label, tagLabel } from '../lib/folk'
 import { STORIES, localize } from '../lib/stories'
 import { folkTitle } from '../lib/folkTitle'
 import { isKo } from '../lib/langs'
@@ -159,7 +159,7 @@ export default function Stories() {
                           <span className="lore-meta">
                             <em>{label(GROUP[i.group], lang)}</em>
                             {i.tags.slice(0, 6).map((tag) => (
-                              <button key={tag} className="tag" onClick={(e) => { e.stopPropagation(); search(tag) }}>{tag}</button>
+                              <button key={tag} className="tag" onClick={(e) => { e.stopPropagation(); search(tag) }} title={tag}>{tagLabel(tag, lang)}</button>
                             ))}
                           </span>
                         </span>

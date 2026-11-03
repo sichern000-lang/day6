@@ -4,6 +4,7 @@ import IslandMap from '../components/IslandMap'
 import StoryCard from '../components/StoryCard'
 import PlaceModal from '../components/PlaceModal'
 import { Drawing } from '../components/DrawPad'
+import { GoButton } from '../components/GoModal'
 import { Loading } from '../components/Status'
 import { CATEGORIES, SAMPLES, catLabel, sampleView } from '../lib/places'
 import { STORIES } from '../lib/stories'
@@ -77,6 +78,7 @@ export default function MapPage() {
               </span>
               {p.memo && <p>{p.memo}</p>}
             </div>
+            <GoButton place={{ name: p.name, addr: p.address, lat: p.lat, lng: p.lng }} className="place-go" />
             <button className="x edit" aria-label={`${t('map.edit')}: ${p.name}`} title={t('map.edit')}
               onClick={(e) => { e.stopPropagation(); setEditing(p) }}>
               <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>

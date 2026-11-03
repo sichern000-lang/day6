@@ -27,6 +27,17 @@ export default function RootLayout() {
   const [menuOpen, setMenuOpen] = useState(false)
   const closeMenu = () => setMenuOpen(false)
 
+  // 모바일 첫 방문: 언어를 바꿀 수 있다는 안내를 영어로 10초간 하단에 띄움 (한 번 보면 다시 안 띄움)
+  const [langHint, setLangHint] = useState(false)
+  useEffect(() => {
+    let seen = false
+    try { seen = localStorage.getItem('langHintSeen') === '1' } catch { /* 저장소를 못 쓰면 매번 보여줌 */ }
+    if (seen || !window.matchMedia('(max-width: 760px)').matches) return
+    const on = setTimeout(() => { setLangHint(true); try { localStorage.setItem('langHintSeen', '1') } catch { /* ignore */ } }, 1500)
+    const off = setTimeout(() => setLangHint(false), 11500)
+    return () => { clearTimeout(on); clearTimeout(off) }
+  }, [])
+
   // 페이지를 옮기거나 Esc 를 누르면 닫고, 열려 있는 동안은 뒤 화면이 스크롤되지 않게 함
   useEffect(() => { setMenuOpen(false) }, [pathname])
   useEffect(() => {
@@ -100,6 +111,15 @@ export default function RootLayout() {
               {user ? (nickname || user.email) : en('auth.login')}
             </button>
           </div>
+        </div>
+      )}
+      {langHint && !menuOpen && (
+        <div className="lang-hint" role="status">
+          <button className="lang-hint-main" onClick={() => { setLangHint(false); setMenuOpen(true) }}>
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18" fill="none" stroke="currentColor" strokeWidth="1.5" /></svg>
+            <span>Change language in the <b>☰</b> menu</span>
+          </button>
+          <button className="lang-hint-x" aria-label="Close" onClick={() => setLangHint(false)}>×</button>
         </div>
       )}
       <main className={isHome ? '' : 'container'}><Outlet /></main>

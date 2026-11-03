@@ -9,7 +9,8 @@ import Notebook from './pages/Notebook'
 import Helper from './pages/Helper'
 import { Loading } from './components/Status'
 
-const Island = lazy(() => import('./pages/Island'))   // three.js 는 크니까 이 페이지에 들어갈 때만 불러옴
+const Island = lazy(() => import('./pages/Island'))
+const Booth = lazy(() => import('./pages/Booth'))       // 포토부스(두들 그림 만들기 포함)도 이 페이지에 들어갈 때만 불러옴   // three.js 는 크니까 이 페이지에 들어갈 때만 불러옴
 import NotFound from './pages/NotFound'
 
 // 페이지 추가: ① pages/ 에 파일 ② NAV_ITEMS 한 줄 ③ routes 한 줄
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
       { path: 'stories/:id', element: <StoryDetail /> },
       { path: 'notebook', element: <Notebook /> },
       { path: 'helper', element: <Helper /> },
+      { path: 'booth', element: <Suspense fallback={<Loading />}><Booth /></Suspense> },
     ],
   },
 ])

@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { askAgent } from '../api/client'
 import { translate } from '../lib/i18n'
 import { LANGS } from '../lib/langs'
+import { removePhoto } from '../lib/photos'
 import { createPlace, deletePlace, loadHidden, loadMine, ownerOf, saveHidden, updatePlaceRow } from '../lib/places'
 
 // ── 여러 페이지가 함께 쓰는 "전역 상태" ─────────────────
@@ -87,12 +88,12 @@ export const useAppStore = create(
         if (error) return get().toast(error.message, 'error')
         set({ saved: data })
       },
-      saveStory: async ({ id, title, answer }, quiet = false) => {
+      saveStory: async ({ id, title, answer, image }, quiet = false) => {
         if (!supabase) return get().toast(translate(get().lang, 'toast.nosb'), 'warn')
         if (get().saved.some((s) => s.story_id === id)) return get().toast(translate(get().lang, 'toast.dup'), 'warn')
         const { data, error } = await supabase
           .from('saved_stories')
-          .insert({ nickname: get().nickname || '익명', story_id: id, title, ...(answer ? { answer } : {}) })
+          .insert({ nickname: get().nickname || '익명', story_id: id, title, ...(answer ? { answer } : {}), ...(image ? { image } : {}) })
           .select().single()
         if (error) return get().toast(error.message, 'error')
         set({ saved: [data, ...get().saved] })
@@ -120,8 +121,10 @@ export const useAppStore = create(
       },
       removeStory: async (id) => {
         if (!supabase) return
+        const row = get().saved.find((s) => s.id === id)
         const { error } = await supabase.from('saved_stories').delete().eq('id', id)
         if (error) return get().toast(error.message, 'error')
+        if (row?.image) removePhoto(row.image).catch(() => {})                            // 사진 파일도 정리
         set({ saved: get().saved.filter((s) => s.id !== id) })
       },
 

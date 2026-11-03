@@ -22,6 +22,7 @@ const TONES = ['#c9d8ee', '#cfe0d2', '#d9d3ee', '#ebd2cc', '#d3e3ea']
 const PAPER = ['#f1f5f1', '#e6edf2', '#e8efe6']   // 두들 종이 조각 색 (랜딩 인트로와 같은 톤)
 const STEP = 202   // 메모지 사이 간격(px) — 카드보다 좁아서 살짝 겹침
 const isWord = (s) => s.story_id.startsWith('word:')
+const isPhoto = (s) => s.story_id.startsWith('photo:')
 const pad2 = (n) => String(n).padStart(2, '0')
 const dateOf = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : `${pad2(d.getMonth() + 1)} / ${pad2(d.getDate())} / ${pad2(d.getFullYear() % 100)}` }
 
@@ -62,11 +63,15 @@ export default function Notebook() {
       {!loading && isSupabaseReady && saved.length === 0 && <Empty text={t('nb.empty')} />}
 
       {notes.length > 0 && (list
-        ? <ul className="nb-list" key="list">{notes.map((s, i) => <li key={s.id}>{isWord(s)
+        ? <ul className="nb-list" key="list">{notes.map((s, i) => <li key={s.id}>{isPhoto(s)
+          ? <PhotoCard s={s} i={i} t={t} list onMark={toggleVisited} onDel={removeStory} />
+          : isWord(s)
           ? <WordCard s={s} i={i} lang={lang} t={t} list onMark={toggleVisited} onDel={removeStory} />
           : <Note s={s} i={i} lang={lang} t={t} list onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} />}</li>)}</ul>
         : <Slider key="notes" count={notes.length} hint={t('nb.hint')} decor={<Scraps count={notes.length} />}>
-            {notes.map((s, i) => (isWord(s)
+            {notes.map((s, i) => (isPhoto(s)
+              ? <PhotoCard key={s.id} s={s} i={i} t={t} onMark={toggleVisited} onDel={removeStory} />
+              : isWord(s)
               ? <WordCard key={s.id} s={s} i={i} lang={lang} t={t} onMark={toggleVisited} onDel={removeStory} />
               : <Note key={s.id} s={s} i={i} lang={lang} t={t} onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} />))}
           </Slider>)}
@@ -172,6 +177,24 @@ function WordCard({ s, i, lang, t, list = false, onMark, onDel }) {
       {g && lang !== 'ko' && <p className="helper-name">{g[lang] ?? g.en}</p>}
       {g && <p className="helper-desc">{g.d[lang] ?? g.d.en}</p>}
       <button className="note-del word-del" aria-label={t('nb.del')} title={t('nb.del')} onClick={() => onDel(s.id)}>×</button>
+    </article>
+  )
+}
+
+// 포토부스·3D 섬에서 담은 사진 — 폴라로이드처럼 사진과 날짜만 (기록용이라 작게 줄여 둔 사진)
+function PhotoCard({ s, i, t, list = false, onMark, onDel }) {
+  const style = useMemo(() => {
+    const r = rng(`note-${s.id}`)
+    return { '--rot': `${((r() - 0.5) * 24).toFixed(1)}deg`, '--dy': `${Math.round((r() - 0.5) * 190)}px`, '--dx': `${Math.round((r() - 0.5) * 70)}px`, '--i': i, zIndex: 1 + Math.floor(r() * 2) * 2 }
+  }, [s.id, i])
+  const marked = !!s.visited
+  return (
+    <article className={`photo-card ${marked ? 'marked' : ''} ${list ? 'as-list' : ''}`} style={style}>
+      <button className="note-mark" role="checkbox" aria-checked={marked} aria-label={`${t('nb.mark')}: ${s.title}`} title={t('nb.mark')} onClick={() => onMark(s)}>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1Z" fill={marked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+      </button>
+      <img src={s.image} alt={s.title} loading="lazy" draggable="false" />
+      <div className="note-foot"><span>{s.title} · {dateOf(s.created_at)}</span><button className="note-del" aria-label={t('nb.del')} title={t('nb.del')} onClick={() => onDel(s.id)}>×</button></div>
     </article>
   )
 }

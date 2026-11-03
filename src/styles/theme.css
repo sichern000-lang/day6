@@ -910,3 +910,72 @@ body { overflow-x: clip; }
 .char-grid img { width: 100%; max-width: 110px; aspect-ratio: 1; object-fit: contain; }
 .char-ph { width: 110px; height: 110px; }
 .photo-preview { display: block; width: min(300px, 100%); margin: 14px auto; border-radius: 10px; box-shadow: 0 10px 28px rgba(36, 58, 46, .22); }
+
+/* 상단 메뉴: 포토부스 카메라 아이콘 (언어 스위치 오른쪽) */
+.cam-link { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--ink); color: var(--ink); transition: background .2s, color .2s; flex: none; }
+.cam-link:hover, .cam-link.active { background: var(--ink); color: #fff; }
+
+/* 포토부스 */
+.booth-cam { display: grid; justify-items: center; gap: 16px; margin: 8px 0 72px; }
+.booth-view { position: relative; width: min(520px, 100%); aspect-ratio: 1; border-radius: 18px; overflow: hidden; background: #dfe7dc; box-shadow: 0 12px 34px rgba(36, 58, 46, .18); }
+.booth-view video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.booth-view video.mirror { transform: scaleX(-1); }
+.booth-msg { position: absolute; inset: 0; display: grid; place-items: center; padding: 28px; text-align: center; color: var(--muted); font-size: .95rem; line-height: 1.6; }
+.booth-count { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-size: clamp(7rem, 30vw, 11rem); color: #fff; text-shadow: 0 6px 30px rgba(0, 0, 0, .35); animation: boothPop .9s ease; pointer-events: none; }
+@keyframes boothPop { 0% { transform: scale(1.5); opacity: 0; } 25% { opacity: 1; } 100% { transform: scale(.85); opacity: .85; } }
+.booth-flash { position: absolute; inset: 0; background: #fff; animation: boothFlash .18s ease-out; pointer-events: none; }
+@keyframes boothFlash { from { opacity: .95; } to { opacity: 0; } }
+.booth-dots { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); display: flex; gap: 8px; }
+.booth-dots i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .3); }
+.booth-dots i.on { background: #fff; }
+.booth-bar { display: flex; align-items: center; justify-content: center; gap: 34px; }
+.booth-shutter { width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--ink); background: transparent; display: grid; place-items: center; cursor: pointer; transition: transform .15s; }
+.booth-shutter i { width: 56px; height: 56px; border-radius: 50%; background: var(--ink); transition: background .2s; }
+.booth-shutter:hover:not(:disabled) { transform: scale(1.05); }
+.booth-shutter:disabled { opacity: .4; cursor: default; }
+.booth-side { width: 46px; height: 46px; border-radius: 50%; border: 1.5px solid rgba(52, 66, 31, .45); background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; transition: background .2s; }
+.booth-side:hover:not(:disabled) { background: rgba(207, 224, 236, .8); }
+.booth-side:disabled { opacity: .4; }
+.booth-edit { display: flex; flex-wrap: wrap; gap: 36px; justify-content: center; align-items: flex-start; margin: 8px 0 72px; }
+.booth-strip { width: min(300px, 78vw); height: auto; aspect-ratio: 800 / 2370; border-radius: 4px; box-shadow: 0 14px 36px rgba(36, 58, 46, .24); touch-action: none; cursor: pointer; background: #fff; }
+.booth-panel { display: grid; gap: 22px; width: min(380px, 100%); }
+.booth-panel section { display: grid; gap: 10px; }
+.booth-panel b { font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; }
+.swatches { display: flex; gap: 12px; }
+.swatches button { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid rgba(52, 66, 31, .4); cursor: pointer; transition: transform .15s, box-shadow .15s; }
+.swatches button:hover { transform: scale(1.08); }
+.swatches button.on { box-shadow: 0 0 0 3px var(--ink); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { border: 1.5px solid var(--ink); background: transparent; color: var(--ink); font: inherit; font-size: .84rem; padding: 5px 16px; border-radius: 999px; cursor: pointer; transition: background .2s; }
+.chips button:hover { background: rgba(207, 224, 236, .7); }
+.chips button.on { background: var(--ink); color: #fff; }
+.sticker-tray { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.sticker-tray button { aspect-ratio: 1; border: 1px solid rgba(52, 66, 31, .25); border-radius: 12px; background: #fff; padding: 6px; cursor: pointer; transition: transform .15s, border-color .15s; }
+.sticker-tray button:hover { transform: translateY(-2px); border-color: var(--ink); }
+.sticker-tray img { width: 100%; height: 100%; object-fit: contain; }
+.sticker-ctl button { padding: 3px 14px; font-size: 1rem; }
+@media (max-width: 760px) { .cam-link { width: 32px; height: 32px; } }
+
+/* 좁은 화면: 로고 · 언어 · 카메라 · 로그인이 한 줄에 들어가도록 */
+@media (max-width: 560px) {
+  .topbar { padding: 10px 12px; column-gap: 8px; }
+  .topbar .right { grid-column: 2; grid-row: 1; gap: 6px; min-width: 0; }
+  .brand { font-size: 1.22rem; }
+  .lang button { padding: 3px 7px; font-size: .64rem; }
+  button.who { padding: 3px 9px; font-size: .72rem; }
+  .cam-link { width: 30px; height: 30px; }
+  .cam-link svg { width: 17px; height: 17px; }
+}
+
+.sticker-tray { max-height: 292px; overflow-y: auto; padding: 2px 8px 2px 2px; }
+.sticker-tray img { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .18)); }
+
+/* 수첩: 포토부스·3D 섬 사진 카드 (폴라로이드) */
+.photo-card { position: relative; width: 190px; padding: 10px 10px 8px; background: #fbfdfb; border-radius: 3px; display: flex; flex-direction: column; gap: 6px; color: var(--ink);
+  box-shadow: 0 10px 22px rgba(36, 58, 46, .16); transition: transform .35s cubic-bezier(.2, .7, .2, 1), box-shadow .3s; }
+.photo-card img { display: block; width: 100%; max-height: 340px; object-fit: contain; background: #eef2ec; border-radius: 2px; }
+.photo-card .note-mark { top: 14px; right: 14px; background: rgba(251, 253, 251, .85); }
+.photo-card.marked { box-shadow: 0 10px 22px rgba(36, 58, 46, .16), 0 0 0 2px var(--ink); }
+.nb-track .photo-card { position: absolute; left: calc(var(--i) * 202px + 24px + var(--dx)); top: calc(110px + var(--dy)); transform: rotate(var(--rot)); }
+.nb-track .photo-card:hover, .nb-track .photo-card:focus-within { transform: rotate(0deg) translateY(-14px) scale(1.04); z-index: 6 !important; box-shadow: 0 18px 34px rgba(36, 58, 46, .24); }
+.photo-card.as-list { width: auto; transform: none; }

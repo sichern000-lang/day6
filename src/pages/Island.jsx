@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader'
 import IslandScene from '../components/IslandScene'
 import CharacterModal from '../components/CharacterModal'
 import Modal from '../components/Modal'
+import { shrinkToJpeg, uploadPhoto } from '../lib/photos'
 import { MAX_CHARS, charName, createChar, deleteChar, loadChars, updateChar } from '../lib/characters'
 import { GoButton } from '../components/GoModal'
 import { SAMPLES, catLabel, ownerOf, sampleView } from '../lib/places'
@@ -77,6 +78,17 @@ export default function Island() {
       const blob = await scene.current.snapshot({ footer: 'Jeju Story Archive', sub: t('island.shareText') })
       setPhoto({ url: URL.createObjectURL(blob), blob })
     } catch { setPhoto(null); toast(t('island.photoFail'), 'error') }
+  }
+  const saveStory = useAppStore((s) => s.saveStory)
+  const [noting, setNoting] = useState(false)
+  async function photoToNote() {
+    if (noting || !photo?.blob) return
+    setNoting(true)
+    try {
+      const url = await uploadPhoto(await shrinkToJpeg(photo.blob, 560))
+      if (await saveStory({ id: `photo:${Date.now()}`, title: 'Island', image: url }, true)) toast(t('booth.noted'))
+    } catch (e) { toast(e.message, 'error') }
+    setNoting(false)
   }
   const closePhoto = () => { if (photo?.url) URL.revokeObjectURL(photo.url); setPhoto(null) }
   async function sharePhoto() {
@@ -194,6 +206,7 @@ export default function Island() {
               <img className="photo-preview" src={photo.url} alt="" />
               <div className="modal-actions">
                 <button className="btn dark" onClick={sharePhoto}>{t('island.share')}</button>
+                <button className="btn ghost" onClick={photoToNote} disabled={noting}>{noting ? t('booth.noting') : t('booth.toNote')}</button>
                 <button className="btn ghost" onClick={savePhoto}>{t('island.saveImg')}</button>
               </div>
               <p className="hint">{t('island.shareHint')}</p>

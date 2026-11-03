@@ -53,6 +53,9 @@ export default function RootLayout() {
               <button key={l.id} className={lang === l.id ? 'on' : ''} onClick={() => setLang(l.id)} title={l.name} aria-pressed={lang === l.id}>{l.label}</button>
             ))}
           </div>
+          <NavLink to="/booth" className="cam-link" aria-label={en('nav.booth')} title={en('nav.booth')}>
+            <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.2-2h6.6l1.2 2h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-9Z" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" strokeWidth="1.7" /></svg>
+          </NavLink>
           <button className={`who ${user ? 'in' : ''}`} onClick={openAuth}>{user ? (nickname || user.email) : en('auth.login')}</button>
         </div>
       </nav>

@@ -8,6 +8,9 @@ import { isSupabaseReady } from '../lib/supabase'
 import { getStoryById, localize } from '../lib/stories'
 import { folkTitle } from '../lib/folkTitle'
 import { rng } from '../lib/rng'
+import SpeakButton from '../components/SpeakButton'
+import { GLOSSARY } from '../data/glossary'
+import { romanize } from '../lib/romanize'
 import { shareText } from '../lib/askShare'
 import { useAppStore } from '../store/useAppStore'
 import { useT } from '../lib/useT'
@@ -18,6 +21,7 @@ import { useT } from '../lib/useT'
 const TONES = ['#c9d8ee', '#cfe0d2', '#d9d3ee', '#ebd2cc', '#d3e3ea']
 const PAPER = ['#f1f5f1', '#e6edf2', '#e8efe6']   // 두들 종이 조각 색 (랜딩 인트로와 같은 톤)
 const STEP = 202   // 메모지 사이 간격(px) — 카드보다 좁아서 살짝 겹침
+const isWord = (s) => s.story_id.startsWith('word:')
 const pad2 = (n) => String(n).padStart(2, '0')
 const dateOf = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : `${pad2(d.getMonth() + 1)} / ${pad2(d.getDate())} / ${pad2(d.getFullYear() % 100)}` }
 
@@ -58,9 +62,13 @@ export default function Notebook() {
       {!loading && isSupabaseReady && saved.length === 0 && <Empty text={t('nb.empty')} />}
 
       {notes.length > 0 && (list
-        ? <ul className="nb-list" key="list">{notes.map((s, i) => <li key={s.id}><Note s={s} i={i} lang={lang} t={t} list onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} /></li>)}</ul>
+        ? <ul className="nb-list" key="list">{notes.map((s, i) => <li key={s.id}>{isWord(s)
+          ? <WordCard s={s} i={i} lang={lang} t={t} list onMark={toggleVisited} onDel={removeStory} />
+          : <Note s={s} i={i} lang={lang} t={t} list onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} />}</li>)}</ul>
         : <Slider key="notes" count={notes.length} hint={t('nb.hint')} decor={<Scraps count={notes.length} />}>
-            {notes.map((s, i) => <Note key={s.id} s={s} i={i} lang={lang} t={t} onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} />)}
+            {notes.map((s, i) => (isWord(s)
+              ? <WordCard key={s.id} s={s} i={i} lang={lang} t={t} onMark={toggleVisited} onDel={removeStory} />
+              : <Note key={s.id} s={s} i={i} lang={lang} t={t} onMark={toggleVisited} onMemo={updateMemo} onDel={removeStory} onRead={setReading} />))}
           </Slider>)}
 
       {reading && <AskModal s={reading} t={t} onClose={() => setReading(null)} />}
@@ -140,6 +148,30 @@ function Note({ s, i, lang, t, list = false, onMark, onMemo, onDel, onRead }) {
         <span>date : {dateOf(s.created_at)}</span>
         <button className="note-del" aria-label={t('nb.del')} title={t('nb.del')} onClick={() => onDel(s.id)}>×</button>
       </div>
+    </article>
+  )
+}
+
+// Your Helper 에서 담은 단어 — 메모지가 아니라 도우미 페이지의 단어 카드 모양 그대로 (한국어·로마자·뜻 풀이)
+function WordCard({ s, i, lang, t, list = false, onMark, onDel }) {
+  const g = GLOSSARY.find((x) => `word:${x.id}` === s.story_id)
+  const style = useMemo(() => {
+    const r = rng(`note-${s.id}`)
+    return { '--rot': `${((r() - 0.5) * 24).toFixed(1)}deg`, '--dy': `${Math.round((r() - 0.5) * 190)}px`, '--dx': `${Math.round((r() - 0.5) * 70)}px`, '--i': i, zIndex: 1 + Math.floor(r() * 2) * 2 }
+  }, [s.id, i])
+  const marked = !!s.visited
+  const ko = g?.ko ?? s.title
+  return (
+    <article className={`word-card ${marked ? 'marked' : ''} ${list ? 'as-list' : ''}`} style={style}>
+      <button className="note-mark" role="checkbox" aria-checked={marked} aria-label={`${t('nb.mark')}: ${ko}`} title={t('nb.mark')} onClick={() => onMark(s)}>
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1Z" fill={marked ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
+      </button>
+      <p className="helper-cat">{g ? t(`helper.cat.${g.cat}`) : 'word'}</p>
+      <h3 className="helper-ko">{ko} <SpeakButton text={ko} /></h3>
+      <p className="helper-rom">{romanize(ko)}</p>
+      {g && lang !== 'ko' && <p className="helper-name">{g[lang] ?? g.en}</p>}
+      {g && <p className="helper-desc">{g.d[lang] ?? g.d.en}</p>}
+      <button className="note-del word-del" aria-label={t('nb.del')} title={t('nb.del')} onClick={() => onDel(s.id)}>×</button>
     </article>
   )
 }

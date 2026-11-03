@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import SpeakButton from '../components/SpeakButton'
@@ -11,6 +11,11 @@ import { useT } from '../lib/useT'
 export default function Helper() {
   const t = useT()
   const lang = useAppStore((s) => s.lang)
+  const saved = useAppStore((s) => s.saved)
+  const nickname = useAppStore((s) => s.nickname)
+  const loadSaved = useAppStore((s) => s.loadSaved)
+  const toggleSave = useAppStore((s) => s.toggleSave)
+  useEffect(() => { loadSaved() }, [loadSaved, nickname])
   const [cat, setCat] = useState('')
   const [q, setQ] = useState('')
 
@@ -39,7 +44,18 @@ export default function Helper() {
             <p className="helper-rom">{romanize(g.ko)}</p>
             {lang !== 'ko' && <p className="helper-name">{g[lang] ?? g.en}</p>}
             <p className="helper-desc">{g.d[lang] ?? g.d.en}</p>
-            {g.q && <Link className="textlink" to={`/stories?q=${encodeURIComponent(g.q)}`}>{t('helper.find')} →</Link>}
+            <div className="helper-actions">
+              {g.q && <Link className="textlink" to={`/stories?q=${encodeURIComponent(g.q)}`}>{t('helper.find')} →</Link>}
+              {(() => {
+                const on = saved.some((s) => s.story_id === `word:${g.id}`)
+                return (
+                  <button className={`helper-add ${on ? 'on' : ''}`} aria-pressed={on} onClick={() => toggleSave({ id: `word:${g.id}`, title: g.ko })}>
+                    <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1Z" fill={on ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /></svg>
+                    {t(on ? 'helper.saved' : 'helper.add')}
+                  </button>
+                )
+              })()}
+            </div>
           </article>
         ))}
       </div>
